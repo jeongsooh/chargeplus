@@ -1,0 +1,134 @@
+[
+  {
+    "model": "config.csmsvariable",
+    "pk": 1,
+    "fields": {
+      "key": "heartbeat_interval",
+      "value": "60",
+      "value_type": "int",
+      "description": "BootNotification 응답에 포함되는 heartbeat 주기 (초). 충전기가 이 주기로 Heartbeat를 전송한다.",
+      "is_per_station": true,
+      "updated_by": "system"
+    }
+  },
+  {
+    "model": "config.csmsvariable",
+    "pk": 2,
+    "fields": {
+      "key": "connection_timeout",
+      "value": "30",
+      "value_type": "int",
+      "description": "RemoteStartTransaction 전송 후 StartTransaction 수신 대기 시간 (초).",
+      "is_per_station": false,
+      "updated_by": "system"
+    }
+  },
+  {
+    "model": "config.csmsvariable",
+    "pk": 3,
+    "fields": {
+      "key": "pending_session_timeout",
+      "value": "120",
+      "value_type": "int",
+      "description": "AppSession이 pending 상태로 유지되는 최대 시간 (초). 초과 시 status=failed로 전환.",
+      "is_per_station": false,
+      "updated_by": "system"
+    }
+  },
+  {
+    "model": "config.csmsvariable",
+    "pk": 4,
+    "fields": {
+      "key": "default_unit_price",
+      "value": "270",
+      "value_type": "int",
+      "description": "기본 충전 단가 (원/kWh). StationVariable로 충전기별 override 가능.",
+      "is_per_station": true,
+      "updated_by": "system"
+    }
+  },
+  {
+    "model": "config.csmsvariable",
+    "pk": 5,
+    "fields": {
+      "key": "unit_price_overrides",
+      "value": "{\"EVN03\": 210, \"EVN07\": 245}",
+      "value_type": "json",
+      "description": "충전기 ID prefix 기반 단가 override 테이블 (JSON). station_id.startswith(prefix) 순서로 매칭.",
+      "is_per_station": false,
+      "updated_by": "system"
+    }
+  },
+  {
+    "model": "config.csmsvariable",
+    "pk": 6,
+    "fields": {
+      "key": "nonuser_unit_price",
+      "value": "350",
+      "value_type": "int",
+      "description": "비회원(앱 미사용) 충전 단가 (원/kWh).",
+      "is_per_station": false,
+      "updated_by": "system"
+    }
+  },
+  {
+    "model": "config.csmsvariable",
+    "pk": 7,
+    "fields": {
+      "key": "jwt_access_token_lifetime_hours",
+      "value": "24",
+      "value_type": "int",
+      "description": "앱 JWT Access Token 유효 시간 (시간 단위).",
+      "is_per_station": false,
+      "updated_by": "system"
+    }
+  },
+  {
+    "model": "config.csmsvariable",
+    "pk": 8,
+    "fields": {
+      "key": "notification_enabled",
+      "value": "true",
+      "value_type": "bool",
+      "description": "카카오 알림톡 / SMS 발송 활성화 여부.",
+      "is_per_station": false,
+      "updated_by": "system"
+    }
+  },
+  {
+    "model": "config.csmsvariable",
+    "pk": 9,
+    "fields": {
+      "key": "notification_error_enabled",
+      "value": "true",
+      "value_type": "bool",
+      "description": "충전기 에러 발생 시 관리자 알림 발송 여부.",
+      "is_per_station": true,
+      "updated_by": "system"
+    }
+  },
+  {
+    "model": "config.csmsvariable",
+    "pk": 10,
+    "fields": {
+      "key": "firmware_server_url",
+      "value": "ftp://firmware.example.com/",
+      "value_type": "str",
+      "description": "UpdateFirmware 명령에 사용될 기본 펌웨어 서버 URL.",
+      "is_per_station": false,
+      "updated_by": "system"
+    }
+  },
+  {
+    "model": "config.csmsvariable",
+    "pk": 11,
+    "fields": {
+      "key": "session_cleanup_after_hours",
+      "value": "24",
+      "value_type": "int",
+      "description": "stopped/failed AppSession을 DB에서 정리하기까지의 보존 시간 (시간).",
+      "is_per_station": false,
+      "updated_by": "system"
+    }
+  }
+]

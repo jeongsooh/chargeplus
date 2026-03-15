@@ -1,0 +1,162 @@
+version: '3.9'
+
+services:
+  nginx:
+    image: nginx:1.25-alpine
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - gateway
+      - backend
+    restart: unless-stopped
+
+  gateway:
+    build:
+      context: ./gateway
+      dockerfile: Dockerfile
+    environment:
+      - REDIS_URL=${REDIS_URL:-redis://redis:6379/0}
+      - GATEWAY_HOST=${GATEWAY_HOST:-0.0.0.0}
+      - GATEWAY_PORT=${GATEWAY_PORT:-9000}
+      - OCPP_SECURITY_PROFILE=${OCPP_SECURITY_PROFILE:-0}
+    depends_on:
+      - redis
+    restart: unless-stopped
+    deploy:
+      replicas: 2
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    environment:
+      - DATABASE_URL=${DATABASE_URL:-postgresql://chargeplus:chargeplus@db:5432/chargeplus}
+      - REDIS_URL=${REDIS_URL:-redis://redis:6379/0}
+      - CELERY_BROKER_URL=${CELERY_BROKER_URL:-redis://redis:6379/1}
+      - CELERY_RESULT_BACKEND=${CELERY_RESULT_BACKEND:-redis://redis:6379/2}
+      - SECRET_KEY=${SECRET_KEY:-change-me-in-production}
+      - DJANGO_SETTINGS_MODULE=${DJANGO_SETTINGS_MODULE:-chargeplus.settings.production}
+      - ALLOWED_HOSTS=${ALLOWED_HOSTS:-localhost,127.0.0.1,backend}
+    command: gunicorn chargeplus.wsgi:application --bind 0.0.0.0:8000 --workers 4
+    depends_on:
+      - db
+      - redis
+    restart: unless-stopped
+
+  worker-core:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    environment:
+      - DATABASE_URL=${DATABASE_URL:-postgresql://chargeplus:chargeplus@db:5432/chargeplus}
+      - REDIS_URL=${REDIS_URL:-redis://redis:6379/0}
+      - CELERY_BROKER_URL=${CELERY_BROKER_URL:-redis://redis:6379/1}
+      - CELERY_RESULT_BACKEND=${CELERY_RESULT_BACKEND:-redis://redis:6379/2}
+      - SECRET_KEY=${SECRET_KEY:-change-me-in-production}
+      - DJANGO_SETTINGS_MODULE=${DJANGO_SETTINGS_MODULE:-chargeplus.settings.production}
+    entrypoint: []
+    command: celery -A chargeplus worker -Q ocpp.q.core -c 4 --loglevel=info
+    depends_on:
+      - db
+      - redis
+    restart: unless-stopped
+    deploy:
+      replicas: 2
+
+  worker-telemetry:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    environment:
+      - DATABASE_URL=${DATABASE_URL:-postgresql://chargeplus:chargeplus@db:5432/chargeplus}
+      - REDIS_URL=${REDIS_URL:-redis://redis:6379/0}
+      - CELERY_BROKER_URL=${CELERY_BROKER_URL:-redis://redis:6379/1}
+      - CELERY_RESULT_BACKEND=${CELERY_RESULT_BACKEND:-redis://redis:6379/2}
+      - SECRET_KEY=${SECRET_KEY:-change-me-in-production}
+      - DJANGO_SETTINGS_MODULE=${DJANGO_SETTINGS_MODULE:-chargeplus.settings.production}
+    entrypoint: []
+    command: celery -A chargeplus worker -Q ocpp.q.telemetry -c 8 --loglevel=info
+    depends_on:
+      - db
+      - redis
+    restart: unless-stopped
+    deploy:
+      replicas: 4
+
+  worker-management:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    environment:
+      - DATABASE_URL=${DATABASE_URL:-postgresql://chargeplus:chargeplus@db:5432/chargeplus}
+      - REDIS_URL=${REDIS_URL:-redis://redis:6379/0}
+      - CELERY_BROKER_URL=${CELERY_BROKER_URL:-redis://redis:6379/1}
+      - CELERY_RESULT_BACKEND=${CELERY_RESULT_BACKEND:-redis://redis:6379/2}
+      - SECRET_KEY=${SECRET_KEY:-change-me-in-production}
+      - DJANGO_SETTINGS_MODULE=${DJANGO_SETTINGS_MODULE:-chargeplus.settings.production}
+    entrypoint: []
+    command: celery -A chargeplus worker -Q ocpp.q.management -c 2 --loglevel=info
+    depends_on:
+      - db
+      - redis
+    restart: unless-stopped
+
+  worker-commands:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    environment:
+      - DATABASE_URL=${DATABASE_URL:-postgresql://chargeplus:chargeplus@db:5432/chargeplus}
+      - REDIS_URL=${REDIS_URL:-redis://redis:6379/0}
+      - CELERY_BROKER_URL=${CELERY_BROKER_URL:-redis://redis:6379/1}
+      - CELERY_RESULT_BACKEND=${CELERY_RESULT_BACKEND:-redis://redis:6379/2}
+      - SECRET_KEY=${SECRET_KEY:-change-me-in-production}
+      - DJANGO_SETTINGS_MODULE=${DJANGO_SETTINGS_MODULE:-chargeplus.settings.production}
+    entrypoint: []
+    command: celery -A chargeplus worker -Q ocpp.q.commands -c 2 --loglevel=info
+    depends_on:
+      - db
+      - redis
+    restart: unless-stopped
+
+  dispatcher:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    environment:
+      - DATABASE_URL=${DATABASE_URL:-postgresql://chargeplus:chargeplus@db:5432/chargeplus}
+      - REDIS_URL=${REDIS_URL:-redis://redis:6379/0}
+      - CELERY_BROKER_URL=${CELERY_BROKER_URL:-redis://redis:6379/1}
+      - CELERY_RESULT_BACKEND=${CELERY_RESULT_BACKEND:-redis://redis:6379/2}
+      - SECRET_KEY=${SECRET_KEY:-change-me-in-production}
+      - DJANGO_SETTINGS_MODULE=${DJANGO_SETTINGS_MODULE:-chargeplus.settings.production}
+    entrypoint: []
+    command: python manage.py run_ocpp_dispatcher
+    depends_on:
+      - db
+      - redis
+    restart: unless-stopped
+
+  redis:
+    image: redis:7-alpine
+    volumes:
+      - redis_data:/data
+    restart: unless-stopped
+    command: redis-server --appendonly yes
+
+  db:
+    image: postgres:16-alpine
+    environment:
+      - POSTGRES_DB=chargeplus
+      - POSTGRES_USER=chargeplus
+      - POSTGRES_PASSWORD=chargeplus
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+  redis_data:

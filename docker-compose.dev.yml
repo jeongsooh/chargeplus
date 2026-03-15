@@ -1,0 +1,84 @@
+version: '3.9'
+
+services:
+  nginx:
+    ports:
+      - "8080:80"
+
+  gateway:
+    build:
+      context: ./gateway
+      dockerfile: Dockerfile
+    volumes:
+      - ./gateway:/app
+    environment:
+      - REDIS_URL=redis://redis:6379/0
+      - GATEWAY_HOST=0.0.0.0
+      - GATEWAY_PORT=9000
+      - OCPP_SECURITY_PROFILE=0
+    ports:
+      - "9000:9000"
+    command: uvicorn main:app --host 0.0.0.0 --port 9000 --reload
+    deploy:
+      replicas: 1
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    volumes:
+      - ./backend:/app
+      - ./tests:/app/tests
+    environment:
+      - DATABASE_URL=postgresql://chargeplus:chargeplus@db:5432/chargeplus
+      - REDIS_URL=redis://redis:6379/0
+      - CELERY_BROKER_URL=redis://redis:6379/1
+      - CELERY_RESULT_BACKEND=redis://redis:6379/2
+      - SECRET_KEY=dev-secret-key-not-for-production
+      - DJANGO_SETTINGS_MODULE=chargeplus.settings.development
+      - ALLOWED_HOSTS=*
+    command: python manage.py runserver 0.0.0.0:8000
+    ports:
+      - "8000:8000"
+
+  worker-core:
+    volumes:
+      - ./backend:/app
+    environment:
+      - DJANGO_SETTINGS_MODULE=chargeplus.settings.development
+    deploy:
+      replicas: 1
+
+  worker-telemetry:
+    volumes:
+      - ./backend:/app
+    environment:
+      - DJANGO_SETTINGS_MODULE=chargeplus.settings.development
+    deploy:
+      replicas: 1
+
+  worker-management:
+    volumes:
+      - ./backend:/app
+    environment:
+      - DJANGO_SETTINGS_MODULE=chargeplus.settings.development
+
+  worker-commands:
+    volumes:
+      - ./backend:/app
+    environment:
+      - DJANGO_SETTINGS_MODULE=chargeplus.settings.development
+
+  dispatcher:
+    volumes:
+      - ./backend:/app
+    environment:
+      - DJANGO_SETTINGS_MODULE=chargeplus.settings.development
+
+  db:
+    ports:
+      - "5432:5432"
+
+  redis:
+    ports:
+      - "6379:6379"
