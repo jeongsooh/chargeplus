@@ -13,6 +13,10 @@ DEBUG = False
 
 ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', 'localhost').split(',')
 
+CSRF_TRUSTED_ORIGINS = [
+    o.strip() for o in os.environ.get('CSRF_TRUSTED_ORIGINS', 'http://localhost').split(',')
+]
+
 # Application definition
 INSTALLED_APPS = [
     'django.contrib.admin',
