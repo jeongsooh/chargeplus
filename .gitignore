@@ -1,7 +1,7 @@
 # Documentation (not part of the implementation)
 design_guide/
 implement/
-ocpp16/
+/ocpp16/
 
 # Python
 __pycache__/
