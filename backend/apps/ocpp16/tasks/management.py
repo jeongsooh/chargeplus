@@ -191,6 +191,16 @@ def handle_firmware_status_notification(self, station_id: str, msg_id: str, payl
         publish_response(msg_id, {})
 
 
+@shared_task(queue='ocpp.q.management', name='apps.ocpp16.tasks.management.cleanup_ocpp_messages')
+def cleanup_ocpp_messages():
+    """Delete OcppMessage records older than ocpp_message_log_retention_days (default 30 days)."""
+    from apps.config.models import CsmsVariable
+    retention_days = int(CsmsVariable.get('ocpp_message_log_retention_days', default=30))
+    cutoff = timezone.now() - timezone.timedelta(days=retention_days)
+    deleted, _ = OcppMessage.objects.filter(created_at__lt=cutoff).delete()
+    logger.info(f"cleanup_ocpp_messages: deleted {deleted} records older than {retention_days} days")
+
+
 @shared_task(queue='ocpp.q.management', bind=True, max_retries=0, name='apps.ocpp16.tasks.management.handle_diagnostics_status_notification')
 def handle_diagnostics_status_notification(self, station_id: str, msg_id: str, payload: dict):
     """

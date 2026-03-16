@@ -1,0 +1,67 @@
+{% extends "portal/cs/base_cs.html" %}
+{% block title %}상세내역 - CS{% endblock %}
+
+{% block content %}
+<div class="d-flex align-items-center mb-4">
+  <h4 class="fw-bold mb-0">서비스 현황 상세내역</h4>
+  <a href="{% url 'portal:cs_dashboard' %}?tab={{ tab }}" class="btn btn-sm btn-outline-secondary ms-3">← 대시보드</a>
+</div>
+<p class="text-muted">{{ start|date:"Y-m-d H:i" }} ~ {{ end|date:"Y-m-d H:i" }}</p>
+
+<!-- 충전소별 -->
+<h6 class="fw-bold mb-2">충전소별</h6>
+<div class="card shadow-sm mb-4">
+  <div class="table-responsive">
+    <table class="table table-sm table-hover mb-0">
+      <thead class="table-light">
+        <tr><th>충전소</th><th>충전량(kWh)</th><th>결제금액(원)</th><th>충전횟수</th></tr>
+      </thead>
+      <tbody>
+        {% for row in by_site %}
+        <tr>
+          <td>{{ row.charging_station__site__site_name|default:"(충전소 미지정)" }}</td>
+          <td>{{ row.energy|floatformat:1|default:"-" }}</td>
+          <td>{{ row.amount|floatformat:0|default:"-" }}</td>
+          <td>{{ row.count }}</td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="4" class="text-center text-muted py-2">데이터 없음</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- 충전기별 -->
+<h6 class="fw-bold mb-2">충전기별</h6>
+<div class="card shadow-sm">
+  <div class="table-responsive">
+    <table class="table table-sm table-hover mb-0">
+      <thead class="table-light">
+        <tr>
+          <th>충전기 ID</th><th>충전소</th>
+          <th>충전량(kWh)</th><th class="text-muted small">증감</th>
+          <th>결제금액(원)</th><th class="text-muted small">증감</th>
+          <th>충전횟수</th><th class="text-muted small">증감</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for row in charger_rows %}
+        <tr>
+          <td><code>{{ row.charging_station__station_id }}</code></td>
+          <td>{{ row.charging_station__site__site_name|default:"-" }}</td>
+          <td>{{ row.energy|floatformat:1|default:"-" }}</td>
+          <td>{% include "portal/cs/_diff_badge.html" with val=row.energy_diff %}</td>
+          <td>{{ row.amount|floatformat:0|default:"-" }}</td>
+          <td>{% include "portal/cs/_diff_badge.html" with val=row.amount_diff %}</td>
+          <td>{{ row.count }}</td>
+          <td>{% include "portal/cs/_diff_badge.html" with val=row.count_diff %}</td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="8" class="text-center text-muted py-2">데이터 없음</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

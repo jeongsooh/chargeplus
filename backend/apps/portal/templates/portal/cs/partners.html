@@ -4,11 +4,14 @@
 {% block content %}
 <div class="d-flex align-items-center mb-4">
   <h4 class="fw-bold mb-0">파트너 관리</h4>
-  <div class="ms-auto">
-    <a href="?pending=1" class="btn btn-sm {% if pending_only %}btn-warning{% else %}btn-outline-warning{% endif %}">
-      승인 대기만 보기
+  <div class="ms-auto d-flex gap-2">
+    <a href="{% url 'portal:cs_partner_create' %}" class="btn btn-primary btn-sm">
+      <i class="bi bi-plus-lg me-1"></i>파트너 추가
     </a>
-    {% if pending_only %}<a href="?" class="btn btn-sm btn-outline-secondary ms-1">전체 보기</a>{% endif %}
+    <a href="?pending=1" class="btn btn-sm {% if pending_only %}btn-warning{% else %}btn-outline-warning{% endif %}">
+      승인대기
+    </a>
+    {% if pending_only %}<a href="?" class="btn btn-sm btn-outline-secondary">전체</a>{% endif %}
   </div>
 </div>
 
@@ -16,9 +19,7 @@
   <div class="table-responsive">
     <table class="table table-hover mb-0">
       <thead class="table-light">
-        <tr>
-          <th>사업체명</th><th>사업자번호</th><th>담당자</th><th>연락처</th><th>상태</th><th>신청일</th><th>처리</th>
-        </tr>
+        <tr><th>사업체명</th><th>사업자번호</th><th>담당자</th><th>연락처</th><th>상태</th><th>신청일</th><th></th></tr>
       </thead>
       <tbody>
         {% for p in partners %}
@@ -33,17 +34,23 @@
             {% else %}<span class="badge bg-secondary">비활성</span>{% endif %}
           </td>
           <td>{{ p.created_at|date:"Y-m-d" }}</td>
-          <td>
+          <td class="text-nowrap">
+            <a href="{% url 'portal:cs_partner_detail' p.pk %}" class="btn btn-sm btn-outline-primary">상세</a>
             <form method="post" action="{% url 'portal:cs_partner_approve' p.pk %}" class="d-inline">
               {% csrf_token %}
               {% if p.user.status == 'pending' %}
                 <button name="action" value="approve" class="btn btn-sm btn-success">승인</button>
-                <button name="action" value="reject" class="btn btn-sm btn-outline-danger ms-1">반려</button>
+                <button name="action" value="reject" class="btn btn-sm btn-outline-danger">반려</button>
               {% elif p.user.status == 'active' %}
-                <button name="action" value="reject" class="btn btn-sm btn-outline-secondary">비활성화</button>
+                <button name="action" value="reject" class="btn btn-sm btn-outline-secondary">비활성</button>
               {% else %}
-                <button name="action" value="approve" class="btn btn-sm btn-outline-success">재활성화</button>
+                <button name="action" value="approve" class="btn btn-sm btn-outline-success">재활성</button>
               {% endif %}
+            </form>
+            <form method="post" action="{% url 'portal:cs_partner_delete' p.pk %}" class="d-inline"
+                  onsubmit="return confirm('파트너를 삭제하시겠습니까?')">
+              {% csrf_token %}
+              <button class="btn btn-sm btn-outline-danger">삭제</button>
             </form>
           </td>
         </tr>

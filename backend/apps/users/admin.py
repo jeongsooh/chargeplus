@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 
-from .models import User, PartnerProfile
+from .models import User, PartnerProfile, PaymentCard
 
 
 @admin.register(User)
@@ -22,4 +22,12 @@ class CustomUserAdmin(UserAdmin):
 class PartnerProfileAdmin(admin.ModelAdmin):
     list_display = ['business_name', 'business_no', 'user', 'contact_phone', 'created_at']
     search_fields = ['business_name', 'business_no', 'user__username']
+    raw_id_fields = ['user']
+
+
+@admin.register(PaymentCard)
+class PaymentCardAdmin(admin.ModelAdmin):
+    list_display = ['user', 'nickname', 'card_type', 'card_last4', 'is_default', 'created_at']
+    list_filter = ['card_type', 'is_default']
+    search_fields = ['user__username', 'nickname', 'card_last4']
     raw_id_fields = ['user']

@@ -130,5 +130,17 @@
       "is_per_station": false,
       "updated_by": "system"
     }
+  },
+  {
+    "model": "config.csmsvariable",
+    "pk": 12,
+    "fields": {
+      "key": "ocpp_message_log_retention_days",
+      "value": "30",
+      "value_type": "int",
+      "description": "OCPP 메시지 로그 보관 기간 (일). 초과된 로그는 자동 삭제됩니다.",
+      "is_per_station": false,
+      "updated_by": "system"
+    }
   }
 ]

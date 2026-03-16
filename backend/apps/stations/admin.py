@@ -8,7 +8,7 @@ from apps.config.models import StationVariable
 
 from .models import (
     Operator, ChargingStation, ChargingSite, EVSE, Connector,
-    DeviceConfiguration, FirmwareHistory,
+    DeviceConfiguration, FirmwareHistory, FaultLog,
 )
 
 logger = logging.getLogger(__name__)
@@ -166,3 +166,11 @@ class FirmwareHistoryAdmin(admin.ModelAdmin):
     list_filter = ['status']
     search_fields = ['charging_station__station_id']
     readonly_fields = ['requested_at']
+
+
+@admin.register(FaultLog)
+class FaultLogAdmin(admin.ModelAdmin):
+    list_display = ['charging_station', 'fault_type', 'reported_at', 'resolved_at', 'reported_by', 'created_at']
+    list_filter = ['fault_type']
+    search_fields = ['charging_station__station_id', 'description', 'reported_by']
+    readonly_fields = ['created_at']

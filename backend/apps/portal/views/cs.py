@@ -1,15 +1,24 @@
-from django.shortcuts import render, get_object_or_404, redirect
+import json
+from datetime import date, timedelta
+
 from django.contrib import messages
+from django.contrib.auth.hashers import make_password
+from django.core.paginator import Paginator
 from django.db.models import Count, Sum, Q
+from django.db.models.functions import TruncDay, TruncWeek, TruncMonth
+from django.shortcuts import render, get_object_or_404, redirect
 from django.utils import timezone
-from datetime import timedelta
+from django.views.decorators.http import require_POST
 
-from apps.portal.decorators import role_required
-from apps.users.models import User, PartnerProfile
-from apps.stations.models import ChargingStation, ChargingSite
-from apps.transactions.models import Transaction
 from apps.config.models import CsmsVariable
+from apps.ocpp16.models import OcppMessage
+from apps.portal.decorators import role_required
+from apps.stations.models import ChargingStation, ChargingSite, Operator, FaultLog
+from apps.transactions.models import Transaction
+from apps.users.models import User, PartnerProfile, PaymentCard
 
+
+# ─────────────────────────────────────────────────────────── dashboard ──────
 
 @role_required('cs')
 def dashboard(request):
@@ -17,20 +26,184 @@ def dashboard(request):
     month_start = now.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
 
     stats = {
-        'total_stations': ChargingStation.objects.count(),
-        'online_stations': ChargingStation.objects.exclude(status='Offline').count(),
-        'total_users': User.objects.filter(role='customer').count(),
+        'total_stations': ChargingStation.objects.filter(is_active=True).count(),
+        'online_stations': ChargingStation.objects.filter(is_active=True).exclude(status='Offline').count(),
+        'total_users': User.objects.filter(role='customer', is_active=True).count(),
         'total_partners': User.objects.filter(role='partner').count(),
         'pending_partners': User.objects.filter(role='partner', status='pending').count(),
-        'month_sessions': Transaction.objects.filter(
-            time_start__gte=month_start, state='Completed'
-        ).count(),
+        'month_sessions': Transaction.objects.filter(time_start__gte=month_start, state='Completed').count(),
         'month_energy': Transaction.objects.filter(
             time_start__gte=month_start, state='Completed'
         ).aggregate(total=Sum('energy_kwh'))['total'] or 0,
     }
-    return render(request, 'portal/cs/dashboard.html', {'stats': stats})
 
+    tab = request.GET.get('tab', 'daily')
+    service_rows, prev_period_data = _build_service_stats(tab)
+
+    return render(request, 'portal/cs/dashboard.html', {
+        'stats': stats,
+        'tab': tab,
+        'service_rows': service_rows,
+        'prev_period_data': prev_period_data,
+    })
+
+
+def _build_service_stats(tab):
+    """Return list of dicts for the service status table (last 4 periods)."""
+    now = timezone.now()
+
+    if tab == 'weekly':
+        trunc_fn = TruncWeek
+        periods = [now - timedelta(weeks=i) for i in range(4, 0, -1)]
+        label_fmt = lambda d: f"{d.isocalendar()[0]}년 {d.isocalendar()[1]}주"
+        delta = timedelta(weeks=1)
+    elif tab == 'monthly':
+        trunc_fn = TruncMonth
+        months = []
+        cur = now.replace(day=1)
+        for _ in range(4):
+            months.insert(0, cur)
+            if cur.month == 1:
+                cur = cur.replace(year=cur.year - 1, month=12)
+            else:
+                cur = cur.replace(month=cur.month - 1)
+        periods = months
+        label_fmt = lambda d: d.strftime('%Y년 %m월')
+        delta = None  # handled per-month
+    else:  # daily
+        trunc_fn = TruncDay
+        periods = [now.date() - timedelta(days=i) for i in range(3, -1, -1)]
+        label_fmt = lambda d: d.strftime('%m/%d')
+        delta = timedelta(days=1)
+
+    def _query_period(start, end):
+        return Transaction.objects.filter(
+            state='Completed', time_start__gte=start, time_start__lt=end
+        ).aggregate(
+            energy=Sum('energy_kwh'),
+            amount=Sum('amount'),
+            count=Count('transaction_id'),
+        )
+
+    rows = []
+    prev_data = {}
+
+    for i, period_start in enumerate(periods):
+        if tab == 'daily':
+            start = timezone.make_aware(timezone.datetime(
+                period_start.year, period_start.month, period_start.day))
+            end = start + timedelta(days=1)
+            prev_start = start - timedelta(days=1)
+            prev_end = start
+        elif tab == 'weekly':
+            # TruncWeek aligns to Monday
+            wd = period_start.weekday()
+            monday = period_start - timedelta(days=wd)
+            start = timezone.make_aware(timezone.datetime(monday.year, monday.month, monday.day))
+            end = start + timedelta(weeks=1)
+            prev_start = start - timedelta(weeks=1)
+            prev_end = start
+        else:  # monthly
+            start = timezone.make_aware(timezone.datetime(
+                period_start.year, period_start.month, 1))
+            if period_start.month == 12:
+                end = timezone.make_aware(timezone.datetime(period_start.year + 1, 1, 1))
+            else:
+                end = timezone.make_aware(timezone.datetime(period_start.year, period_start.month + 1, 1))
+            if period_start.month == 1:
+                prev_start = timezone.make_aware(timezone.datetime(period_start.year - 1, 12, 1))
+            else:
+                prev_start = timezone.make_aware(timezone.datetime(period_start.year, period_start.month - 1, 1))
+            prev_end = start
+
+        curr = _query_period(start, end)
+        prev = _query_period(prev_start, prev_end)
+
+        def _diff(curr_val, prev_val):
+            c = float(curr_val or 0)
+            p = float(prev_val or 0)
+            return round(c - p, 3)
+
+        rows.append({
+            'label': label_fmt(period_start),
+            'start_iso': start.isoformat(),
+            'end_iso': end.isoformat(),
+            'energy': float(curr['energy'] or 0),
+            'amount': float(curr['amount'] or 0),
+            'count': curr['count'] or 0,
+            'energy_diff': _diff(curr['energy'], prev['energy']),
+            'amount_diff': _diff(curr['amount'], prev['amount']),
+            'count_diff': (curr['count'] or 0) - (prev['count'] or 0),
+        })
+
+    return rows, {}
+
+
+@role_required('cs')
+def stats_detail(request):
+    """Detail breakdown by site/charger for a given period."""
+    start_iso = request.GET.get('start', '')
+    end_iso = request.GET.get('end', '')
+    tab = request.GET.get('tab', 'daily')
+
+    try:
+        from django.utils.dateparse import parse_datetime
+        start = parse_datetime(start_iso)
+        end = parse_datetime(end_iso)
+    except Exception:
+        return redirect('portal:cs_dashboard')
+
+    base_qs = Transaction.objects.filter(state='Completed', time_start__gte=start, time_start__lt=end)
+
+    # Breakdown by site
+    by_site = (
+        base_qs
+        .values('charging_station__site__site_name', 'charging_station__site__id')
+        .annotate(energy=Sum('energy_kwh'), amount=Sum('amount'), count=Count('transaction_id'))
+        .order_by('-energy')
+    )
+
+    # Breakdown by charger
+    by_charger = (
+        base_qs
+        .values('charging_station__station_id', 'charging_station__site__site_name')
+        .annotate(energy=Sum('energy_kwh'), amount=Sum('amount'), count=Count('transaction_id'))
+        .order_by('-energy')
+    )
+
+    # Previous period comparison
+    delta = end - start
+    prev_start = start - delta
+    prev_end = start
+    prev_qs = Transaction.objects.filter(state='Completed', time_start__gte=prev_start, time_start__lt=prev_end)
+
+    prev_by_charger = {
+        r['charging_station__station_id']: r
+        for r in prev_qs.values('charging_station__station_id')
+        .annotate(energy=Sum('energy_kwh'), amount=Sum('amount'), count=Count('transaction_id'))
+    }
+
+    charger_rows = []
+    for row in by_charger:
+        sid = row['charging_station__station_id']
+        prev = prev_by_charger.get(sid, {})
+        charger_rows.append({
+            **row,
+            'energy_diff': float(row['energy'] or 0) - float(prev.get('energy') or 0),
+            'amount_diff': float(row['amount'] or 0) - float(prev.get('amount') or 0),
+            'count_diff': (row['count'] or 0) - (prev.get('count') or 0),
+        })
+
+    return render(request, 'portal/cs/stats_detail.html', {
+        'start': start,
+        'end': end,
+        'tab': tab,
+        'by_site': by_site,
+        'charger_rows': charger_rows,
+    })
+
+
+# ──────────────────────────────────────────────────────────── users ──────────
 
 @role_required('cs')
 def users_list(request):
@@ -45,26 +218,130 @@ def users_list(request):
     if q:
         qs = qs.filter(Q(username__icontains=q) | Q(email__icontains=q) | Q(first_name__icontains=q))
     return render(request, 'portal/cs/users.html', {
-        'users': qs,
-        'role_filter': role_filter,
-        'status_filter': status_filter,
-        'q': q,
+        'users': qs, 'role_filter': role_filter, 'status_filter': status_filter, 'q': q,
     })
 
 
 @role_required('cs')
-def user_toggle_status(request, user_id):
-    if request.method != 'POST':
+def user_create(request):
+    if request.method == 'POST':
+        username = request.POST.get('username', '').strip()
+        password = request.POST.get('password', '')
+        email = request.POST.get('email', '').strip()
+        first_name = request.POST.get('first_name', '').strip()
+        phone = request.POST.get('phone', '').strip()
+        role = request.POST.get('role', 'customer')
+        status = 'active' if role == 'customer' else request.POST.get('status', 'pending')
+
+        if not username or not password:
+            messages.error(request, '아이디와 비밀번호는 필수입니다.')
+            return render(request, 'portal/cs/user_form.html')
+        if User.objects.filter(username=username).exists():
+            messages.error(request, '이미 사용 중인 아이디입니다.')
+            return render(request, 'portal/cs/user_form.html')
+
+        user = User.objects.create_user(
+            username=username, password=password,
+            email=email, first_name=first_name,
+            phone=phone, role=role, status=status,
+        )
+        if role == 'partner':
+            PartnerProfile.objects.create(
+                user=user,
+                business_name=request.POST.get('business_name', '').strip(),
+                business_no=request.POST.get('business_no', '').strip(),
+                contact_phone=request.POST.get('contact_phone', '').strip(),
+            )
+        messages.success(request, f"사용자 '{username}'이 생성되었습니다.")
         return redirect('portal:cs_users')
+    return render(request, 'portal/cs/user_form.html')
+
+
+@role_required('cs')
+def user_detail(request, user_id):
+    target = get_object_or_404(User, pk=user_id)
+    payment_cards = PaymentCard.objects.filter(user=target).order_by('-created_at')
+
+    if request.method == 'POST':
+        action = request.POST.get('action')
+        if action == 'update_profile':
+            target.first_name = request.POST.get('first_name', '').strip()
+            target.email = request.POST.get('email', '').strip()
+            target.phone = request.POST.get('phone', '').strip()
+            target.role = request.POST.get('role', target.role)
+            target.status = request.POST.get('status', target.status)
+            new_pw = request.POST.get('new_password', '')
+            if new_pw:
+                target.set_password(new_pw)
+            target.save()
+            messages.success(request, '사용자 정보가 수정되었습니다.')
+
+        elif action == 'add_card':
+            nickname = request.POST.get('nickname', '').strip()
+            card_last4 = request.POST.get('card_last4', '').strip()
+            card_type = request.POST.get('card_type', '국내카드')
+            if nickname and card_last4:
+                # Set new card as default if first card
+                is_default = not payment_cards.exists()
+                if request.POST.get('is_default') == '1':
+                    PaymentCard.objects.filter(user=target).update(is_default=False)
+                    is_default = True
+                PaymentCard.objects.create(
+                    user=target, nickname=nickname,
+                    card_last4=card_last4, card_type=card_type,
+                    is_default=is_default,
+                )
+                messages.success(request, '카드가 등록되었습니다.')
+            else:
+                messages.error(request, '카드 별칭과 끝 4자리를 입력해 주세요.')
+
+        elif action == 'delete_card':
+            card_id = request.POST.get('card_id')
+            PaymentCard.objects.filter(pk=card_id, user=target).delete()
+            messages.success(request, '카드가 삭제되었습니다.')
+
+        elif action == 'set_default_card':
+            card_id = request.POST.get('card_id')
+            PaymentCard.objects.filter(user=target).update(is_default=False)
+            PaymentCard.objects.filter(pk=card_id, user=target).update(is_default=True)
+
+        return redirect('portal:cs_user_detail', user_id=user_id)
+
+    return render(request, 'portal/cs/user_detail.html', {
+        'target': target,
+        'payment_cards': payment_cards,
+        'card_types': PaymentCard.CardType.choices,
+    })
+
+
+@role_required('cs')
+@require_POST
+def user_delete(request, user_id):
+    target = get_object_or_404(User, pk=user_id)
+    if target == request.user:
+        messages.error(request, '자기 자신은 삭제할 수 없습니다.')
+        return redirect('portal:cs_users')
+    target.is_active = False
+    target.status = 'inactive'
+    target.save(update_fields=['is_active', 'status'])
+    messages.success(request, f"'{target.username}' 사용자가 비활성화되었습니다.")
+    return redirect('portal:cs_users')
+
+
+@role_required('cs')
+@require_POST
+def user_toggle_status(request, user_id):
     user = get_object_or_404(User, pk=user_id)
     if user == request.user:
         messages.error(request, '자기 자신의 상태는 변경할 수 없습니다.')
-        return redirect('portal:cs_users')
-    user.status = 'inactive' if user.status == 'active' else 'active'
-    user.save(update_fields=['status'])
-    messages.success(request, f"{user.username} 상태가 {user.status}로 변경되었습니다.")
+    else:
+        user.status = 'inactive' if user.status == 'active' else 'active'
+        user.save(update_fields=['status'])
+        messages.success(request, f"{user.username} 상태가 {user.status}로 변경되었습니다.")
     return redirect('portal:cs_users')
 
+
+# ──────────────────────────────────────────────────────────── partners ────────
 
 @role_required('cs')
 def partners_list(request):
@@ -73,15 +350,71 @@ def partners_list(request):
     if pending_only:
         partners = partners.filter(user__status='pending')
     return render(request, 'portal/cs/partners.html', {
-        'partners': partners,
-        'pending_only': pending_only,
+        'partners': partners, 'pending_only': pending_only,
     })
 
 
 @role_required('cs')
-def partner_approve(request, partner_id):
-    if request.method != 'POST':
+def partner_create(request):
+    if request.method == 'POST':
+        username = request.POST.get('username', '').strip()
+        password = request.POST.get('password', 'ChargePlus1234!')
+        email = request.POST.get('email', '').strip()
+        first_name = request.POST.get('first_name', '').strip()
+        business_name = request.POST.get('business_name', '').strip()
+        business_no = request.POST.get('business_no', '').strip()
+        contact_phone = request.POST.get('contact_phone', '').strip()
+
+        if not username or not business_name:
+            messages.error(request, '아이디와 사업체명은 필수입니다.')
+            return render(request, 'portal/cs/partner_form.html')
+        if User.objects.filter(username=username).exists():
+            messages.error(request, '이미 사용 중인 아이디입니다.')
+            return render(request, 'portal/cs/partner_form.html')
+
+        user = User.objects.create_user(
+            username=username, password=password,
+            email=email, first_name=first_name,
+            role='partner', status='active',
+        )
+        PartnerProfile.objects.create(
+            user=user, business_name=business_name,
+            business_no=business_no, contact_phone=contact_phone,
+        )
+        messages.success(request, f"파트너 '{business_name}'이 생성되었습니다. 초기 비밀번호: {password}")
         return redirect('portal:cs_partners')
+    return render(request, 'portal/cs/partner_form.html')
+
+
+@role_required('cs')
+def partner_detail(request, partner_id):
+    profile = get_object_or_404(PartnerProfile, pk=partner_id)
+    sites = ChargingSite.objects.filter(partner=profile).annotate(
+        station_count=Count('stations')
+    )
+    stations = ChargingStation.objects.filter(site__partner=profile).select_related('site')
+
+    if request.method == 'POST':
+        action = request.POST.get('action')
+        if action == 'update':
+            profile.business_name = request.POST.get('business_name', '').strip()
+            profile.business_no = request.POST.get('business_no', '').strip()
+            profile.contact_phone = request.POST.get('contact_phone', '').strip()
+            profile.save()
+            profile.user.first_name = request.POST.get('first_name', '').strip()
+            profile.user.email = request.POST.get('email', '').strip()
+            profile.user.save(update_fields=['first_name', 'email'])
+            messages.success(request, '파트너 정보가 수정되었습니다.')
+        return redirect('portal:cs_partner_detail', partner_id=partner_id)
+
+    return render(request, 'portal/cs/partner_detail.html', {
+        'profile': profile, 'sites': sites, 'stations': stations,
+    })
+
+
+@role_required('cs')
+@require_POST
+def partner_approve(request, partner_id):
     profile = get_object_or_404(PartnerProfile, pk=partner_id)
     action = request.POST.get('action')
     if action == 'approve':
@@ -96,6 +429,20 @@ def partner_approve(request, partner_id):
 
 
 @role_required('cs')
+@require_POST
+def partner_delete(request, partner_id):
+    profile = get_object_or_404(PartnerProfile, pk=partner_id)
+    name = profile.business_name
+    profile.user.is_active = False
+    profile.user.status = 'inactive'
+    profile.user.save(update_fields=['is_active', 'status'])
+    messages.success(request, f"파트너 '{name}'이 비활성화되었습니다.")
+    return redirect('portal:cs_partners')
+
+
+# ──────────────────────────────────────────────────────────── chargers ────────
+
+@role_required('cs')
 def chargers_list(request):
     stations = ChargingStation.objects.select_related('operator', 'site').order_by('station_id')
     status_filter = request.GET.get('status', '')
@@ -103,16 +450,101 @@ def chargers_list(request):
     if status_filter:
         stations = stations.filter(status=status_filter)
     if q:
-        stations = stations.filter(
-            Q(station_id__icontains=q) | Q(address__icontains=q)
-        )
+        stations = stations.filter(Q(station_id__icontains=q) | Q(address__icontains=q))
     return render(request, 'portal/cs/chargers.html', {
-        'stations': stations,
-        'status_filter': status_filter,
-        'q': q,
+        'stations': stations, 'status_filter': status_filter, 'q': q,
         'status_choices': ChargingStation.Status.choices,
     })
 
+
+@role_required('cs')
+def charger_create(request):
+    operators = Operator.objects.all().order_by('name')
+    sites = ChargingSite.objects.select_related('partner').order_by('site_name')
+    if request.method == 'POST':
+        station_id = request.POST.get('station_id', '').strip().upper()
+        operator_id = request.POST.get('operator_id', '')
+        site_id = request.POST.get('site_id', '') or None
+        address = request.POST.get('address', '').strip()
+
+        if not station_id or not operator_id:
+            messages.error(request, '충전기 ID와 운영사는 필수입니다.')
+        elif ChargingStation.objects.filter(station_id=station_id).exists():
+            messages.error(request, '이미 존재하는 충전기 ID입니다.')
+        else:
+            ChargingStation.objects.create(
+                station_id=station_id,
+                operator_id=operator_id,
+                site_id=site_id,
+                address=address,
+                status=ChargingStation.Status.OFFLINE,
+            )
+            messages.success(request, f"충전기 '{station_id}'이 등록되었습니다.")
+            return redirect('portal:cs_chargers')
+
+    return render(request, 'portal/cs/charger_form.html', {
+        'operators': operators, 'sites': sites,
+    })
+
+
+@role_required('cs')
+def charger_detail(request, station_pk):
+    station = get_object_or_404(ChargingStation, pk=station_pk)
+    fault_logs = FaultLog.objects.filter(charging_station=station).order_by('-reported_at')
+    sessions = Transaction.objects.filter(
+        charging_station=station
+    ).order_by('-time_start')[:20]
+
+    return render(request, 'portal/cs/charger_detail.html', {
+        'station': station,
+        'fault_logs': fault_logs,
+        'sessions': sessions,
+        'fault_type_choices': FaultLog.FaultType.choices,
+    })
+
+
+@role_required('cs')
+@require_POST
+def charger_fault_add(request, station_pk):
+    station = get_object_or_404(ChargingStation, pk=station_pk)
+    fault_type = request.POST.get('fault_type', 'other')
+    description = request.POST.get('description', '').strip()
+    reported_at_str = request.POST.get('reported_at', '')
+
+    if not description:
+        messages.error(request, '장애 내용을 입력해 주세요.')
+        return redirect('portal:cs_charger_detail', station_pk=station_pk)
+
+    try:
+        from django.utils.dateparse import parse_datetime
+        reported_at = parse_datetime(reported_at_str) or timezone.now()
+        if timezone.is_naive(reported_at):
+            reported_at = timezone.make_aware(reported_at)
+    except Exception:
+        reported_at = timezone.now()
+
+    FaultLog.objects.create(
+        charging_station=station,
+        reported_at=reported_at,
+        fault_type=fault_type,
+        description=description,
+        reported_by=request.user.username,
+    )
+    messages.success(request, '장애이력이 등록되었습니다.')
+    return redirect('portal:cs_charger_detail', station_pk=station_pk)
+
+
+@role_required('cs')
+@require_POST
+def charger_delete(request, station_pk):
+    station = get_object_or_404(ChargingStation, pk=station_pk)
+    station.is_active = False
+    station.save(update_fields=['is_active'])
+    messages.success(request, f"충전기 '{station.station_id}'이 비활성화되었습니다.")
+    return redirect('portal:cs_chargers')
+
+
+# ──────────────────────────────────────────────────────────── sites ───────────
 
 @role_required('cs')
 def sites_list(request):
@@ -129,43 +561,98 @@ def site_create(request):
         site_name = request.POST.get('site_name', '').strip()
         address = request.POST.get('address', '').strip()
         unit_price = request.POST.get('unit_price', '0')
-
         if not site_name or not partner_id:
             messages.error(request, '충전소명과 파트너를 선택해 주세요.')
         else:
-            partner = get_object_or_404(PartnerProfile, pk=partner_id)
             ChargingSite.objects.create(
-                partner=partner,
-                site_name=site_name,
-                address=address,
-                unit_price=unit_price,
+                partner_id=partner_id, site_name=site_name,
+                address=address, unit_price=unit_price,
             )
             messages.success(request, f"충전소 '{site_name}'이 등록되었습니다.")
             return redirect('portal:cs_sites')
-
     partners = PartnerProfile.objects.select_related('user').filter(user__status='active')
     return render(request, 'portal/cs/site_form.html', {'partners': partners})
 
 
+# ──────────────────────────────────────────────────────────── sessions ────────
+
 @role_required('cs')
 def sessions_list(request):
-    sessions = Transaction.objects.select_related(
-        'charging_station', 'id_token'
-    ).order_by('-time_start')[:200]
-    return render(request, 'portal/cs/sessions.html', {'sessions': sessions})
+    qs = Transaction.objects.select_related('charging_station', 'id_token__user').order_by('-time_start')
 
+    # Filters
+    date_from = request.GET.get('date_from', '')
+    date_to = request.GET.get('date_to', '')
+    site_id = request.GET.get('site_id', '')
+    station_q = request.GET.get('station_q', '')
+    user_q = request.GET.get('user_q', '')
+
+    if date_from:
+        qs = qs.filter(time_start__date__gte=date_from)
+    if date_to:
+        qs = qs.filter(time_start__date__lte=date_to)
+    if site_id:
+        qs = qs.filter(charging_station__site_id=site_id)
+    if station_q:
+        qs = qs.filter(charging_station__station_id__icontains=station_q)
+    if user_q:
+        qs = qs.filter(
+            Q(id_token__user__username__icontains=user_q) |
+            Q(id_token__id_token__icontains=user_q)
+        )
+
+    paginator = Paginator(qs, 20)
+    page = paginator.get_page(request.GET.get('page', 1))
+    sites = ChargingSite.objects.order_by('site_name')
+
+    return render(request, 'portal/cs/sessions.html', {
+        'page': page,
+        'sites': sites,
+        'date_from': date_from, 'date_to': date_to,
+        'site_id': site_id, 'station_q': station_q, 'user_q': user_q,
+    })
+
+
+# ──────────────────────────────────────────────────────── system ops ──────────
 
 @role_required('cs')
-def config_view(request):
+def ops_config(request):
     variables = CsmsVariable.objects.all().order_by('key')
     if request.method == 'POST':
         key = request.POST.get('key', '').strip()
         value = request.POST.get('value', '').strip()
         if key:
             CsmsVariable.objects.filter(key=key).update(
-                value=value,
-                updated_by=request.user.username,
+                value=value, updated_by=request.user.username,
             )
             messages.success(request, f"'{key}' 변수가 업데이트되었습니다.")
-            return redirect('portal:cs_config')
-    return render(request, 'portal/cs/config.html', {'variables': variables})
+            return redirect('portal:cs_ops_config')
+    return render(request, 'portal/cs/ops_config.html', {'variables': variables})
+
+
+@role_required('cs')
+def ops_msglog(request):
+    qs = OcppMessage.objects.order_by('-created_at')
+
+    date_from = request.GET.get('date_from', '')
+    date_to = request.GET.get('date_to', '')
+    station_q = request.GET.get('station_q', '')
+    action_q = request.GET.get('action_q', '')
+
+    if date_from:
+        qs = qs.filter(created_at__date__gte=date_from)
+    if date_to:
+        qs = qs.filter(created_at__date__lte=date_to)
+    if station_q:
+        qs = qs.filter(station_id__icontains=station_q)
+    if action_q:
+        qs = qs.filter(action__icontains=action_q)
+
+    paginator = Paginator(qs, 20)
+    page = paginator.get_page(request.GET.get('page', 1))
+
+    return render(request, 'portal/cs/ops_msglog.html', {
+        'page': page,
+        'date_from': date_from, 'date_to': date_to,
+        'station_q': station_q, 'action_q': action_q,
+    })

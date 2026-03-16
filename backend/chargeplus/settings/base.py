@@ -198,6 +198,16 @@ CELERY_TASK_ROUTES = {
 CELERY_TASK_DEFAULT_QUEUE = 'default'
 CELERY_QUEUES_DEFAULT = 'default'
 
+# Periodic tasks (django-celery-beat)
+from celery.schedules import crontab
+CELERY_BEAT_SCHEDULE = {
+    'cleanup-ocpp-messages-daily': {
+        'task': 'apps.ocpp16.tasks.management.cleanup_ocpp_messages',
+        'schedule': crontab(hour=3, minute=0),  # 매일 새벽 3시
+        'options': {'queue': 'ocpp.q.management'},
+    },
+}
+
 # Define queues
 from kombu import Queue
 CELERY_TASK_QUEUES = (

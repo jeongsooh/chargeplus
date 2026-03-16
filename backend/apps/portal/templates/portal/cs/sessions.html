@@ -2,22 +2,58 @@
 {% block title %}충전이력 - CS{% endblock %}
 
 {% block content %}
-<h4 class="fw-bold mb-4">전체 충전이력 (최근 200건)</h4>
+<h4 class="fw-bold mb-4">충전이력</h4>
+
+<!-- 필터 -->
+<div class="card shadow-sm mb-3">
+  <div class="card-body py-2">
+    <form method="get" class="row g-2 align-items-center">
+      <div class="col-auto">
+        <input type="date" name="date_from" class="form-control form-control-sm" value="{{ date_from }}" placeholder="시작일">
+      </div>
+      <div class="col-auto">
+        <span class="text-muted">~</span>
+      </div>
+      <div class="col-auto">
+        <input type="date" name="date_to" class="form-control form-control-sm" value="{{ date_to }}" placeholder="종료일">
+      </div>
+      <div class="col-auto">
+        <select name="site_id" class="form-select form-select-sm">
+          <option value="">충전소 전체</option>
+          {% for site in sites %}
+          <option value="{{ site.pk }}" {% if site_id == site.pk|stringformat:"s" %}selected{% endif %}>{{ site.site_name }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="col">
+        <input type="text" name="station_q" class="form-control form-control-sm" placeholder="충전기 ID" value="{{ station_q }}">
+      </div>
+      <div class="col">
+        <input type="text" name="user_q" class="form-control form-control-sm" placeholder="사용자/카드" value="{{ user_q }}">
+      </div>
+      <div class="col-auto">
+        <button type="submit" class="btn btn-primary btn-sm">검색</button>
+        <a href="{% url 'portal:cs_sessions' %}" class="btn btn-outline-secondary btn-sm">초기화</a>
+      </div>
+    </form>
+  </div>
+</div>
 
 <div class="card shadow-sm">
   <div class="table-responsive">
     <table class="table table-hover table-sm mb-0">
       <thead class="table-light">
         <tr>
-          <th>TX#</th><th>충전기</th><th>카드</th><th>상태</th>
+          <th>TX#</th><th>충전기</th><th>충전소</th><th>카드</th><th>상태</th>
           <th>시작</th><th>종료</th><th>충전량(kWh)</th><th>금액(원)</th>
         </tr>
       </thead>
       <tbody>
-        {% for s in sessions %}
+        {% for s in page %}
         <tr>
           <td>{{ s.transaction_id }}</td>
-          <td><code>{{ s.charging_station_id }}</code></td>
+          <td><code>{{ s.charging_station.station_id }}</code></td>
+          <td>{{ s.charging_station.site.site_name|default:"-" }}</td>
           <td>{{ s.id_token_id|default:"-" }}</td>
           <td>
             {% if s.state == 'Completed' %}<span class="badge bg-success">완료</span>
@@ -25,16 +61,44 @@
             {% elif s.state == 'Failed' %}<span class="badge bg-danger">실패</span>
             {% else %}<span class="badge bg-secondary">{{ s.state }}</span>{% endif %}
           </td>
-          <td>{{ s.time_start|date:"m-d H:i"|default:"-" }}</td>
-          <td>{{ s.time_end|date:"m-d H:i"|default:"-" }}</td>
+          <td class="text-nowrap">{{ s.time_start|date:"m-d H:i"|default:"-" }}</td>
+          <td class="text-nowrap">{{ s.time_end|date:"m-d H:i"|default:"-" }}</td>
           <td>{{ s.energy_kwh|floatformat:3|default:"-" }}</td>
           <td>{{ s.amount|floatformat:0|default:"-" }}</td>
         </tr>
         {% empty %}
-        <tr><td colspan="8" class="text-center text-muted py-3">충전이력이 없습니다.</td></tr>
+        <tr><td colspan="9" class="text-center text-muted py-3">충전이력이 없습니다.</td></tr>
         {% endfor %}
       </tbody>
     </table>
   </div>
+
+  <!-- 페이지네이션 -->
+  {% if page.paginator.num_pages > 1 %}
+  <div class="card-footer d-flex justify-content-between align-items-center py-2">
+    <small class="text-muted">총 {{ page.paginator.count }}건 / {{ page.paginator.num_pages }}페이지</small>
+    <nav>
+      <ul class="pagination pagination-sm mb-0">
+        {% if page.has_previous %}
+        <li class="page-item">
+          <a class="page-link" href="?page={{ page.previous_page_number }}&date_from={{ date_from }}&date_to={{ date_to }}&site_id={{ site_id }}&station_q={{ station_q }}&user_q={{ user_q }}">‹</a>
+        </li>
+        {% endif %}
+        {% for num in page.paginator.page_range %}
+          {% if num >= page.number|add:"-3" and num <= page.number|add:"3" %}
+          <li class="page-item {% if num == page.number %}active{% endif %}">
+            <a class="page-link" href="?page={{ num }}&date_from={{ date_from }}&date_to={{ date_to }}&site_id={{ site_id }}&station_q={{ station_q }}&user_q={{ user_q }}">{{ num }}</a>
+          </li>
+          {% endif %}
+        {% endfor %}
+        {% if page.has_next %}
+        <li class="page-item">
+          <a class="page-link" href="?page={{ page.next_page_number }}&date_from={{ date_from }}&date_to={{ date_to }}&site_id={{ site_id }}&station_q={{ station_q }}&user_q={{ user_q }}">›</a>
+        </li>
+        {% endif %}
+      </ul>
+    </nav>
+  </div>
+  {% endif %}
 </div>
 {% endblock %}

@@ -1,0 +1,48 @@
+{% extends "portal/cs/base_cs.html" %}
+{% block title %}충전기 추가 - CS{% endblock %}
+
+{% block content %}
+<div class="d-flex align-items-center mb-4">
+  <h4 class="fw-bold mb-0">충전기 추가</h4>
+  <a href="{% url 'portal:cs_chargers' %}" class="btn btn-sm btn-outline-secondary ms-3">← 목록</a>
+</div>
+
+<div class="card shadow-sm" style="max-width:520px;">
+  <div class="card-body p-4">
+    <form method="post">
+      {% csrf_token %}
+      <div class="mb-3">
+        <label class="form-label">충전기 ID <span class="text-danger">*</span></label>
+        <input type="text" name="station_id" class="form-control text-uppercase" placeholder="예: CP001" required>
+        <div class="form-text">영문/숫자 조합, 대문자 저장</div>
+      </div>
+      <div class="mb-3">
+        <label class="form-label">운영사 <span class="text-danger">*</span></label>
+        <select name="operator_id" class="form-select" required>
+          <option value="">-- 선택 --</option>
+          {% for op in operators %}
+          <option value="{{ op.pk }}">{{ op.name }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="mb-3">
+        <label class="form-label">충전소</label>
+        <select name="site_id" class="form-select">
+          <option value="">-- 미지정 --</option>
+          {% for site in sites %}
+          <option value="{{ site.pk }}">{{ site.site_name }} ({{ site.partner.business_name }})</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="mb-4">
+        <label class="form-label">주소</label>
+        <input type="text" name="address" class="form-control" placeholder="설치 주소">
+      </div>
+      <div class="d-flex gap-2">
+        <button type="submit" class="btn btn-primary">저장</button>
+        <a href="{% url 'portal:cs_chargers' %}" class="btn btn-outline-secondary">취소</a>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,127 @@
+{% extends "portal/cs/base_cs.html" %}
+{% block title %}충전기 상세 - CS{% endblock %}
+
+{% block content %}
+<div class="d-flex align-items-center mb-4">
+  <h4 class="fw-bold mb-0">충전기 상세 — <code>{{ station.station_id }}</code></h4>
+  <a href="{% url 'portal:cs_chargers' %}" class="btn btn-sm btn-outline-secondary ms-3">← 목록</a>
+</div>
+
+<div class="row g-4">
+  <!-- 기본 정보 -->
+  <div class="col-md-4">
+    <div class="card shadow-sm">
+      <div class="card-header fw-bold">기본 정보</div>
+      <div class="card-body">
+        <dl class="row mb-0">
+          <dt class="col-5 text-muted">충전기 ID</dt>
+          <dd class="col-7"><code>{{ station.station_id }}</code></dd>
+          <dt class="col-5 text-muted">운영사</dt>
+          <dd class="col-7">{{ station.operator.name }}</dd>
+          <dt class="col-5 text-muted">충전소</dt>
+          <dd class="col-7">{{ station.site.site_name|default:"-" }}</dd>
+          <dt class="col-5 text-muted">주소</dt>
+          <dd class="col-7">{{ station.address|default:"-" }}</dd>
+          <dt class="col-5 text-muted">상태</dt>
+          <dd class="col-7">
+            {% if station.status == 'Available' %}<span class="badge bg-success">{{ station.status }}</span>
+            {% elif station.status == 'Faulted' %}<span class="badge bg-danger">{{ station.status }}</span>
+            {% elif station.status == 'Offline' %}<span class="badge bg-secondary">{{ station.status }}</span>
+            {% else %}<span class="badge bg-warning text-dark">{{ station.status }}</span>{% endif %}
+          </dd>
+          <dt class="col-5 text-muted">최종 하트비트</dt>
+          <dd class="col-7">{{ station.last_heartbeat|date:"Y-m-d H:i"|default:"-" }}</dd>
+        </dl>
+      </div>
+    </div>
+
+    <!-- 장애 등록 폼 -->
+    <div class="card shadow-sm mt-3">
+      <div class="card-header fw-bold">장애이력 등록</div>
+      <div class="card-body">
+        <form method="post" action="{% url 'portal:cs_charger_fault_add' station.pk %}">
+          {% csrf_token %}
+          <div class="mb-2">
+            <label class="form-label small">발생일시</label>
+            {% now "Y-m-d" as today %}{% now "H:i" as cur_time %}
+            <input type="datetime-local" name="reported_at" class="form-control form-control-sm"
+                   value="{{ today }}T{{ cur_time }}">
+          </div>
+          <div class="mb-2">
+            <label class="form-label small">유형</label>
+            <select name="fault_type" class="form-select form-select-sm">
+              {% for val, label in fault_type_choices %}
+              <option value="{{ val }}">{{ label }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="mb-2">
+            <label class="form-label small">내용 <span class="text-danger">*</span></label>
+            <textarea name="description" class="form-control form-control-sm" rows="3" required></textarea>
+          </div>
+          <button type="submit" class="btn btn-sm btn-warning w-100">장애 등록</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-8">
+    <!-- 장애이력 -->
+    <div class="card shadow-sm mb-3">
+      <div class="card-header fw-bold">장애이력 ({{ fault_logs|length }}건)</div>
+      <div class="table-responsive">
+        <table class="table table-sm table-hover mb-0">
+          <thead class="table-light">
+            <tr><th>발생일시</th><th>유형</th><th>내용</th><th>처리일시</th><th>등록자</th></tr>
+          </thead>
+          <tbody>
+            {% for log in fault_logs %}
+            <tr>
+              <td class="text-nowrap">{{ log.reported_at|date:"Y-m-d H:i" }}</td>
+              <td><span class="badge bg-secondary">{{ log.get_fault_type_display }}</span></td>
+              <td>{{ log.description }}</td>
+              <td class="text-nowrap">{{ log.resolved_at|date:"Y-m-d H:i"|default:"미처리" }}</td>
+              <td>{{ log.reported_by }}</td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="5" class="text-center text-muted py-2">장애이력이 없습니다.</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- 최근 충전이력 -->
+    <div class="card shadow-sm">
+      <div class="card-header fw-bold">최근 충전이력 (최대 20건)</div>
+      <div class="table-responsive">
+        <table class="table table-sm table-hover mb-0">
+          <thead class="table-light">
+            <tr><th>TX#</th><th>카드</th><th>상태</th><th>시작</th><th>종료</th><th>충전량(kWh)</th><th>금액(원)</th></tr>
+          </thead>
+          <tbody>
+            {% for s in sessions %}
+            <tr>
+              <td>{{ s.transaction_id }}</td>
+              <td>{{ s.id_token_id|default:"-" }}</td>
+              <td>
+                {% if s.state == 'Completed' %}<span class="badge bg-success">완료</span>
+                {% elif s.state == 'Active' %}<span class="badge bg-primary">충전중</span>
+                {% elif s.state == 'Failed' %}<span class="badge bg-danger">실패</span>
+                {% else %}<span class="badge bg-secondary">{{ s.state }}</span>{% endif %}
+              </td>
+              <td class="text-nowrap">{{ s.time_start|date:"m-d H:i"|default:"-" }}</td>
+              <td class="text-nowrap">{{ s.time_end|date:"m-d H:i"|default:"-" }}</td>
+              <td>{{ s.energy_kwh|floatformat:3|default:"-" }}</td>
+              <td>{{ s.amount|floatformat:0|default:"-" }}</td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="7" class="text-center text-muted py-2">충전이력이 없습니다.</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

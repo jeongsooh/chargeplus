@@ -200,6 +200,39 @@ class DeviceConfiguration(models.Model):
         return f"{self.charging_station.station_id} / {self.key}={self.value}"
 
 
+class FaultLog(models.Model):
+    """Manual fault history entry for a charging station."""
+
+    class FaultType(models.TextChoices):
+        CONNECTOR   = 'connector',    '커넥터 불량'
+        COMM        = 'comm',         '통신 오류'
+        POWER       = 'power',        '전원 불량'
+        DISPLAY     = 'display',      '디스플레이 불량'
+        OTHER       = 'other',        '기타'
+
+    charging_station = models.ForeignKey(
+        ChargingStation,
+        on_delete=models.CASCADE,
+        related_name='fault_logs',
+        verbose_name='충전기',
+    )
+    reported_at      = models.DateTimeField(verbose_name='장애 발생 시각')
+    fault_type       = models.CharField(max_length=20, choices=FaultType.choices, default=FaultType.OTHER)
+    description      = models.TextField(verbose_name='장애 내용')
+    resolved_at      = models.DateTimeField(null=True, blank=True, verbose_name='복구 시각')
+    reported_by      = models.CharField(max_length=50, verbose_name='입력자')
+    created_at       = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        db_table = 'cp_fault_log'
+        verbose_name = 'Fault Log'
+        verbose_name_plural = 'Fault Logs'
+        ordering = ['-reported_at']
+
+    def __str__(self):
+        return f"{self.charging_station.station_id} {self.fault_type} @ {self.reported_at:%Y-%m-%d %H:%M}"
+
+
 class FirmwareHistory(models.Model):
     """Firmware update history for a charging station."""
 

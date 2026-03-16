@@ -53,3 +53,33 @@ class PartnerProfile(models.Model):
 
     def __str__(self):
         return f"{self.business_name} ({self.user.username})"
+
+
+class PaymentCard(models.Model):
+    """User payment card (masked — PG billing key to be integrated later)."""
+
+    class CardType(models.TextChoices):
+        VISA        = 'Visa',       'Visa'
+        MASTERCARD  = 'Mastercard', 'Mastercard'
+        DOMESTIC    = '국내카드',    '국내카드'
+        OTHER       = '기타',       '기타'
+
+    user        = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='payment_cards',
+    )
+    nickname    = models.CharField(max_length=50, verbose_name='카드 별칭')
+    card_last4  = models.CharField(max_length=4, verbose_name='카드 끝 4자리')
+    card_type   = models.CharField(max_length=20, choices=CardType.choices, default=CardType.DOMESTIC)
+    billing_key = models.CharField(max_length=200, blank=True, verbose_name='PG 빌링키')
+    is_default  = models.BooleanField(default=False, verbose_name='기본 결제 카드')
+    created_at  = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        db_table = 'cp_payment_card'
+        verbose_name = 'Payment Card'
+        verbose_name_plural = 'Payment Cards'
+
+    def __str__(self):
+        return f"{self.user.username} - {self.nickname} (*{self.card_last4})"
