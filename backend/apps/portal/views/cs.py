@@ -10,7 +10,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.utils import timezone
 from django.views.decorators.http import require_POST
 
-from django.db import ProtectedError
+from django.db.models import ProtectedError
 
 from apps.authorization.models import IdToken
 from apps.config.models import CsmsVariable
