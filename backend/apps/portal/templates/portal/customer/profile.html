@@ -1,0 +1,39 @@
+{% extends "portal/customer/base_customer.html" %}
+{% block title %}프로필 수정{% endblock %}
+
+{% block content %}
+<h4 class="fw-bold mb-4">프로필 수정</h4>
+
+<div class="card shadow-sm" style="max-width:480px;">
+  <div class="card-body p-4">
+    <form method="post">
+      {% csrf_token %}
+      <div class="mb-3">
+        <label class="form-label">아이디</label>
+        <input type="text" class="form-control" value="{{ request.user.username }}" disabled>
+      </div>
+      <div class="mb-3">
+        <label class="form-label">이름</label>
+        <input type="text" name="first_name" class="form-control" value="{{ request.user.first_name }}">
+      </div>
+      <div class="mb-3">
+        <label class="form-label">이메일</label>
+        <input type="email" name="email" class="form-control" value="{{ request.user.email }}">
+      </div>
+      <div class="mb-3">
+        <label class="form-label">연락처</label>
+        <input type="text" name="phone" class="form-control" value="{{ request.user.phone }}">
+      </div>
+      <hr>
+      <h6 class="text-muted mb-3">비밀번호 변경 (변경 시에만 입력)</h6>
+      <div class="mb-3">
+        <label class="form-label">새 비밀번호</label>
+        <input type="password" name="new_password" class="form-control" minlength="8">
+      </div>
+      <div class="mb-4">
+        <button type="submit" class="btn btn-primary">저장</button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

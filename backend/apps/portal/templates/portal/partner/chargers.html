@@ -1,0 +1,51 @@
+{% extends "portal/partner/base_partner.html" %}
+{% block title %}충전기 현황 - 파트너{% endblock %}
+
+{% block extra_js %}
+<script>
+  // 30초마다 페이지 새로고침 (폴링)
+  setTimeout(() => location.reload(), 30000);
+</script>
+{% endblock %}
+
+{% block content %}
+<div class="d-flex align-items-center mb-4">
+  <h4 class="fw-bold mb-0">충전기 현황</h4>
+  <span class="text-muted small ms-3">30초마다 자동 갱신</span>
+</div>
+
+<div class="row g-3">
+  {% for s in stations %}
+  <div class="col-md-4">
+    <div class="card shadow-sm h-100">
+      <div class="card-header d-flex justify-content-between align-items-center">
+        <code class="fw-bold">{{ s.station_id }}</code>
+        {% if s.status == 'Available' %}<span class="badge bg-success">{{ s.status }}</span>
+        {% elif s.status == 'Faulted' %}<span class="badge bg-danger">{{ s.status }}</span>
+        {% elif s.status == 'Offline' %}<span class="badge bg-secondary">{{ s.status }}</span>
+        {% else %}<span class="badge bg-warning text-dark">{{ s.status }}</span>{% endif %}
+      </div>
+      <div class="card-body">
+        <p class="text-muted small mb-2">{{ s.site.site_name }}</p>
+        {% for evse in s.evses.all %}
+          {% for conn in evse.connectors.all %}
+          <div class="d-flex justify-content-between align-items-center border rounded px-2 py-1 mb-1">
+            <span class="small">커넥터 {{ conn.connector_id }}</span>
+            {% if conn.current_status == 'Available' %}<span class="badge bg-success">Available</span>
+            {% elif conn.current_status == 'Charging' %}<span class="badge bg-primary">Charging</span>
+            {% elif conn.current_status == 'Faulted' %}<span class="badge bg-danger">Faulted</span>
+            {% else %}<span class="badge bg-secondary">{{ conn.current_status }}</span>{% endif %}
+          </div>
+          {% endfor %}
+        {% endfor %}
+        <p class="text-muted small mb-0 mt-2">
+          마지막 하트비트: {{ s.last_heartbeat|date:"H:i:s"|default:"없음" }}
+        </p>
+      </div>
+    </div>
+  </div>
+  {% empty %}
+  <div class="col"><p class="text-muted">소속 충전기가 없습니다.</p></div>
+  {% endfor %}
+</div>
+{% endblock %}

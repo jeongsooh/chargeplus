@@ -1,0 +1,40 @@
+{% extends "portal/cs/base_cs.html" %}
+{% block title %}충전이력 - CS{% endblock %}
+
+{% block content %}
+<h4 class="fw-bold mb-4">전체 충전이력 (최근 200건)</h4>
+
+<div class="card shadow-sm">
+  <div class="table-responsive">
+    <table class="table table-hover table-sm mb-0">
+      <thead class="table-light">
+        <tr>
+          <th>TX#</th><th>충전기</th><th>카드</th><th>상태</th>
+          <th>시작</th><th>종료</th><th>충전량(kWh)</th><th>금액(원)</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for s in sessions %}
+        <tr>
+          <td>{{ s.transaction_id }}</td>
+          <td><code>{{ s.charging_station_id }}</code></td>
+          <td>{{ s.id_token_id|default:"-" }}</td>
+          <td>
+            {% if s.state == 'Completed' %}<span class="badge bg-success">완료</span>
+            {% elif s.state == 'Active' %}<span class="badge bg-primary">충전중</span>
+            {% elif s.state == 'Failed' %}<span class="badge bg-danger">실패</span>
+            {% else %}<span class="badge bg-secondary">{{ s.state }}</span>{% endif %}
+          </td>
+          <td>{{ s.time_start|date:"m-d H:i"|default:"-" }}</td>
+          <td>{{ s.time_end|date:"m-d H:i"|default:"-" }}</td>
+          <td>{{ s.energy_kwh|floatformat:3|default:"-" }}</td>
+          <td>{{ s.amount|floatformat:0|default:"-" }}</td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="8" class="text-center text-muted py-3">충전이력이 없습니다.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

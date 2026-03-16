@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'apps.smart_charging',
     'apps.ocpp16',
     'apps.mobile_api',
+    'apps.portal',
 ]
 
 MIDDLEWARE = [
@@ -143,6 +144,10 @@ STORAGES = {
 
 # Default primary key field type
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# Portal session auth
+LOGIN_URL = '/login/'
+LOGIN_REDIRECT_URL = '/'
 
 # --- Django REST Framework ---
 REST_FRAMEWORK = {

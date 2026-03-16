@@ -7,7 +7,7 @@ from django.urls import reverse
 from apps.config.models import StationVariable
 
 from .models import (
-    Operator, ChargingStation, EVSE, Connector,
+    Operator, ChargingStation, ChargingSite, EVSE, Connector,
     DeviceConfiguration, FirmwareHistory,
 )
 
@@ -59,6 +59,13 @@ class StationVariableInline(admin.TabularInline):
 class OperatorAdmin(admin.ModelAdmin):
     list_display = ['name', 'code', 'created_at']
     search_fields = ['name', 'code']
+
+
+@admin.register(ChargingSite)
+class ChargingSiteAdmin(admin.ModelAdmin):
+    list_display = ['site_name', 'partner', 'address', 'unit_price', 'created_at']
+    search_fields = ['site_name', 'address', 'partner__business_name']
+    list_filter = ['partner']
 
 
 @admin.register(ChargingStation)

@@ -1,0 +1,36 @@
+{% extends "portal/cs/base_cs.html" %}
+{% block title %}시스템 설정 - CS{% endblock %}
+
+{% block content %}
+<h4 class="fw-bold mb-4">시스템 설정 (CSMS Variables)</h4>
+
+<div class="card shadow-sm">
+  <div class="table-responsive">
+    <table class="table table-hover mb-0">
+      <thead class="table-light">
+        <tr><th>키</th><th>값</th><th>타입</th><th>설명</th><th>수정</th></tr>
+      </thead>
+      <tbody>
+        {% for v in variables %}
+        <tr>
+          <td><code>{{ v.key }}</code></td>
+          <td>
+            <form method="post" class="d-flex gap-2 align-items-center">
+              {% csrf_token %}
+              <input type="hidden" name="key" value="{{ v.key }}">
+              <input type="text" name="value" class="form-control form-control-sm" value="{{ v.value }}" style="min-width:150px;">
+              <button type="submit" class="btn btn-sm btn-primary">저장</button>
+            </form>
+          </td>
+          <td><span class="badge bg-light text-dark border">{{ v.value_type }}</span></td>
+          <td class="text-muted small">{{ v.description|default:"-" }}</td>
+          <td class="text-muted small">{{ v.updated_at|date:"m-d H:i" }}</td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="5" class="text-center text-muted py-3">설정 변수가 없습니다.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

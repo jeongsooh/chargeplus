@@ -1,0 +1,47 @@
+{% extends "portal/base.html" %}
+{% block title %}가입 유형 선택 - ChargePlus{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center mt-5">
+  <div class="col-md-6">
+    <div class="text-center mb-4">
+      <h3 class="fw-bold">가입 유형을 선택하세요</h3>
+    </div>
+    <div class="row g-3">
+      <div class="col-md-4">
+        <a href="{% url 'portal:register_customer' %}" class="text-decoration-none">
+          <div class="card text-center p-3 h-100 border-primary">
+            <i class="bi bi-person-circle fs-2 text-primary mb-2"></i>
+            <h6 class="fw-bold">고객</h6>
+            <p class="text-muted small mb-0">충전 이력 조회, 카드 관리</p>
+            <span class="badge bg-success mt-2">즉시 활성화</span>
+          </div>
+        </a>
+      </div>
+      <div class="col-md-4">
+        <a href="{% url 'portal:register_partner' %}" class="text-decoration-none">
+          <div class="card text-center p-3 h-100 border-warning">
+            <i class="bi bi-building fs-2 text-warning mb-2"></i>
+            <h6 class="fw-bold">파트너</h6>
+            <p class="text-muted small mb-0">충전소/충전기 관리, 정산</p>
+            <span class="badge bg-warning text-dark mt-2">관리자 승인 필요</span>
+          </div>
+        </a>
+      </div>
+      <div class="col-md-4">
+        <a href="{% url 'portal:register_cs' %}" class="text-decoration-none">
+          <div class="card text-center p-3 h-100 border-danger">
+            <i class="bi bi-headset fs-2 text-danger mb-2"></i>
+            <h6 class="fw-bold">고객센터</h6>
+            <p class="text-muted small mb-0">전체 관리자 수준 접근</p>
+            <span class="badge bg-danger mt-2">Django 어드민 승인</span>
+          </div>
+        </a>
+      </div>
+    </div>
+    <div class="text-center mt-4">
+      <a href="{% url 'portal:login' %}" class="text-muted small">로그인으로 돌아가기</a>
+    </div>
+  </div>
+</div>
+{% endblock %}

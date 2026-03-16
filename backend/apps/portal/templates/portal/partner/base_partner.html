@@ -1,0 +1,16 @@
+{% extends "portal/base.html" %}
+
+{% block sidebar %}
+<a href="{% url 'portal:partner_dashboard' %}" class="nav-link {% if request.resolver_match.url_name == 'partner_dashboard' %}active{% endif %}">
+  <i class="bi bi-speedometer2 me-2"></i>대시보드
+</a>
+<a href="{% url 'portal:partner_sites' %}" class="nav-link {% if 'partner_site' in request.resolver_match.url_name %}active{% endif %}">
+  <i class="bi bi-geo-alt me-2"></i>내 충전소
+</a>
+<a href="{% url 'portal:partner_chargers' %}" class="nav-link {% if request.resolver_match.url_name == 'partner_chargers' %}active{% endif %}">
+  <i class="bi bi-lightning-charge me-2"></i>충전기 현황
+</a>
+<a href="{% url 'portal:partner_stats' %}" class="nav-link {% if request.resolver_match.url_name == 'partner_stats' %}active{% endif %}">
+  <i class="bi bi-bar-chart me-2"></i>통계
+</a>
+{% endblock %}

@@ -1,0 +1,81 @@
+{% extends "portal/cs/base_cs.html" %}
+{% block title %}사용자 관리 - CS{% endblock %}
+
+{% block content %}
+<div class="d-flex align-items-center mb-4">
+  <h4 class="fw-bold mb-0">사용자 관리</h4>
+</div>
+
+<div class="card shadow-sm mb-3">
+  <div class="card-body py-2">
+    <form method="get" class="row g-2 align-items-center">
+      <div class="col-auto">
+        <select name="role" class="form-select form-select-sm">
+          <option value="">역할 전체</option>
+          <option value="cs" {% if role_filter == 'cs' %}selected{% endif %}>고객센터</option>
+          <option value="partner" {% if role_filter == 'partner' %}selected{% endif %}>파트너</option>
+          <option value="customer" {% if role_filter == 'customer' %}selected{% endif %}>고객</option>
+        </select>
+      </div>
+      <div class="col-auto">
+        <select name="status" class="form-select form-select-sm">
+          <option value="">상태 전체</option>
+          <option value="active" {% if status_filter == 'active' %}selected{% endif %}>활성</option>
+          <option value="pending" {% if status_filter == 'pending' %}selected{% endif %}>승인대기</option>
+          <option value="inactive" {% if status_filter == 'inactive' %}selected{% endif %}>비활성</option>
+        </select>
+      </div>
+      <div class="col">
+        <input type="text" name="q" class="form-control form-control-sm" placeholder="아이디/이름/이메일 검색" value="{{ q }}">
+      </div>
+      <div class="col-auto">
+        <button type="submit" class="btn btn-primary btn-sm">검색</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div class="card shadow-sm">
+  <div class="table-responsive">
+    <table class="table table-hover mb-0">
+      <thead class="table-light">
+        <tr>
+          <th>아이디</th><th>이름</th><th>이메일</th><th>역할</th><th>상태</th><th>가입일</th><th></th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for u in users %}
+        <tr>
+          <td>{{ u.username }}</td>
+          <td>{{ u.get_full_name|default:"-" }}</td>
+          <td>{{ u.email|default:"-" }}</td>
+          <td>
+            {% if u.role == 'cs' %}<span class="badge bg-danger">고객센터</span>
+            {% elif u.role == 'partner' %}<span class="badge bg-warning text-dark">파트너</span>
+            {% else %}<span class="badge bg-secondary">고객</span>{% endif %}
+          </td>
+          <td>
+            {% if u.status == 'active' %}<span class="badge bg-success">활성</span>
+            {% elif u.status == 'pending' %}<span class="badge bg-warning text-dark">승인대기</span>
+            {% else %}<span class="badge bg-secondary">비활성</span>{% endif %}
+          </td>
+          <td>{{ u.created_at|date:"Y-m-d" }}</td>
+          <td>
+            {% if u != request.user %}
+            <form method="post" action="{% url 'portal:cs_user_toggle' u.pk %}" class="d-inline">
+              {% csrf_token %}
+              <button type="submit" class="btn btn-sm {% if u.status == 'active' %}btn-outline-secondary{% else %}btn-outline-success{% endif %}">
+                {% if u.status == 'active' %}비활성화{% else %}활성화{% endif %}
+              </button>
+            </form>
+            {% endif %}
+          </td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="7" class="text-center text-muted py-3">사용자가 없습니다.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

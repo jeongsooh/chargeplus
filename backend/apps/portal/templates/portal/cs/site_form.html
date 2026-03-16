@@ -1,0 +1,41 @@
+{% extends "portal/cs/base_cs.html" %}
+{% block title %}충전소 등록 - CS{% endblock %}
+
+{% block content %}
+<div class="d-flex align-items-center mb-4">
+  <h4 class="fw-bold mb-0">충전소 등록</h4>
+</div>
+
+<div class="card shadow-sm" style="max-width:500px;">
+  <div class="card-body p-4">
+    <form method="post">
+      {% csrf_token %}
+      <div class="mb-3">
+        <label class="form-label">파트너 <span class="text-danger">*</span></label>
+        <select name="partner_id" class="form-select" required>
+          <option value="">선택하세요</option>
+          {% for p in partners %}
+          <option value="{{ p.pk }}">{{ p.business_name }} ({{ p.user.username }})</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="mb-3">
+        <label class="form-label">충전소명 <span class="text-danger">*</span></label>
+        <input type="text" name="site_name" class="form-control" required>
+      </div>
+      <div class="mb-3">
+        <label class="form-label">주소</label>
+        <input type="text" name="address" class="form-control">
+      </div>
+      <div class="mb-4">
+        <label class="form-label">충전단가 (원/kWh)</label>
+        <input type="number" name="unit_price" class="form-control" value="0" min="0" step="10">
+      </div>
+      <div class="d-flex gap-2">
+        <button type="submit" class="btn btn-primary">등록</button>
+        <a href="{% url 'portal:cs_sites' %}" class="btn btn-outline-secondary">취소</a>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

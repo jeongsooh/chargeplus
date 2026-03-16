@@ -1,0 +1,25 @@
+{% extends "portal/base.html" %}
+
+{% block sidebar %}
+<a href="{% url 'portal:cs_dashboard' %}" class="nav-link {% if request.resolver_match.url_name == 'cs_dashboard' %}active{% endif %}">
+  <i class="bi bi-speedometer2 me-2"></i>대시보드
+</a>
+<a href="{% url 'portal:cs_users' %}" class="nav-link {% if 'cs_user' in request.resolver_match.url_name %}active{% endif %}">
+  <i class="bi bi-people me-2"></i>사용자 관리
+</a>
+<a href="{% url 'portal:cs_partners' %}" class="nav-link {% if 'cs_partner' in request.resolver_match.url_name %}active{% endif %}">
+  <i class="bi bi-building me-2"></i>파트너 관리
+</a>
+<a href="{% url 'portal:cs_chargers' %}" class="nav-link {% if request.resolver_match.url_name == 'cs_chargers' %}active{% endif %}">
+  <i class="bi bi-lightning-charge me-2"></i>충전기 관리
+</a>
+<a href="{% url 'portal:cs_sites' %}" class="nav-link {% if 'cs_site' in request.resolver_match.url_name %}active{% endif %}">
+  <i class="bi bi-geo-alt me-2"></i>충전소 관리
+</a>
+<a href="{% url 'portal:cs_sessions' %}" class="nav-link {% if request.resolver_match.url_name == 'cs_sessions' %}active{% endif %}">
+  <i class="bi bi-clock-history me-2"></i>충전이력
+</a>
+<a href="{% url 'portal:cs_config' %}" class="nav-link {% if request.resolver_match.url_name == 'cs_config' %}active{% endif %}">
+  <i class="bi bi-gear me-2"></i>시스템 설정
+</a>
+{% endblock %}

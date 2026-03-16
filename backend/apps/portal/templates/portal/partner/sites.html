@@ -1,0 +1,32 @@
+{% extends "portal/partner/base_partner.html" %}
+{% block title %}내 충전소 - 파트너{% endblock %}
+
+{% block content %}
+<h4 class="fw-bold mb-4">내 충전소 관리</h4>
+
+<div class="row g-3">
+  {% for site in sites %}
+  <div class="col-md-6">
+    <div class="card shadow-sm">
+      <div class="card-body">
+        <h6 class="fw-bold">{{ site.site_name }}</h6>
+        <p class="text-muted small mb-2">{{ site.address|default:"주소 미등록" }}</p>
+        <div class="d-flex align-items-center justify-content-between">
+          <span class="text-muted small">충전기 {{ site.station_count }}대</span>
+          <form method="post" action="{% url 'portal:partner_site_price' site.pk %}" class="d-flex gap-2 align-items-center">
+            {% csrf_token %}
+            <div class="input-group input-group-sm" style="width:160px;">
+              <input type="number" name="unit_price" class="form-control" value="{{ site.unit_price }}" min="0" step="10">
+              <span class="input-group-text">원/kWh</span>
+            </div>
+            <button type="submit" class="btn btn-sm btn-outline-primary">저장</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% empty %}
+  <div class="col"><p class="text-muted">등록된 충전소가 없습니다.</p></div>
+  {% endfor %}
+</div>
+{% endblock %}

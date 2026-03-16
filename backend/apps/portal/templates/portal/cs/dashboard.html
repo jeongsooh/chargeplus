@@ -1,0 +1,54 @@
+{% extends "portal/cs/base_cs.html" %}
+{% block title %}대시보드 - CS{% endblock %}
+
+{% block content %}
+<h4 class="mb-4 fw-bold">고객센터 대시보드</h4>
+
+<div class="row g-3 mb-4">
+  <div class="col-md-3">
+    <div class="card border-0 shadow-sm">
+      <div class="card-body">
+        <div class="text-muted small">전체 충전기</div>
+        <div class="fs-3 fw-bold text-primary">{{ stats.total_stations }}</div>
+        <div class="text-success small">온라인 {{ stats.online_stations }}대</div>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="card border-0 shadow-sm">
+      <div class="card-body">
+        <div class="text-muted small">전체 고객</div>
+        <div class="fs-3 fw-bold text-info">{{ stats.total_users }}</div>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="card border-0 shadow-sm">
+      <div class="card-body">
+        <div class="text-muted small">파트너</div>
+        <div class="fs-3 fw-bold text-warning">{{ stats.total_partners }}</div>
+        {% if stats.pending_partners %}
+          <div class="text-danger small">승인대기 {{ stats.pending_partners }}건</div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="card border-0 shadow-sm">
+      <div class="card-body">
+        <div class="text-muted small">당월 충전건수</div>
+        <div class="fs-3 fw-bold text-success">{{ stats.month_sessions }}</div>
+        <div class="text-muted small">{{ stats.month_energy|floatformat:1 }} kWh</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% if stats.pending_partners %}
+<div class="alert alert-warning">
+  <i class="bi bi-exclamation-triangle me-2"></i>
+  파트너 승인 대기 중인 건이 {{ stats.pending_partners }}건 있습니다.
+  <a href="{% url 'portal:cs_partners' %}?pending=1" class="alert-link ms-2">승인 처리 →</a>
+</div>
+{% endif %}
+{% endblock %}

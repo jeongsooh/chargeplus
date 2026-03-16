@@ -1,6 +1,31 @@
 from django.db import models
 
 
+class ChargingSite(models.Model):
+    """Charging site (physical location) belonging to a partner."""
+    partner    = models.ForeignKey(
+        'users.PartnerProfile',
+        on_delete=models.PROTECT,
+        related_name='sites',
+        verbose_name='파트너',
+    )
+    site_name  = models.CharField(max_length=100, verbose_name='충전소명')
+    address    = models.CharField(max_length=200, blank=True, verbose_name='주소')
+    unit_price = models.DecimalField(
+        max_digits=8, decimal_places=2, default=0,
+        verbose_name='충전단가(원/kWh)',
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        db_table = 'cp_charging_site'
+        verbose_name = 'Charging Site'
+        verbose_name_plural = 'Charging Sites'
+
+    def __str__(self):
+        return f"{self.site_name} ({self.partner.business_name})"
+
+
 class Operator(models.Model):
     """Charging station operator (business entity)."""
     name       = models.CharField(max_length=100)
@@ -33,6 +58,16 @@ class ChargingStation(models.Model):
         Operator,
         on_delete=models.PROTECT,
         related_name='stations',
+    )
+
+    # Charging site (physical location managed by a partner)
+    site            = models.ForeignKey(
+        ChargingSite,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='stations',
+        verbose_name='충전소',
     )
 
     # Fields populated from BootNotification

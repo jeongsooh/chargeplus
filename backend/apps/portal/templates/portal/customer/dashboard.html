@@ -1,0 +1,41 @@
+{% extends "portal/customer/base_customer.html" %}
+{% block title %}내 충전현황{% endblock %}
+
+{% block content %}
+<h4 class="fw-bold mb-4">안녕하세요, {{ request.user.get_full_name|default:request.user.username }}님</h4>
+
+<div class="row g-3 mb-4">
+  <div class="col-md-4">
+    <div class="card border-0 shadow-sm">
+      <div class="card-body">
+        <div class="text-muted small">등록된 카드</div>
+        <div class="fs-3 fw-bold text-primary">{{ cards.count }}</div>
+        <a href="{% url 'portal:customer_cards' %}" class="small">관리 →</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<h6 class="fw-bold mb-3">최근 충전이력</h6>
+<div class="card shadow-sm">
+  <div class="table-responsive">
+    <table class="table table-hover mb-0">
+      <thead class="table-light">
+        <tr><th>충전기</th><th>시작</th><th>충전량(kWh)</th><th>금액(원)</th></tr>
+      </thead>
+      <tbody>
+        {% for s in recent_sessions %}
+        <tr>
+          <td><code>{{ s.charging_station_id }}</code></td>
+          <td>{{ s.time_start|date:"Y-m-d H:i"|default:"-" }}</td>
+          <td>{{ s.energy_kwh|floatformat:3|default:"-" }}</td>
+          <td>{{ s.amount|floatformat:0|default:"-" }}</td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="4" class="text-center text-muted py-3">충전이력이 없습니다.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

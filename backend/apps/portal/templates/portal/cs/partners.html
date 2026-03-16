@@ -1,0 +1,57 @@
+{% extends "portal/cs/base_cs.html" %}
+{% block title %}파트너 관리 - CS{% endblock %}
+
+{% block content %}
+<div class="d-flex align-items-center mb-4">
+  <h4 class="fw-bold mb-0">파트너 관리</h4>
+  <div class="ms-auto">
+    <a href="?pending=1" class="btn btn-sm {% if pending_only %}btn-warning{% else %}btn-outline-warning{% endif %}">
+      승인 대기만 보기
+    </a>
+    {% if pending_only %}<a href="?" class="btn btn-sm btn-outline-secondary ms-1">전체 보기</a>{% endif %}
+  </div>
+</div>
+
+<div class="card shadow-sm">
+  <div class="table-responsive">
+    <table class="table table-hover mb-0">
+      <thead class="table-light">
+        <tr>
+          <th>사업체명</th><th>사업자번호</th><th>담당자</th><th>연락처</th><th>상태</th><th>신청일</th><th>처리</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for p in partners %}
+        <tr>
+          <td>{{ p.business_name }}</td>
+          <td>{{ p.business_no }}</td>
+          <td>{{ p.user.get_full_name|default:p.user.username }}</td>
+          <td>{{ p.contact_phone|default:"-" }}</td>
+          <td>
+            {% if p.user.status == 'active' %}<span class="badge bg-success">활성</span>
+            {% elif p.user.status == 'pending' %}<span class="badge bg-warning text-dark">승인대기</span>
+            {% else %}<span class="badge bg-secondary">비활성</span>{% endif %}
+          </td>
+          <td>{{ p.created_at|date:"Y-m-d" }}</td>
+          <td>
+            <form method="post" action="{% url 'portal:cs_partner_approve' p.pk %}" class="d-inline">
+              {% csrf_token %}
+              {% if p.user.status == 'pending' %}
+                <button name="action" value="approve" class="btn btn-sm btn-success">승인</button>
+                <button name="action" value="reject" class="btn btn-sm btn-outline-danger ms-1">반려</button>
+              {% elif p.user.status == 'active' %}
+                <button name="action" value="reject" class="btn btn-sm btn-outline-secondary">비활성화</button>
+              {% else %}
+                <button name="action" value="approve" class="btn btn-sm btn-outline-success">재활성화</button>
+              {% endif %}
+            </form>
+          </td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="7" class="text-center text-muted py-3">파트너가 없습니다.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,16 @@
+{% extends "portal/base.html" %}
+
+{% block sidebar %}
+<a href="{% url 'portal:customer_dashboard' %}" class="nav-link {% if request.resolver_match.url_name == 'customer_dashboard' %}active{% endif %}">
+  <i class="bi bi-house me-2"></i>대시보드
+</a>
+<a href="{% url 'portal:customer_history' %}" class="nav-link {% if request.resolver_match.url_name == 'customer_history' %}active{% endif %}">
+  <i class="bi bi-clock-history me-2"></i>충전이력
+</a>
+<a href="{% url 'portal:customer_cards' %}" class="nav-link {% if 'customer_card' in request.resolver_match.url_name %}active{% endif %}">
+  <i class="bi bi-credit-card me-2"></i>카드 관리
+</a>
+<a href="{% url 'portal:customer_profile' %}" class="nav-link {% if request.resolver_match.url_name == 'customer_profile' %}active{% endif %}">
+  <i class="bi bi-person me-2"></i>프로필
+</a>
+{% endblock %}
