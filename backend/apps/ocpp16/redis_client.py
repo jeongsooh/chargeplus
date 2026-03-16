@@ -15,7 +15,7 @@ def get_redis() -> redis_lib.Redis:
             settings.REDIS_URL,
             decode_responses=True,
             socket_connect_timeout=5,
-            socket_timeout=5,
+            socket_timeout=30,   # must be > brpop_timeout (default 5s) to avoid false TimeoutError
             retry_on_timeout=True,
         )
     return _client

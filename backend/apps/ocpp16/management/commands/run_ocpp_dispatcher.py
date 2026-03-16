@@ -138,8 +138,11 @@ class Command(BaseCommand):
             except KeyboardInterrupt:
                 break
             except Exception as e:
+                # redis TimeoutError on BRPOP is expected when queue is idle
+                # (socket_timeout fires before a message arrives — not a real error)
+                if 'Timeout' in type(e).__name__ or 'timeout' in str(e).lower():
+                    continue
                 logger.error(f"Dispatcher error: {e}")
-                # Brief pause to avoid tight error loops
                 import time
                 time.sleep(0.1)
 
