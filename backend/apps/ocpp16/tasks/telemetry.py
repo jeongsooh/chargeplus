@@ -75,29 +75,47 @@ def handle_status_notification(self, station_id: str, msg_id: str, payload: dict
             logger.info(f"StatusNotification: station={station_id} connector=0 status={ocpp_status}")
 
         else:
-            # Individual connector status
+            # Individual connector status — auto-create EVSE/Connector if first time seen
+            from apps.stations.models import EVSE
             try:
                 station = ChargingStation.objects.get(station_id=station_id)
-                connector = Connector.objects.get(
-                    evse__charging_station=station,
+
+                # Auto-provision EVSE (evse_id=1 for all OCPP 1.6 connectors)
+                evse, _ = EVSE.objects.get_or_create(
+                    charging_station=station,
+                    evse_id=1,
+                )
+
+                connector, created = Connector.objects.get_or_create(
+                    evse=evse,
                     connector_id=connector_id,
+                    defaults={
+                        'current_status': ocpp_status,
+                        'error_code': error_code,
+                        'info': info,
+                        'vendor_id': vendor_id,
+                        'vendor_error_code': vendor_error_code,
+                        'status_updated_at': now,
+                    },
                 )
-                Connector.objects.filter(pk=connector.pk).update(
-                    current_status=ocpp_status,
-                    error_code=error_code,
-                    info=info,
-                    vendor_id=vendor_id,
-                    vendor_error_code=vendor_error_code,
-                    status_updated_at=now,
-                )
+
+                if not created:
+                    Connector.objects.filter(pk=connector.pk).update(
+                        current_status=ocpp_status,
+                        error_code=error_code,
+                        info=info,
+                        vendor_id=vendor_id,
+                        vendor_error_code=vendor_error_code,
+                        status_updated_at=now,
+                    )
+
                 logger.info(
                     f"StatusNotification: station={station_id} connector={connector_id} "
                     f"status={ocpp_status} error={error_code}"
+                    + (" (auto-created)" if created else "")
                 )
             except ChargingStation.DoesNotExist:
                 logger.warning(f"StatusNotification: station {station_id} not found in DB")
-            except Connector.DoesNotExist:
-                logger.warning(f"StatusNotification: connector {connector_id} not found for {station_id}")
 
         # Send error alert if there's a fault
         if error_code and error_code != 'NoError':

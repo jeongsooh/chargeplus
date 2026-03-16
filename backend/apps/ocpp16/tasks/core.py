@@ -57,8 +57,16 @@ def handle_start_transaction(self, station_id: str, msg_id: str, payload: dict):
         except ValueError:
             time_start = timezone.now()
 
-        # Authorize the idTag
+        # Authorize the idTag first
         auth_result = AuthorizationService.authorize(station_id=station_id, id_tag=id_tag, connector_id=connector_id)
+
+        # If not accepted, respond immediately without creating a transaction
+        if auth_result.get('status') not in ('Accepted', 'ConcurrentTx'):
+            logger.info(
+                f"StartTransaction rejected: station={station_id} idTag={id_tag} status={auth_result.get('status')}"
+            )
+            publish_response(msg_id, {"transactionId": -1, "idTagInfo": auth_result})
+            return
 
         try:
             station = ChargingStation.objects.get(station_id=station_id)
@@ -67,18 +75,21 @@ def handle_start_transaction(self, station_id: str, msg_id: str, payload: dict):
             publish_response(msg_id, {"transactionId": -1, "idTagInfo": {"status": "Invalid"}})
             return
 
-        # Find connector
-        try:
-            connector = Connector.objects.get(
-                evse__charging_station=station,
-                connector_id=connector_id,
-            )
-        except Connector.DoesNotExist:
-            logger.error(f"StartTransaction: connector {connector_id} not found for {station_id}")
-            publish_response(msg_id, {"transactionId": -1, "idTagInfo": {"status": "Invalid"}})
-            return
+        # Auto-provision EVSE/Connector if first time seen (OCPP 1.6: no EVSE in messages)
+        from apps.stations.models import EVSE
+        evse, _ = EVSE.objects.get_or_create(
+            charging_station=station,
+            evse_id=1,
+        )
+        connector, conn_created = Connector.objects.get_or_create(
+            evse=evse,
+            connector_id=connector_id,
+            defaults={'current_status': Connector.Status.PREPARING},
+        )
+        if conn_created:
+            logger.info(f"StartTransaction: auto-created connector {connector_id} for {station_id}")
 
-        # Get IdToken (may be None for unknown tokens we still accept)
+        # Get IdToken object (may be None for roaming/anonymous)
         id_token_obj = None
         try:
             id_token_obj = IdToken.objects.get(id_token=id_tag)

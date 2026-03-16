@@ -27,31 +27,33 @@ def utcnow_iso() -> str:
     return datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%S.%f")[:-3] + "Z"
 
 
-async def wait_for_upstream_response(msg_id: str, timeout: float) -> dict:
+async def wait_for_upstream_response(msg_id: str, timeout: float, pubsub=None) -> dict:
     """
-    Subscribe to ocpp:response:{msg_id} and wait for the Celery worker to publish the response.
+    Wait for the Celery worker to publish a response on ocpp:response:{msg_id}.
+    If pubsub is provided (already subscribed by caller), use it directly.
+    Otherwise create a new subscription (legacy path, has race condition).
     """
-    redis = get_redis()
-    pubsub = redis.pubsub()
+    owned = pubsub is None
+    if owned:
+        pubsub = get_redis().pubsub()
+        await pubsub.subscribe(f"ocpp:response:{msg_id}")
 
     try:
-        await pubsub.subscribe(f"ocpp:response:{msg_id}")
         deadline = asyncio.get_event_loop().time() + timeout
-
         async for message in pubsub.listen():
             if asyncio.get_event_loop().time() > deadline:
                 raise asyncio.TimeoutError()
             if message["type"] == "message":
                 data = json.loads(message["data"])
                 return data["payload"]
-
         raise asyncio.TimeoutError()
     finally:
-        try:
-            await pubsub.unsubscribe(f"ocpp:response:{msg_id}")
-            await pubsub.aclose()
-        except Exception:
-            pass
+        if owned:
+            try:
+                await pubsub.unsubscribe(f"ocpp:response:{msg_id}")
+                await pubsub.aclose()
+            except Exception:
+                pass
 
 
 async def handle_upstream(station_id: str, raw: str, ws: WebSocket) -> None:
@@ -107,7 +109,11 @@ async def handle_upstream(station_id: str, raw: str, ws: WebSocket) -> None:
         ))
         return
 
-    # Push to upstream queue for Celery processing
+    # Subscribe to response channel BEFORE pushing to queue to avoid race condition:
+    # if Celery processes faster than subscription is set up, the publish would be missed.
+    pubsub = get_redis().pubsub()
+    await pubsub.subscribe(f"ocpp:response:{msg.msg_id}")
+
     upstream_data = {
         "station_id": station_id,
         "msg_id": msg.msg_id,
@@ -123,12 +129,17 @@ async def handle_upstream(station_id: str, raw: str, ws: WebSocket) -> None:
         await ws.send_text(build_call_error(
             msg.msg_id, INTERNAL_ERROR, "Message queue unavailable"
         ))
+        try:
+            await pubsub.unsubscribe(f"ocpp:response:{msg.msg_id}")
+            await pubsub.aclose()
+        except Exception:
+            pass
         return
 
     # Wait for Celery worker to process and publish response
     try:
         response_payload = await asyncio.wait_for(
-            wait_for_upstream_response(msg.msg_id, settings.RESPONSE_TIMEOUT),
+            wait_for_upstream_response(msg.msg_id, settings.RESPONSE_TIMEOUT, pubsub),
             timeout=settings.RESPONSE_TIMEOUT + 1.0,
         )
         await ws.send_text(build_call_result(msg.msg_id, response_payload))
@@ -143,6 +154,12 @@ async def handle_upstream(station_id: str, raw: str, ws: WebSocket) -> None:
         await ws.send_text(build_call_error(
             msg.msg_id, INTERNAL_ERROR, str(e)
         ))
+    finally:
+        try:
+            await pubsub.unsubscribe(f"ocpp:response:{msg.msg_id}")
+            await pubsub.aclose()
+        except Exception:
+            pass
 
 
 @router.websocket("/ocpp/1.6/{station_id}")
