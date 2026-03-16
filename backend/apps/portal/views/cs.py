@@ -10,6 +10,9 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.utils import timezone
 from django.views.decorators.http import require_POST
 
+from django.db import ProtectedError
+
+from apps.authorization.models import IdToken
 from apps.config.models import CsmsVariable
 from apps.ocpp16.models import OcppMessage
 from apps.portal.decorators import role_required
@@ -321,10 +324,12 @@ def user_delete(request, user_id):
     if target == request.user:
         messages.error(request, '자기 자신은 삭제할 수 없습니다.')
         return redirect('portal:cs_users')
-    target.is_active = False
-    target.status = 'inactive'
-    target.save(update_fields=['is_active', 'status'])
-    messages.success(request, f"'{target.username}' 사용자가 비활성화되었습니다.")
+    username = target.username
+    try:
+        target.delete()
+        messages.success(request, f"'{username}' 사용자가 삭제되었습니다.")
+    except ProtectedError:
+        messages.error(request, f"'{username}' 사용자는 연결된 데이터(충전이력 등)가 있어 삭제할 수 없습니다.")
     return redirect('portal:cs_users')
 
 
@@ -433,10 +438,11 @@ def partner_approve(request, partner_id):
 def partner_delete(request, partner_id):
     profile = get_object_or_404(PartnerProfile, pk=partner_id)
     name = profile.business_name
-    profile.user.is_active = False
-    profile.user.status = 'inactive'
-    profile.user.save(update_fields=['is_active', 'status'])
-    messages.success(request, f"파트너 '{name}'이 비활성화되었습니다.")
+    try:
+        profile.user.delete()  # cascades to PartnerProfile
+        messages.success(request, f"파트너 '{name}'이 삭제되었습니다.")
+    except ProtectedError:
+        messages.error(request, f"'{name}' 파트너는 소속 충전소가 있어 삭제할 수 없습니다. 충전소를 먼저 삭제해 주세요.")
     return redirect('portal:cs_partners')
 
 
@@ -538,10 +544,118 @@ def charger_fault_add(request, station_pk):
 @require_POST
 def charger_delete(request, station_pk):
     station = get_object_or_404(ChargingStation, pk=station_pk)
-    station.is_active = False
-    station.save(update_fields=['is_active'])
-    messages.success(request, f"충전기 '{station.station_id}'이 비활성화되었습니다.")
+    station_id = station.station_id
+    try:
+        station.delete()
+        messages.success(request, f"충전기 '{station_id}'이 삭제되었습니다.")
+    except ProtectedError:
+        messages.error(request, f"'{station_id}' 충전기는 충전이력이 있어 삭제할 수 없습니다.")
     return redirect('portal:cs_chargers')
+
+
+# ──────────────────────────────────────────────────────── idtokens ───────────
+
+def _idtoken_form_ctx():
+    return {
+        'status_choices': IdToken.Status.choices,
+        'type_choices': IdToken.Type.choices,
+        'users': User.objects.filter(is_active=True).order_by('username'),
+    }
+
+
+@role_required('cs')
+def idtokens_list(request):
+    qs = IdToken.objects.select_related('user').order_by('-created_at')
+    status_filter = request.GET.get('status', '')
+    type_filter = request.GET.get('token_type', '')
+    q = request.GET.get('q', '')
+
+    if status_filter:
+        qs = qs.filter(status=status_filter)
+    if type_filter:
+        qs = qs.filter(token_type=type_filter)
+    if q:
+        qs = qs.filter(Q(id_token__icontains=q) | Q(user__username__icontains=q))
+
+    paginator = Paginator(qs, 20)
+    page = paginator.get_page(request.GET.get('page', 1))
+
+    return render(request, 'portal/cs/idtokens.html', {
+        'page': page,
+        'status_filter': status_filter,
+        'type_filter': type_filter,
+        'q': q,
+        'status_choices': IdToken.Status.choices,
+        'type_choices': IdToken.Type.choices,
+    })
+
+
+@role_required('cs')
+def idtoken_create(request):
+    ctx = _idtoken_form_ctx()
+    if request.method == 'POST':
+        id_token_val = request.POST.get('id_token', '').strip().upper()
+        token_type = request.POST.get('token_type', 'RFID')
+        status = request.POST.get('status', 'Accepted')
+        user_id = request.POST.get('user_id', '') or None
+        expiry_date = _parse_expiry(request.POST.get('expiry_date', ''))
+
+        if not id_token_val:
+            messages.error(request, '카드 번호를 입력해 주세요.')
+            return render(request, 'portal/cs/idtoken_form.html', ctx)
+        if IdToken.objects.filter(id_token=id_token_val).exists():
+            messages.error(request, '이미 등록된 카드 번호입니다.')
+            return render(request, 'portal/cs/idtoken_form.html', ctx)
+
+        IdToken.objects.create(
+            id_token=id_token_val, token_type=token_type,
+            status=status, user_id=user_id, expiry_date=expiry_date,
+        )
+        messages.success(request, f"충전카드 '{id_token_val}'이 등록되었습니다.")
+        return redirect('portal:cs_idtokens')
+
+    return render(request, 'portal/cs/idtoken_form.html', ctx)
+
+
+@role_required('cs')
+def idtoken_edit(request, token_id):
+    token = get_object_or_404(IdToken, pk=token_id)
+    ctx = {**_idtoken_form_ctx(), 'token': token}
+
+    if request.method == 'POST':
+        token.token_type = request.POST.get('token_type', token.token_type)
+        token.status = request.POST.get('status', token.status)
+        token.user_id = request.POST.get('user_id', '') or None
+        token.expiry_date = _parse_expiry(request.POST.get('expiry_date', ''))
+        token.save()
+        messages.success(request, f"충전카드 '{token.id_token}'이 수정되었습니다.")
+        return redirect('portal:cs_idtokens')
+
+    return render(request, 'portal/cs/idtoken_form.html', ctx)
+
+
+@role_required('cs')
+@require_POST
+def idtoken_delete(request, token_id):
+    token = get_object_or_404(IdToken, pk=token_id)
+    token_val = token.id_token
+    try:
+        token.delete()
+        messages.success(request, f"충전카드 '{token_val}'이 삭제되었습니다.")
+    except ProtectedError:
+        messages.error(request, f"'{token_val}' 카드는 충전이력이 있어 삭제할 수 없습니다.")
+    return redirect('portal:cs_idtokens')
+
+
+def _parse_expiry(expiry_str):
+    """Parse datetime-local string to aware datetime or None."""
+    if not expiry_str:
+        return None
+    from django.utils.dateparse import parse_datetime
+    dt = parse_datetime(expiry_str)
+    if dt and timezone.is_naive(dt):
+        dt = timezone.make_aware(dt)
+    return dt
 
 
 # ──────────────────────────────────────────────────────────── sites ───────────

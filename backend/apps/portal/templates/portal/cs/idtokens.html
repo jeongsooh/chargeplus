@@ -1,0 +1,106 @@
+{% extends "portal/cs/base_cs.html" %}
+{% block title %}충전카드 관리 - CS{% endblock %}
+
+{% block content %}
+<div class="d-flex align-items-center mb-4">
+  <h4 class="fw-bold mb-0">충전카드 관리</h4>
+  <a href="{% url 'portal:cs_idtoken_create' %}" class="btn btn-primary btn-sm ms-auto">
+    <i class="bi bi-plus-lg me-1"></i>카드 추가
+  </a>
+</div>
+
+<!-- 필터 -->
+<div class="card shadow-sm mb-3">
+  <div class="card-body py-2">
+    <form method="get" class="row g-2 align-items-center">
+      <div class="col-auto">
+        <select name="status" class="form-select form-select-sm">
+          <option value="">상태 전체</option>
+          {% for val, label in status_choices %}
+          <option value="{{ val }}" {% if status_filter == val %}selected{% endif %}>{{ label }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="col-auto">
+        <select name="token_type" class="form-select form-select-sm">
+          <option value="">타입 전체</option>
+          {% for val, label in type_choices %}
+          <option value="{{ val }}" {% if type_filter == val %}selected{% endif %}>{{ label }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="col">
+        <input type="text" name="q" class="form-control form-control-sm" placeholder="카드번호 / 사용자ID" value="{{ q }}">
+      </div>
+      <div class="col-auto">
+        <button type="submit" class="btn btn-primary btn-sm">검색</button>
+        <a href="{% url 'portal:cs_idtokens' %}" class="btn btn-outline-secondary btn-sm">초기화</a>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div class="card shadow-sm">
+  <div class="table-responsive">
+    <table class="table table-hover mb-0">
+      <thead class="table-light">
+        <tr><th>카드 번호</th><th>타입</th><th>상태</th><th>사용자</th><th>만료일</th><th>등록일</th><th></th></tr>
+      </thead>
+      <tbody>
+        {% for token in page %}
+        <tr>
+          <td><code>{{ token.id_token }}</code></td>
+          <td><span class="badge bg-secondary">{{ token.token_type }}</span></td>
+          <td>
+            {% if token.status == 'Accepted' %}<span class="badge bg-success">Accepted</span>
+            {% elif token.status == 'Blocked' %}<span class="badge bg-danger">Blocked</span>
+            {% elif token.status == 'Expired' %}<span class="badge bg-warning text-dark">Expired</span>
+            {% else %}<span class="badge bg-secondary">{{ token.status }}</span>{% endif %}
+          </td>
+          <td>{{ token.user.username|default:"-" }}</td>
+          <td class="text-muted small">{{ token.expiry_date|date:"Y-m-d"|default:"-" }}</td>
+          <td class="text-muted small">{{ token.created_at|date:"Y-m-d" }}</td>
+          <td class="text-nowrap">
+            <a href="{% url 'portal:cs_idtoken_edit' token.id_token %}" class="btn btn-sm btn-outline-primary">수정</a>
+            <form method="post" action="{% url 'portal:cs_idtoken_delete' token.id_token %}" class="d-inline"
+                  onsubmit="return confirm('충전카드를 삭제하시겠습니까?')">
+              {% csrf_token %}
+              <button class="btn btn-sm btn-outline-danger">삭제</button>
+            </form>
+          </td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="7" class="text-center text-muted py-3">등록된 충전카드가 없습니다.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  {% if page.paginator.num_pages > 1 %}
+  <div class="card-footer d-flex justify-content-between align-items-center py-2">
+    <small class="text-muted">총 {{ page.paginator.count }}건 / {{ page.paginator.num_pages }}페이지</small>
+    <nav>
+      <ul class="pagination pagination-sm mb-0">
+        {% if page.has_previous %}
+        <li class="page-item">
+          <a class="page-link" href="?page={{ page.previous_page_number }}&status={{ status_filter }}&token_type={{ type_filter }}&q={{ q }}">‹</a>
+        </li>
+        {% endif %}
+        {% for num in page.paginator.page_range %}
+          {% if num >= page.number|add:"-3" and num <= page.number|add:"3" %}
+          <li class="page-item {% if num == page.number %}active{% endif %}">
+            <a class="page-link" href="?page={{ num }}&status={{ status_filter }}&token_type={{ type_filter }}&q={{ q }}">{{ num }}</a>
+          </li>
+          {% endif %}
+        {% endfor %}
+        {% if page.has_next %}
+        <li class="page-item">
+          <a class="page-link" href="?page={{ page.next_page_number }}&status={{ status_filter }}&token_type={{ type_filter }}&q={{ q }}">›</a>
+        </li>
+        {% endif %}
+      </ul>
+    </nav>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

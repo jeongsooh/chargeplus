@@ -37,6 +37,12 @@ urlpatterns = [
     path('portal/cs/chargers/<int:station_pk>/fault/', cs.charger_fault_add, name='cs_charger_fault_add'),
     path('portal/cs/chargers/<int:station_pk>/delete/', cs.charger_delete, name='cs_charger_delete'),
 
+    # IdTokens (충전카드)
+    path('portal/cs/idtokens/', cs.idtokens_list, name='cs_idtokens'),
+    path('portal/cs/idtokens/create/', cs.idtoken_create, name='cs_idtoken_create'),
+    path('portal/cs/idtokens/<str:token_id>/edit/', cs.idtoken_edit, name='cs_idtoken_edit'),
+    path('portal/cs/idtokens/<str:token_id>/delete/', cs.idtoken_delete, name='cs_idtoken_delete'),
+
     # Sites
     path('portal/cs/sites/', cs.sites_list, name='cs_sites'),
     path('portal/cs/sites/create/', cs.site_create, name='cs_site_create'),
