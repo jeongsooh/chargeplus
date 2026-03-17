@@ -42,7 +42,7 @@ services:
       - DJANGO_SETTINGS_MODULE=${DJANGO_SETTINGS_MODULE:-chargeplus.settings.production}
       - ALLOWED_HOSTS=${ALLOWED_HOSTS:-localhost,127.0.0.1,backend}
       - CSRF_TRUSTED_ORIGINS=${CSRF_TRUSTED_ORIGINS:-http://localhost}
-    command: gunicorn chargeplus.wsgi:application --bind 0.0.0.0:8000 --workers 4
+    command: gunicorn chargeplus.wsgi:application --bind 0.0.0.0:8000 --workers 4 --access-logfile -
     depends_on:
       - db
       - redis
