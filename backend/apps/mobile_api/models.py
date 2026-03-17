@@ -35,12 +35,28 @@ class AppSession(models.Model):
         related_name='app_session',
     )
 
+    class GoalType(models.TextChoices):
+        TIME   = 'time',   'Time (minutes)'
+        KWH    = 'kwh',    'Energy (kWh)'
+        AMOUNT = 'amount', 'Amount (KRW)'
+        FREE   = 'free',   'Free (no limit)'
+
     status           = models.CharField(
         max_length=10,
         choices=Status.choices,
         default=Status.PENDING,
     )
     fail_reason      = models.CharField(max_length=200, blank=True)
+
+    # Charging goal (set at session creation)
+    goal_type        = models.CharField(
+        max_length=10,
+        choices=GoalType.choices,
+        default=GoalType.FREE,
+    )
+    goal_value       = models.DecimalField(
+        max_digits=10, decimal_places=2, null=True, blank=True
+    )
 
     # Real-time charging amount (updated by MeterValues)
     kwh_current      = models.DecimalField(max_digits=8, decimal_places=3, default=0)

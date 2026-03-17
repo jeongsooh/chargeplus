@@ -73,6 +73,32 @@ class ChargeStartView(APIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
+        goal_type = request.query_params.get("goal_type", "free").strip().lower()
+        if goal_type not in AppSession.GoalType.values:
+            return Response(
+                {"error": f"goal_type은 {AppSession.GoalType.values} 중 하나여야 합니다."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        goal_value_str = request.query_params.get("goal_value", "").strip()
+        if goal_type != AppSession.GoalType.FREE:
+            if not goal_value_str:
+                return Response(
+                    {"error": f"goal_type이 '{goal_type}'일 때 goal_value는 필수입니다."},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+            try:
+                goal_value = float(goal_value_str)
+                if goal_value <= 0:
+                    raise ValueError
+            except ValueError:
+                return Response(
+                    {"error": "goal_value는 0보다 큰 숫자여야 합니다."},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+        else:
+            goal_value = None
+
         user = request.user
 
         # 1. Find station
@@ -121,6 +147,8 @@ class ChargeStartView(APIView):
             charging_station=station,
             connector_id=connector.connector_id,
             status=AppSession.Status.PENDING,
+            goal_type=goal_type,
+            goal_value=goal_value,
         )
 
         # 6. Send RemoteStartTransaction to CP
@@ -170,7 +198,8 @@ class ChargeStartView(APIView):
 
         logger.info(
             f"Charge start: user={user.pk} station={station_id} "
-            f"connector={connector.connector_id} session={session_id}"
+            f"connector={connector.connector_id} session={session_id} "
+            f"goal={goal_type}:{goal_value}"
         )
 
         return Response({
@@ -345,7 +374,7 @@ class ChargeStopView(APIView):
                     "kwh": float(session.final_kwh or 0),
                     "cost": session.final_cost or 0,
                     "currency": "KRW",
-                    "message": "충전이 완료되었습니다.",
+                    "message": "충전이 완료되었습니다. 이용해 주셔서 감사합니다.",
                 })
             else:
                 # StopTransaction not yet processed; return current values
