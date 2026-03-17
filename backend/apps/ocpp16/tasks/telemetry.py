@@ -22,6 +22,8 @@ def handle_heartbeat(self, station_id: str, msg_id: str, payload: dict):
     from apps.ocpp16.redis_client import get_redis
 
     try:
+        log_ocpp_message(station_id, msg_id, OcppMessage.Direction.INBOUND, 'Heartbeat', payload)
+
         # Update heartbeat timestamp
         ChargingStation.objects.filter(station_id=station_id).update(
             last_heartbeat=timezone.now()
@@ -34,6 +36,7 @@ def handle_heartbeat(self, station_id: str, msg_id: str, payload: dict):
 
         response = {"currentTime": utcnow_iso()}
         publish_response(msg_id, response)
+        log_ocpp_message(station_id, msg_id, OcppMessage.Direction.OUTBOUND, 'Heartbeat', response)
 
     except Exception as e:
         logger.exception(f"handle_heartbeat error for station={station_id}: {e}")
@@ -139,6 +142,8 @@ def handle_meter_values(self, station_id: str, msg_id: str, payload: dict):
     from apps.transactions.models import Transaction, MeterValue
 
     try:
+        log_ocpp_message(station_id, msg_id, OcppMessage.Direction.INBOUND, 'MeterValues', payload)
+
         transaction_id = payload.get('transactionId')
         connector_id = payload.get('connectorId', 1)
         meter_value_list = payload.get('meterValue', [])
@@ -220,6 +225,7 @@ def handle_meter_values(self, station_id: str, msg_id: str, payload: dict):
                 logger.error(f"Failed to update AppSession kwh_current: {e}")
 
         publish_response(msg_id, {})
+        log_ocpp_message(station_id, msg_id, OcppMessage.Direction.OUTBOUND, 'MeterValues', {})
 
     except Exception as e:
         logger.exception(f"handle_meter_values error for station={station_id}: {e}")
