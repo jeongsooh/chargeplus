@@ -1,0 +1,101 @@
+{% extends "portal/cs/base_cs.html" %}
+{% block title %}정산내역 - CS{% endblock %}
+
+{% block content %}
+<h4 class="fw-bold mb-4">정산내역</h4>
+
+<div class="card shadow-sm mb-3">
+  <div class="card-body py-2">
+    <form method="get" class="row g-2 align-items-center">
+      <div class="col-auto">
+        <input type="date" name="date_from" class="form-control form-control-sm" value="{{ date_from }}">
+      </div>
+      <div class="col-auto"><span class="text-muted">~</span></div>
+      <div class="col-auto">
+        <input type="date" name="date_to" class="form-control form-control-sm" value="{{ date_to }}">
+      </div>
+      <div class="col">
+        <input type="text" name="station_q" class="form-control form-control-sm" placeholder="충전기 ID" value="{{ station_q }}">
+      </div>
+      <div class="col">
+        <input type="text" name="user_q" class="form-control form-control-sm" placeholder="사용자(아이디/이름/이메일)" value="{{ user_q }}">
+      </div>
+      <div class="col-auto">
+        <select name="status_q" class="form-select form-select-sm">
+          <option value="">상태 전체</option>
+          {% for val, label in status_choices %}
+          <option value="{{ val }}" {% if status_q == val %}selected{% endif %}>{{ label }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="col-auto">
+        <button type="submit" class="btn btn-primary btn-sm">검색</button>
+        <a href="{% url 'portal:cs_payments' %}" class="btn btn-outline-secondary btn-sm">초기화</a>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div class="card shadow-sm">
+  <div class="table-responsive">
+    <table class="table table-hover table-sm mb-0">
+      <thead class="table-light">
+        <tr>
+          <th>주문번호</th><th>충전기</th><th>사용자</th>
+          <th class="text-end">선결제(원)</th><th class="text-end">실사용(원)</th><th class="text-end">환불(원)</th>
+          <th>상태</th><th>MB거래ID</th><th>일시</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for p in page %}
+        <tr>
+          <td><code class="small">{{ p.order_reference }}</code></td>
+          <td><code>{{ p.station_id }}</code></td>
+          <td>{{ p.user.username }}<br><small class="text-muted">{{ p.user.get_full_name }}</small></td>
+          <td class="text-end">{{ p.prepaid_amount|floatformat:0 }}</td>
+          <td class="text-end">{{ p.actual_amount|floatformat:0|default:"-" }}</td>
+          <td class="text-end">{{ p.refund_amount|floatformat:0|default:"-" }}</td>
+          <td>
+            {% if p.status == 'PENDING' %}<span class="badge bg-warning text-dark">결제대기</span>
+            {% elif p.status == 'PAID' %}<span class="badge bg-info text-dark">IPN수신</span>
+            {% elif p.status == 'CHARGING' %}<span class="badge bg-primary">충전중</span>
+            {% elif p.status == 'COMPLETED' %}<span class="badge bg-success">완료</span>
+            {% elif p.status == 'REFUNDED' %}<span class="badge bg-secondary">환불완료</span>
+            {% elif p.status == 'FAILED' %}<span class="badge bg-danger">실패</span>
+            {% elif p.status == 'CANCELED' %}<span class="badge bg-secondary">취소</span>
+            {% else %}<span class="badge bg-light text-dark">{{ p.status }}</span>{% endif %}
+          </td>
+          <td><small class="text-muted">{{ p.mb_transaction_id|default:"-" }}</small></td>
+          <td class="text-nowrap"><small>{{ p.created_at|date:"m-d H:i" }}</small></td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="9" class="text-center text-muted py-3">정산내역이 없습니다.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  {% if page.paginator.num_pages > 1 %}
+  <div class="card-footer d-flex justify-content-between align-items-center py-2">
+    <small class="text-muted">총 {{ page.paginator.count }}건 / {{ page.paginator.num_pages }}페이지</small>
+    <nav>
+      <ul class="pagination pagination-sm mb-0">
+        {% if page.has_previous %}
+        <li class="page-item"><a class="page-link" href="?page={{ page.previous_page_number }}&date_from={{ date_from }}&date_to={{ date_to }}&station_q={{ station_q }}&user_q={{ user_q }}&status_q={{ status_q }}">‹</a></li>
+        {% endif %}
+        {% for num in page.paginator.page_range %}
+          {% if num >= page.number|add:"-3" and num <= page.number|add:"3" %}
+          <li class="page-item {% if num == page.number %}active{% endif %}">
+            <a class="page-link" href="?page={{ num }}&date_from={{ date_from }}&date_to={{ date_to }}&station_q={{ station_q }}&user_q={{ user_q }}&status_q={{ status_q }}">{{ num }}</a>
+          </li>
+          {% endif %}
+        {% endfor %}
+        {% if page.has_next %}
+        <li class="page-item"><a class="page-link" href="?page={{ page.next_page_number }}&date_from={{ date_from }}&date_to={{ date_to }}&station_q={{ station_q }}&user_q={{ user_q }}&status_q={{ status_q }}">›</a></li>
+        {% endif %}
+      </ul>
+    </nav>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

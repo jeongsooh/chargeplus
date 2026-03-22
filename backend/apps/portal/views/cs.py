@@ -727,7 +727,113 @@ def sessions_list(request):
     })
 
 
+# ─────────────────────────────────────────────────────────── payments ────
+
+@role_required('cs')
+def payments_list(request):
+    from apps.payment.models import PaymentTransaction
+
+    qs = PaymentTransaction.objects.select_related('user').order_by('-created_at')
+
+    station_q = request.GET.get('station_q', '')
+    user_q = request.GET.get('user_q', '')
+    status_q = request.GET.get('status_q', '')
+    date_from = request.GET.get('date_from', '')
+    date_to = request.GET.get('date_to', '')
+
+    if station_q:
+        qs = qs.filter(station_id__icontains=station_q)
+    if user_q:
+        qs = qs.filter(
+            Q(user__username__icontains=user_q) |
+            Q(user__email__icontains=user_q) |
+            Q(user__first_name__icontains=user_q)
+        )
+    if status_q:
+        qs = qs.filter(status=status_q)
+    if date_from:
+        qs = qs.filter(created_at__date__gte=date_from)
+    if date_to:
+        qs = qs.filter(created_at__date__lte=date_to)
+
+    paginator = Paginator(qs, 20)
+    page = paginator.get_page(request.GET.get('page', 1))
+
+    from apps.payment.models import PaymentTransaction as PT
+    return render(request, 'portal/cs/payments.html', {
+        'page': page,
+        'station_q': station_q, 'user_q': user_q,
+        'status_q': status_q, 'date_from': date_from, 'date_to': date_to,
+        'status_choices': PT.Status.choices,
+    })
+
+
 # ──────────────────────────────────────────────────────── system ops ──────────
+
+@role_required('cs')
+def ops_active_stations(request):
+    from apps.ocpp16.redis_client import get_redis
+
+    r = get_redis()
+    stations = ChargingStation.objects.filter(is_active=True).prefetch_related(
+        'evses__connectors'
+    ).order_by('station_id')
+
+    station_list = []
+    for st in stations:
+        if r.exists(f"ocpp:connected:{st.station_id}"):
+            connectors = []
+            for evse in st.evses.all():
+                for conn in evse.connectors.all():
+                    connectors.append({
+                        'evse_id': evse.evse_id,
+                        'connector_id': conn.connector_id,
+                        'status': conn.current_status,
+                        'error_code': conn.error_code,
+                    })
+            station_list.append({'station': st, 'connectors': connectors})
+
+    return render(request, 'portal/cs/ops_active_stations.html', {
+        'station_list': station_list,
+    })
+
+
+@role_required('cs')
+def ops_station_cmd(request, station_id):
+    """AJAX POST: send OCPP command to a station, return JSON."""
+    import json as _json
+    from django.http import JsonResponse
+    from apps.ocpp16.services.gateway_client import GatewayClient
+
+    if request.method != 'POST':
+        return JsonResponse({'success': False, 'error': 'Method not allowed'}, status=405)
+
+    try:
+        body = _json.loads(request.body)
+        action = body.get('action', '').strip()
+        payload = body.get('payload', {})
+    except Exception as e:
+        return JsonResponse({'success': False, 'error': f'Invalid JSON: {e}'}, status=400)
+
+    if not action:
+        return JsonResponse({'success': False, 'error': 'action is required'}, status=400)
+
+    if not GatewayClient.is_station_connected(station_id):
+        return JsonResponse({'success': False, 'error': '충전기가 오프라인입니다.'})
+
+    try:
+        if action == 'UpdateFirmware':
+            GatewayClient.send_command_async(station_id, action, payload)
+            result = {'message': '펌웨어 업데이트 명령이 전송되었습니다 (비동기).'}
+        else:
+            timeout = 15 if action in ('GetConfiguration', 'GetLocalListVersion', 'GetCompositeSchedule') else 30
+            result = GatewayClient.send_command(station_id, action, payload, timeout=timeout)
+        return JsonResponse({'success': True, 'result': result})
+    except TimeoutError:
+        return JsonResponse({'success': False, 'error': f'{action} 응답 시간 초과.'})
+    except Exception as e:
+        return JsonResponse({'success': False, 'error': str(e)})
+
 
 @role_required('cs')
 def ops_config(request):

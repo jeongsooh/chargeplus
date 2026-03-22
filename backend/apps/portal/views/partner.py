@@ -1,3 +1,4 @@
+from django.core.paginator import Paginator
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib import messages
 from django.db.models import Sum, Count, Q
@@ -114,4 +115,50 @@ def stats_view(request):
         'prev': prev,
         'month_label': month_start.strftime('%Y년 %m월'),
         'prev_month_label': prev_month_start.strftime('%Y년 %m월'),
+    })
+
+
+@role_required('partner')
+def payments_list(request):
+    from apps.payment.models import PaymentTransaction
+
+    profile = request.user.partner_profile
+    my_station_ids = ChargingStation.objects.filter(
+        site__partner=profile
+    ).values_list('station_id', flat=True)
+
+    qs = PaymentTransaction.objects.filter(
+        station_id__in=my_station_ids
+    ).select_related('user').order_by('-created_at')
+
+    station_q = request.GET.get('station_q', '')
+    user_q = request.GET.get('user_q', '')
+    status_q = request.GET.get('status_q', '')
+    date_from = request.GET.get('date_from', '')
+    date_to = request.GET.get('date_to', '')
+
+    if station_q:
+        qs = qs.filter(station_id__icontains=station_q)
+    if user_q:
+        qs = qs.filter(
+            Q(user__username__icontains=user_q) |
+            Q(user__first_name__icontains=user_q)
+        )
+    if status_q:
+        qs = qs.filter(status=status_q)
+    if date_from:
+        qs = qs.filter(created_at__date__gte=date_from)
+    if date_to:
+        qs = qs.filter(created_at__date__lte=date_to)
+
+    paginator = Paginator(qs, 20)
+    page = paginator.get_page(request.GET.get('page', 1))
+
+    from apps.payment.models import PaymentTransaction as PT
+    return render(request, 'portal/partner/payments.html', {
+        'page': page,
+        'station_q': station_q, 'user_q': user_q,
+        'status_q': status_q, 'date_from': date_from, 'date_to': date_to,
+        'status_choices': PT.Status.choices,
+        'profile': profile,
     })

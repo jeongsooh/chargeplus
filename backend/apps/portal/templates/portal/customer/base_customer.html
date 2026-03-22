@@ -7,6 +7,9 @@
 <a href="{% url 'portal:customer_history' %}" class="nav-link {% if request.resolver_match.url_name == 'customer_history' %}active{% endif %}">
   <i class="bi bi-clock-history me-2"></i>충전이력
 </a>
+<a href="{% url 'portal:customer_payments' %}" class="nav-link {% if request.resolver_match.url_name == 'customer_payments' %}active{% endif %}">
+  <i class="bi bi-receipt me-2"></i>정산내역
+</a>
 <a href="{% url 'portal:customer_cards' %}" class="nav-link {% if 'customer_card' in request.resolver_match.url_name %}active{% endif %}">
   <i class="bi bi-credit-card me-2"></i>카드 관리
 </a>

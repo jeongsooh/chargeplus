@@ -50,8 +50,13 @@ urlpatterns = [
     # Sessions
     path('portal/cs/sessions/', cs.sessions_list, name='cs_sessions'),
 
+    # Payments
+    path('portal/cs/payments/', cs.payments_list, name='cs_payments'),
+
     # System Ops
     path('portal/cs/ops/config/', cs.ops_config, name='cs_ops_config'),
+    path('portal/cs/ops/active/', cs.ops_active_stations, name='cs_ops_active'),
+    path('portal/cs/ops/active/<str:station_id>/cmd/', cs.ops_station_cmd, name='cs_ops_station_cmd'),
     path('portal/cs/ops/msglog/', cs.ops_msglog, name='cs_ops_msglog'),
 
     # ── Partner portal ────────────────────────────────────────────────────────
@@ -60,10 +65,12 @@ urlpatterns = [
     path('portal/partner/sites/<int:site_id>/price/', partner.site_update_price, name='partner_site_price'),
     path('portal/partner/chargers/', partner.chargers_list, name='partner_chargers'),
     path('portal/partner/stats/', partner.stats_view, name='partner_stats'),
+    path('portal/partner/payments/', partner.payments_list, name='partner_payments'),
 
     # ── Customer portal ───────────────────────────────────────────────────────
     path('portal/customer/', customer.dashboard, name='customer_dashboard'),
     path('portal/customer/history/', customer.history, name='customer_history'),
+    path('portal/customer/payments/', customer.payments_list, name='customer_payments'),
     path('portal/customer/cards/', customer.cards_list, name='customer_cards'),
     path('portal/customer/cards/add/', customer.card_add, name='customer_card_add'),
     path('portal/customer/cards/<str:token_id>/delete/', customer.card_delete, name='customer_card_delete'),

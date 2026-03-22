@@ -1,3 +1,4 @@
+from django.core.paginator import Paginator
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib import messages
 from django.views.decorators.http import require_http_methods
@@ -60,6 +61,27 @@ def card_delete(request, token_id):
     card.delete()
     messages.success(request, '카드가 삭제되었습니다.')
     return redirect('portal:customer_cards')
+
+
+@role_required('customer')
+def payments_list(request):
+    from apps.payment.models import PaymentTransaction
+
+    qs = PaymentTransaction.objects.filter(user=request.user).order_by('-created_at')
+
+    status_q = request.GET.get('status_q', '')
+    if status_q:
+        qs = qs.filter(status=status_q)
+
+    paginator = Paginator(qs, 20)
+    page = paginator.get_page(request.GET.get('page', 1))
+
+    from apps.payment.models import PaymentTransaction as PT
+    return render(request, 'portal/customer/payments.html', {
+        'page': page,
+        'status_q': status_q,
+        'status_choices': PT.Status.choices,
+    })
 
 
 @role_required('customer')
