@@ -92,6 +92,18 @@ class ChargingStation(models.Model):
     latitude        = models.DecimalField(max_digits=9, decimal_places=6, null=True, blank=True)
     longitude       = models.DecimalField(max_digits=9, decimal_places=6, null=True, blank=True)
 
+    # Connector topology — used to map flat OCPP connectorId to EVSE/Connector
+    num_evses                = models.PositiveSmallIntegerField(
+        default=1,
+        verbose_name='EVSE 수',
+        help_text='충전기 내 EVSE(충전 유닛) 개수',
+    )
+    num_connectors_per_evse  = models.PositiveSmallIntegerField(
+        default=1,
+        verbose_name='EVSE당 커넥터 수',
+        help_text='각 EVSE에 포함된 커넥터 개수. 총 커넥터 = EVSE 수 × 커넥터 수',
+    )
+
     # Admin
     is_active       = models.BooleanField(default=True)
     note            = models.TextField(blank=True)

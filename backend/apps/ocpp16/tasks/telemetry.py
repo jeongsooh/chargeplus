@@ -80,18 +80,19 @@ def handle_status_notification(self, station_id: str, msg_id: str, payload: dict
         else:
             # Individual connector status — auto-create EVSE/Connector if first time seen
             from apps.stations.models import EVSE
+            from apps.stations.utils import resolve_connector_location
             try:
                 station = ChargingStation.objects.get(station_id=station_id)
 
-                # Auto-provision EVSE (evse_id=1 for all OCPP 1.6 connectors)
+                evse_id, connector_within = resolve_connector_location(station, connector_id)
                 evse, _ = EVSE.objects.get_or_create(
                     charging_station=station,
-                    evse_id=1,
+                    evse_id=evse_id,
                 )
 
                 connector, created = Connector.objects.get_or_create(
                     evse=evse,
-                    connector_id=connector_id,
+                    connector_id=connector_within,
                     defaults={
                         'current_status': ocpp_status,
                         'error_code': error_code,
@@ -114,6 +115,7 @@ def handle_status_notification(self, station_id: str, msg_id: str, payload: dict
 
                 logger.info(
                     f"StatusNotification: station={station_id} connector={connector_id} "
+                    f"→ EVSE-{evse_id}/C-{connector_within} "
                     f"status={ocpp_status} error={error_code}"
                     + (" (auto-created)" if created else "")
                 )

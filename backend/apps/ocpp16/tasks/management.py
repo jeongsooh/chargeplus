@@ -84,6 +84,16 @@ def handle_boot_notification(self, station_id: str, msg_id: str, payload: dict):
             f"model={payload.get('chargePointModel')} -> {response_status}"
         )
 
+        if response_status == 'Accepted':
+            from apps.stations.models import Connector
+            from apps.stations.utils import provision_connectors
+            station_obj = ChargingStation.objects.get(station_id=station_id)
+            provision_connectors(station_obj)
+            Connector.objects.filter(evse__charging_station__station_id=station_id).update(
+                current_status=Connector.Status.UNAVAILABLE,
+                status_updated_at=timezone.now(),
+            )
+
     except Exception as e:
         logger.exception(f"handle_boot_notification error for station={station_id}: {e}")
         publish_response(msg_id, {

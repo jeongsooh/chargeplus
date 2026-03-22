@@ -72,13 +72,46 @@ class ChargingSiteAdmin(admin.ModelAdmin):
 class ChargingStationAdmin(admin.ModelAdmin):
     list_display = [
         'station_id', 'operator', 'status', 'vendor_name', 'model',
-        'firmware_version', 'last_heartbeat', 'is_active',
+        'get_connector_summary', 'firmware_version', 'last_heartbeat', 'is_active',
     ]
     list_filter = ['status', 'operator', 'is_active']
     search_fields = ['station_id', 'vendor_name', 'serial_number', 'address']
     readonly_fields = ['last_heartbeat', 'last_boot_at', 'created_at', 'updated_at']
     inlines = [EVSEInline, DeviceConfigurationInline, FirmwareHistoryInline, StationVariableInline]
-    actions = ['send_soft_reset', 'send_hard_reset', 'get_configuration']
+    actions = ['send_soft_reset', 'send_hard_reset', 'get_configuration', 'provision_connectors']
+
+    fieldsets = [
+        ('기본 정보', {
+            'fields': ['station_id', 'operator', 'site', 'is_active', 'note'],
+        }),
+        ('충전기 구성', {
+            'fields': ['num_evses', 'num_connectors_per_evse'],
+            'description': (
+                'EVSE 수 × EVSE당 커넥터 수 = 총 커넥터 수. '
+                'flat connectorId 1,2,3,... 을 EVSE/Connector에 매핑하는 기준입니다. '
+                '변경 후 "EVSE/Connector 구조 생성" 액션을 실행하세요.'
+            ),
+        }),
+        ('장치 정보', {
+            'fields': ['vendor_name', 'model', 'serial_number', 'firmware_version', 'iccid', 'imsi'],
+            'classes': ['collapse'],
+        }),
+        ('상태', {
+            'fields': ['status', 'last_heartbeat', 'last_boot_at'],
+        }),
+        ('위치', {
+            'fields': ['address', 'latitude', 'longitude'],
+            'classes': ['collapse'],
+        }),
+        ('시간', {
+            'fields': ['created_at', 'updated_at'],
+            'classes': ['collapse'],
+        }),
+    ]
+
+    def get_connector_summary(self, obj):
+        return f'{obj.num_evses} EVSE × {obj.num_connectors_per_evse}C = {obj.num_evses * obj.num_connectors_per_evse}포트'
+    get_connector_summary.short_description = '커넥터 구성'
 
     def send_soft_reset(self, request, queryset):
         from apps.ocpp16.services.gateway_client import GatewayClient
@@ -130,6 +163,14 @@ class ChargingStationAdmin(admin.ModelAdmin):
         self.message_user(request, f"GetConfiguration: {success} succeeded, {failed} failed/offline.")
 
     get_configuration.short_description = 'Get Configuration'
+
+    def provision_connectors(self, request, queryset):
+        from apps.stations.utils import provision_connectors as _provision
+        for station in queryset:
+            _provision(station)
+        self.message_user(request, f"{queryset.count()}개 충전기 EVSE/Connector 구조를 생성/보정했습니다.")
+
+    provision_connectors.short_description = 'EVSE/Connector 구조 생성'
 
 
 @admin.register(EVSE)
