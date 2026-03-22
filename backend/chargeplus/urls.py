@@ -7,6 +7,7 @@ urlpatterns = [
     path('', include('apps.portal.urls', namespace='portal')),
     # REST API (JWT-based)
     path('api/', include('apps.mobile_api.urls')),
+    path('api/payment/', include('apps.payment.urls')),
     path('api/v1/', include('apps.ocpp16.urls')),
     path('api/v1/stations/', include('apps.stations.urls')),
     path('api/v1/transactions/', include('apps.transactions.urls')),

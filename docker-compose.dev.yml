@@ -37,6 +37,14 @@ services:
       - SECRET_KEY=dev-secret-key-not-for-production
       - DJANGO_SETTINGS_MODULE=chargeplus.settings.development
       - ALLOWED_HOSTS=*
+      - MB_SECRET_KEY=6ca6af4578753e1afae2eb864f8aa288
+      - MB_ACCESS_CODE=DNHXPHRNMZ
+      - MB_MERCHANT_ID=114743
+      - MB_SANDBOX=true
+      - MB_IPN_URL=http://backend:8000/api/payment/ipn/
+      - MB_RETURN_URL=http://localhost:8080/api/payment/return/
+      - MB_CANCEL_URL=http://localhost:8080/api/payment/cancel/
+      - MB_PREPAID_AMOUNT=100000
     command: python manage.py runserver 0.0.0.0:8000
     ports:
       - "8000:8000"
@@ -68,6 +76,13 @@ services:
       - ./backend:/app
     environment:
       - DJANGO_SETTINGS_MODULE=chargeplus.settings.development
+      - MB_SECRET_KEY=6ca6af4578753e1afae2eb864f8aa288
+      - MB_ACCESS_CODE=DNHXPHRNMZ
+      - MB_MERCHANT_ID=114743
+      - MB_SANDBOX=true
+      - MB_IPN_URL=http://backend:8000/api/payment/ipn/
+      - MB_RETURN_URL=http://localhost:8080/api/payment/return/
+      - MB_CANCEL_URL=http://localhost:8080/api/payment/cancel/
 
   dispatcher:
     volumes:

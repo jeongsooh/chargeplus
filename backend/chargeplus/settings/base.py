@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'apps.ocpp16',
     'apps.mobile_api',
     'apps.portal',
+    'apps.payment',
 ]
 
 MIDDLEWARE = [
@@ -193,6 +194,7 @@ CELERY_TASK_ROUTES = {
     'apps.ocpp16.tasks.telemetry.*': {'queue': 'ocpp.q.telemetry'},
     'apps.ocpp16.tasks.management.*': {'queue': 'ocpp.q.management'},
     'apps.ocpp16.tasks.commands.*': {'queue': 'ocpp.q.commands'},
+    'apps.payment.tasks.*': {'queue': 'ocpp.q.commands'},
 }
 
 CELERY_TASK_DEFAULT_QUEUE = 'default'
@@ -271,3 +273,13 @@ LOGGING = {
 # Create logs directory if it doesn't exist
 _logs_dir = BASE_DIR / 'logs'
 _logs_dir.mkdir(exist_ok=True)
+
+# --- MB Paygate ---
+MB_SECRET_KEY  = os.environ.get('MB_SECRET_KEY', '')
+MB_ACCESS_CODE = os.environ.get('MB_ACCESS_CODE', '')
+MB_MERCHANT_ID = os.environ.get('MB_MERCHANT_ID', '')
+MB_SANDBOX     = os.environ.get('MB_SANDBOX', 'true') == 'true'
+MB_IPN_URL     = os.environ.get('MB_IPN_URL', 'https://chargeplus.kr/api/payment/ipn/')
+MB_RETURN_URL  = os.environ.get('MB_RETURN_URL', 'https://chargeplus.kr/api/payment/return/')
+MB_CANCEL_URL  = os.environ.get('MB_CANCEL_URL', 'https://chargeplus.kr/api/payment/cancel/')
+MB_PREPAID_AMOUNT = int(os.environ.get('MB_PREPAID_AMOUNT', '100000'))

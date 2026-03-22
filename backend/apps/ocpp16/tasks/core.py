@@ -276,6 +276,14 @@ def handle_stop_transaction(self, station_id: str, msg_id: str, payload: dict):
         except Exception as e:
             logger.error(f"Error updating AppSession for TX#{transaction_id}: {e}")
 
+        # Payment 연동: 충전 종료 후 차액 환불 처리
+        if app_session:
+            try:
+                from apps.payment.services.payment_service import PaymentService
+                PaymentService.process_stop(app_session)
+            except Exception as e:
+                logger.error(f"PaymentService.process_stop error for TX#{transaction_id}: {e}")
+
         # Send charge complete notification
         if app_session:
             try:
