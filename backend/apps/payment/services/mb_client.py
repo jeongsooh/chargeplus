@@ -19,7 +19,7 @@ from .mac import (
 
 logger = logging.getLogger(__name__)
 
-SANDBOX_BASE = 'https://BE.mbbank.com.vn/pg-paygate/ite-pg-paygate/paygate'
+SANDBOX_BASE = 'https://api-sandbox.mbbank.com.vn/pg-paygate/ite-pg-paygate/paygate'
 PROD_BASE = 'https://BE.mbbank.com.vn/pg-paygate/paygate'  # 운영 URL (추후 확인 필요)
 
 
