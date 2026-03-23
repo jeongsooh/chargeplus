@@ -932,3 +932,6 @@ msgstr "Expired"
 
 msgid "미등록/불가"
 msgstr "Unregistered/Invalid"
+
+msgid "증감"
+msgstr "Net Change"

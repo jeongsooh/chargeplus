@@ -932,3 +932,6 @@ msgstr ""
 
 msgid "미등록/불가"
 msgstr ""
+
+msgid "증감"
+msgstr "증감"

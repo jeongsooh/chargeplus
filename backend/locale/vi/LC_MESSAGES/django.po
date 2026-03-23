@@ -932,3 +932,6 @@ msgstr "Hết hạn"
 
 msgid "미등록/불가"
 msgstr "Chưa đăng ký/Không hợp lệ"
+
+msgid "증감"
+msgstr "Net Change"
