@@ -15,6 +15,9 @@ Qt의 QJsonObject는 키를 알파벳 순으로 저장하므로 sort_keys=True�
 """
 import hashlib
 import json
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 def generate_mac(fields: dict, secret_key: str, restore_mattec: bool = False) -> str:
@@ -50,6 +53,8 @@ def generate_mac(fields: dict, secret_key: str, restore_mattec: bool = False) ->
 
     # 6. hashkey prefix
     s = secret_key + s
+
+    logger.debug(f"MAC pre-hash string: {s}")
 
     # 7. MD5 → 대문자 hex
     return hashlib.md5(s.encode('utf-8')).hexdigest().upper()
