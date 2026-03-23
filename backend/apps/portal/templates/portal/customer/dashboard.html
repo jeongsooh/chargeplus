@@ -1,27 +1,28 @@
 {% extends "portal/customer/base_customer.html" %}
-{% block title %}내 충전현황{% endblock %}
+{% load i18n %}
+{% block title %}{% trans "내 충전현황" %}{% endblock %}
 
 {% block content %}
-<h4 class="fw-bold mb-4">안녕하세요, {{ request.user.get_full_name|default:request.user.username }}님</h4>
+<h4 class="fw-bold mb-4">{% blocktrans with name=request.user.get_full_name|default:request.user.username %}안녕하세요, {{ name }}님{% endblocktrans %}</h4>
 
 <div class="row g-3 mb-4">
   <div class="col-md-4">
     <div class="card border-0 shadow-sm">
       <div class="card-body">
-        <div class="text-muted small">등록된 카드</div>
+        <div class="text-muted small">{% trans "등록된 카드" %}</div>
         <div class="fs-3 fw-bold text-primary">{{ cards.count }}</div>
-        <a href="{% url 'portal:customer_cards' %}" class="small">관리 →</a>
+        <a href="{% url 'portal:customer_cards' %}" class="small">{% trans "관리" %} →</a>
       </div>
     </div>
   </div>
 </div>
 
-<h6 class="fw-bold mb-3">최근 충전이력</h6>
+<h6 class="fw-bold mb-3">{% trans "최근 충전이력" %}</h6>
 <div class="card shadow-sm">
   <div class="table-responsive">
     <table class="table table-hover mb-0">
       <thead class="table-light">
-        <tr><th>충전기</th><th>시작</th><th>충전량(kWh)</th><th>금액(원)</th></tr>
+        <tr><th>{% trans "충전기" %}</th><th>{% trans "시작" %}</th><th>{% trans "충전량(kWh)" %}</th><th>{% trans "금액(원)" %}</th></tr>
       </thead>
       <tbody>
         {% for s in recent_sessions %}
@@ -32,7 +33,7 @@
           <td>{{ s.amount|floatformat:0|default:"-" }}</td>
         </tr>
         {% empty %}
-        <tr><td colspan="4" class="text-center text-muted py-3">충전이력이 없습니다.</td></tr>
+        <tr><td colspan="4" class="text-center text-muted py-3">{% trans "충전이력이 없습니다." %}</td></tr>
         {% endfor %}
       </tbody>
     </table>

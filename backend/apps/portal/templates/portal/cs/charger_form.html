@@ -1,4 +1,5 @@
 {% extends "portal/cs/base_cs.html" %}
+{% load i18n %}
 {% block title %}충전기 추가 - CS{% endblock %}
 
 {% block content %}
@@ -12,12 +13,12 @@
     <form method="post">
       {% csrf_token %}
       <div class="mb-3">
-        <label class="form-label">충전기 ID <span class="text-danger">*</span></label>
+        <label class="form-label">{% trans "충전기 ID" %} <span class="text-danger">*</span></label>
         <input type="text" name="station_id" class="form-control text-uppercase" placeholder="예: CP001" required>
         <div class="form-text">영문/숫자 조합, 대문자 저장</div>
       </div>
       <div class="mb-3">
-        <label class="form-label">운영사 <span class="text-danger">*</span></label>
+        <label class="form-label">{% trans "운영사" %} <span class="text-danger">*</span></label>
         <select name="operator_id" class="form-select" required>
           <option value="">-- 선택 --</option>
           {% for op in operators %}
@@ -26,7 +27,7 @@
         </select>
       </div>
       <div class="mb-3">
-        <label class="form-label">충전소</label>
+        <label class="form-label">{% trans "충전소" %}</label>
         <select name="site_id" class="form-select">
           <option value="">-- 미지정 --</option>
           {% for site in sites %}
@@ -35,12 +36,12 @@
         </select>
       </div>
       <div class="mb-4">
-        <label class="form-label">주소</label>
+        <label class="form-label">{% trans "주소" %}</label>
         <input type="text" name="address" class="form-control" placeholder="설치 주소">
       </div>
       <div class="d-flex gap-2">
-        <button type="submit" class="btn btn-primary">저장</button>
-        <a href="{% url 'portal:cs_chargers' %}" class="btn btn-outline-secondary">취소</a>
+        <button type="submit" class="btn btn-primary">{% trans "저장" %}</button>
+        <a href="{% url 'portal:cs_chargers' %}" class="btn btn-outline-secondary">{% trans "취소" %}</a>
       </div>
     </form>
   </div>

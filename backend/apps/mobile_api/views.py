@@ -2,6 +2,7 @@ import logging
 import time
 
 from django.contrib.auth import authenticate
+from django.utils.translation import gettext as _
 from rest_framework import status as http_status
 from rest_framework.exceptions import NotFound, PermissionDenied
 from rest_framework.permissions import IsAuthenticated, AllowAny
@@ -28,20 +29,20 @@ class LoginView(APIView):
 
         if not user_id or not password:
             return Response(
-                {"detail": "아이디와 비밀번호를 입력해주세요."},
+                {"detail": _("아이디와 비밀번호를 입력해주세요.")},
                 status=http_status.HTTP_401_UNAUTHORIZED,
             )
 
         user = authenticate(username=user_id, password=password)
         if not user:
             return Response(
-                {"detail": "아이디 또는 비밀번호가 틀렸습니다."},
+                {"detail": _("아이디 또는 비밀번호가 틀렸습니다.")},
                 status=http_status.HTTP_401_UNAUTHORIZED,
             )
 
         if not user.is_active:
             return Response(
-                {"detail": "비활성화된 계정입니다."},
+                {"detail": _("비활성화된 계정입니다.")},
                 status=http_status.HTTP_401_UNAUTHORIZED,
             )
 
@@ -69,7 +70,7 @@ class ChargeStartView(APIView):
         station_id = request.query_params.get("qr_code", "").strip()
         if not station_id:
             return Response(
-                {"error": "qr_code 파라미터가 필요합니다."},
+                {"error": _("qr_code 파라미터가 필요합니다.")},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
@@ -93,7 +94,7 @@ class ChargeStartView(APIView):
                     raise ValueError
             except ValueError:
                 return Response(
-                    {"error": "goal_value는 0보다 큰 숫자여야 합니다."},
+                    {"error": _("goal_value는 0보다 큰 숫자여야 합니다.")},
                     status=status.HTTP_400_BAD_REQUEST,
                 )
         else:
@@ -106,14 +107,14 @@ class ChargeStartView(APIView):
             station = ChargingStation.objects.get(station_id=station_id, is_active=True)
         except ChargingStation.DoesNotExist:
             return Response(
-                {"error": "존재하지 않는 충전기입니다."},
+                {"error": _("존재하지 않는 충전기입니다.")},
                 status=status.HTTP_404_NOT_FOUND,
             )
 
         # 2. Check station online status
         if not GatewayClient.is_station_connected(station_id):
             return Response(
-                {"error": "충전기가 오프라인입니다."},
+                {"error": _("충전기가 오프라인입니다.")},
                 status=status.HTTP_503_SERVICE_UNAVAILABLE,
             )
 
@@ -124,7 +125,7 @@ class ChargeStartView(APIView):
         ).exists()
         if duplicate:
             return Response(
-                {"error": "이미 충전 중인 세션이 있습니다."},
+                {"error": _("이미 충전 중인 세션이 있습니다.")},
                 status=status.HTTP_409_CONFLICT,
             )
 
@@ -135,7 +136,7 @@ class ChargeStartView(APIView):
         ).first()
         if not connector:
             return Response(
-                {"error": "사용 가능한 커넥터가 없습니다."},
+                {"error": _("사용 가능한 커넥터가 없습니다.")},
                 status=status.HTTP_409_CONFLICT,
             )
 
@@ -171,7 +172,7 @@ class ChargeStartView(APIView):
                     fail_reason='충전기가 원격 충전을 거부했습니다.',
                 )
                 return Response(
-                    {"error": "충전기가 원격 충전을 거부했습니다."},
+                    {"error": _("충전기가 원격 충전을 거부했습니다.")},
                     status=status.HTTP_409_CONFLICT,
                 )
 
@@ -185,7 +186,7 @@ class ChargeStartView(APIView):
                 fail_reason='충전기 통신 오류가 발생했습니다.',
             )
             return Response(
-                {"error": "충전기 통신 오류가 발생했습니다."},
+                {"error": _("충전기 통신 오류가 발생했습니다.")},
                 status=status.HTTP_503_SERVICE_UNAVAILABLE,
             )
 
@@ -223,7 +224,7 @@ class ChargeStatusView(APIView):
         session_id = request.query_params.get("session_id", "").strip()
         if not session_id:
             return Response(
-                {"error": "session_id 파라미터가 필요합니다."},
+                {"error": _("session_id 파라미터가 필요합니다.")},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
@@ -283,7 +284,7 @@ class ChargeStopView(APIView):
         session_id = request.query_params.get("session_id", "").strip()
         if not session_id:
             return Response(
-                {"error": "session_id 파라미터가 필요합니다."},
+                {"error": _("session_id 파라미터가 필요합니다.")},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
@@ -309,7 +310,7 @@ class ChargeStopView(APIView):
                 "kwh": 0.0,
                 "cost": 0,
                 "currency": "KRW",
-                "message": "세션이 시작되지 않았습니다.",
+                "message": _("세션이 시작되지 않았습니다."),
             })
 
         # Handle pending sessions (never started)
@@ -328,7 +329,7 @@ class ChargeStopView(APIView):
             if not session.transaction:
                 logger.error(f"Active session {session_id} has no transaction")
                 return Response(
-                    {"error": "트랜잭션을 찾을 수 없습니다."},
+                    {"error": _("트랜잭션을 찾을 수 없습니다.")},
                     status=status.HTTP_500_INTERNAL_SERVER_ERROR,
                 )
 
@@ -374,7 +375,7 @@ class ChargeStopView(APIView):
                     "kwh": float(session.final_kwh or 0),
                     "cost": session.final_cost or 0,
                     "currency": "KRW",
-                    "message": "충전이 완료되었습니다. 이용해 주셔서 감사합니다.",
+                    "message": _("충전이 완료되었습니다. 이용해 주셔서 감사합니다."),
                 })
             else:
                 # StopTransaction not yet processed; return current values
@@ -383,10 +384,10 @@ class ChargeStopView(APIView):
                     "kwh": float(session.kwh_current),
                     "cost": 0,
                     "currency": "KRW",
-                    "message": "충전 종료 처리 중입니다.",
+                    "message": _("충전 종료 처리 중입니다."),
                 })
 
         return Response(
-            {"error": "유효하지 않은 세션 상태입니다."},
+            {"error": _("유효하지 않은 세션 상태입니다.")},
             status=status.HTTP_409_CONFLICT,
         )

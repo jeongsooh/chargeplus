@@ -1,11 +1,12 @@
 {% extends "portal/base_auth.html" %}
-{% block title %}파트너 가입 - ChargePlus{% endblock %}
+{% load i18n %}
+{% block title %}{% trans "파트너" %} {% trans "가입하기" %} - ChargePlus{% endblock %}
 
 {% block content %}
 <div class="row justify-content-center mt-5">
   <div class="col-md-5">
     <div class="text-center mb-4">
-      <h4 class="fw-bold"><i class="bi bi-building text-warning me-2"></i>파트너 가입</h4>
+      <h4 class="fw-bold"><i class="bi bi-building text-warning me-2"></i>{% trans "파트너" %} {% trans "가입하기" %}</h4>
       <p class="text-muted small">가입 후 관리자 승인이 필요합니다.</p>
     </div>
     <div class="card shadow-sm">
@@ -14,40 +15,40 @@
           {% csrf_token %}
           <h6 class="text-muted mb-3">계정 정보</h6>
           <div class="mb-3">
-            <label class="form-label">아이디 <span class="text-danger">*</span></label>
+            <label class="form-label">{% trans "아이디" %} <span class="text-danger">*</span></label>
             <input type="text" name="username" class="form-control" required>
           </div>
           <div class="mb-3">
-            <label class="form-label">담당자명</label>
+            <label class="form-label">{% trans "이름" %}</label>
             <input type="text" name="first_name" class="form-control">
           </div>
           <div class="mb-3">
-            <label class="form-label">이메일</label>
+            <label class="form-label">{% trans "이메일" %}</label>
             <input type="email" name="email" class="form-control">
           </div>
           <div class="mb-3">
-            <label class="form-label">비밀번호 <span class="text-danger">*</span></label>
+            <label class="form-label">{% trans "비밀번호" %} <span class="text-danger">*</span></label>
             <input type="password" name="password" class="form-control" required minlength="8">
           </div>
           <div class="mb-4">
-            <label class="form-label">비밀번호 확인 <span class="text-danger">*</span></label>
+            <label class="form-label">{% trans "비밀번호 확인" %} <span class="text-danger">*</span></label>
             <input type="password" name="password2" class="form-control" required>
           </div>
           <hr>
-          <h6 class="text-muted mb-3">사업체 정보</h6>
+          <h6 class="text-muted mb-3">{% trans "사업자 정보" %}</h6>
           <div class="mb-3">
-            <label class="form-label">사업체명 <span class="text-danger">*</span></label>
+            <label class="form-label">{% trans "사업체명" %} <span class="text-danger">*</span></label>
             <input type="text" name="business_name" class="form-control" required>
           </div>
           <div class="mb-3">
-            <label class="form-label">사업자번호 <span class="text-danger">*</span></label>
+            <label class="form-label">{% trans "사업자번호" %} <span class="text-danger">*</span></label>
             <input type="text" name="business_no" class="form-control" placeholder="000-00-00000" required>
           </div>
           <div class="mb-4">
-            <label class="form-label">담당자 연락처</label>
+            <label class="form-label">{% trans "담당자 연락처" %}</label>
             <input type="text" name="contact_phone" class="form-control" placeholder="010-0000-0000">
           </div>
-          <button type="submit" class="btn btn-warning w-100 text-dark fw-bold">가입 신청</button>
+          <button type="submit" class="btn btn-warning w-100 text-dark fw-bold">{% trans "가입하기" %}</button>
         </form>
       </div>
     </div>

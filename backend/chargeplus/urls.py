@@ -3,6 +3,7 @@ from django.urls import path, include
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('i18n/', include('django.conf.urls.i18n')),
     # Portal (session-based, web UI)
     path('', include('apps.portal.urls', namespace='portal')),
     # REST API (JWT-based)

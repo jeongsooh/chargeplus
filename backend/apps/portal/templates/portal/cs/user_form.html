@@ -1,9 +1,10 @@
 {% extends "portal/cs/base_cs.html" %}
-{% block title %}사용자 추가 - CS{% endblock %}
+{% load i18n %}
+{% block title %}{% trans "사용자" %} 추가 - CS{% endblock %}
 
 {% block content %}
 <div class="d-flex align-items-center mb-4">
-  <h4 class="fw-bold mb-0">사용자 추가</h4>
+  <h4 class="fw-bold mb-0">{% trans "사용자" %} 추가</h4>
 </div>
 
 <div class="card shadow-sm" style="max-width:560px;">
@@ -13,35 +14,35 @@
       <div class="mb-3">
         <label class="form-label">역할 <span class="text-danger">*</span></label>
         <select name="role" class="form-select" id="roleSelect" required>
-          <option value="customer">고객</option>
-          <option value="partner">파트너</option>
+          <option value="customer">{% trans "고객" %}</option>
+          <option value="partner">{% trans "파트너" %}</option>
           <option value="cs">고객센터</option>
         </select>
       </div>
       <div class="mb-3">
-        <label class="form-label">아이디 <span class="text-danger">*</span></label>
+        <label class="form-label">{% trans "아이디" %} <span class="text-danger">*</span></label>
         <input type="text" name="username" class="form-control" required>
       </div>
       <div class="mb-3">
-        <label class="form-label">임시 비밀번호 <span class="text-danger">*</span></label>
+        <label class="form-label">임시 {% trans "비밀번호" %} <span class="text-danger">*</span></label>
         <input type="text" name="password" class="form-control" value="ChargePlus1234!" required>
       </div>
       <div class="mb-3">
-        <label class="form-label">이름</label>
+        <label class="form-label">{% trans "이름" %}</label>
         <input type="text" name="first_name" class="form-control">
       </div>
       <div class="mb-3">
-        <label class="form-label">이메일</label>
+        <label class="form-label">{% trans "이메일" %}</label>
         <input type="email" name="email" class="form-control">
       </div>
       <div class="mb-3">
-        <label class="form-label">연락처</label>
+        <label class="form-label">{% trans "연락처" %}</label>
         <input type="text" name="phone" class="form-control">
       </div>
       <div class="mb-3">
-        <label class="form-label">상태</label>
+        <label class="form-label">{% trans "상태" %}</label>
         <select name="status" class="form-select">
-          <option value="active">활성</option>
+          <option value="active">{% trans "활성" %}</option>
           <option value="pending">승인대기</option>
         </select>
       </div>
@@ -49,24 +50,24 @@
       <!-- Partner extra fields -->
       <div id="partnerFields" style="display:none;">
         <hr>
-        <h6 class="text-muted mb-3">사업체 정보</h6>
+        <h6 class="text-muted mb-3">{% trans "사업자 정보" %}</h6>
         <div class="mb-3">
-          <label class="form-label">사업체명</label>
+          <label class="form-label">{% trans "사업체명" %}</label>
           <input type="text" name="business_name" class="form-control">
         </div>
         <div class="mb-3">
-          <label class="form-label">사업자번호</label>
+          <label class="form-label">{% trans "사업자번호" %}</label>
           <input type="text" name="business_no" class="form-control">
         </div>
         <div class="mb-3">
-          <label class="form-label">담당자 연락처</label>
+          <label class="form-label">{% trans "담당자 연락처" %}</label>
           <input type="text" name="contact_phone" class="form-control">
         </div>
       </div>
 
       <div class="d-flex gap-2 mt-4">
-        <button type="submit" class="btn btn-primary">저장</button>
-        <a href="{% url 'portal:cs_users' %}" class="btn btn-outline-secondary">취소</a>
+        <button type="submit" class="btn btn-primary">{% trans "저장" %}</button>
+        <a href="{% url 'portal:cs_users' %}" class="btn btn-outline-secondary">{% trans "취소" %}</a>
       </div>
     </form>
   </div>

@@ -1,41 +1,42 @@
 {% extends "portal/base_auth.html" %}
-{% block title %}고객 가입 - ChargePlus{% endblock %}
+{% load i18n %}
+{% block title %}{% trans "고객" %} {% trans "가입하기" %} - ChargePlus{% endblock %}
 
 {% block content %}
 <div class="row justify-content-center mt-5">
   <div class="col-md-5">
     <div class="text-center mb-4">
-      <h4 class="fw-bold"><i class="bi bi-person-circle text-primary me-2"></i>고객 가입</h4>
+      <h4 class="fw-bold"><i class="bi bi-person-circle text-primary me-2"></i>{% trans "고객" %} {% trans "가입하기" %}</h4>
     </div>
     <div class="card shadow-sm">
       <div class="card-body p-4">
         <form method="post">
           {% csrf_token %}
           <div class="mb-3">
-            <label class="form-label">아이디 <span class="text-danger">*</span></label>
+            <label class="form-label">{% trans "아이디" %} <span class="text-danger">*</span></label>
             <input type="text" name="username" class="form-control" required>
           </div>
           <div class="mb-3">
-            <label class="form-label">이름</label>
+            <label class="form-label">{% trans "이름" %}</label>
             <input type="text" name="first_name" class="form-control">
           </div>
           <div class="mb-3">
-            <label class="form-label">이메일</label>
+            <label class="form-label">{% trans "이메일" %}</label>
             <input type="email" name="email" class="form-control">
           </div>
           <div class="mb-3">
-            <label class="form-label">연락처</label>
+            <label class="form-label">{% trans "연락처" %}</label>
             <input type="text" name="phone" class="form-control" placeholder="010-0000-0000">
           </div>
           <div class="mb-3">
-            <label class="form-label">비밀번호 <span class="text-danger">*</span></label>
+            <label class="form-label">{% trans "비밀번호" %} <span class="text-danger">*</span></label>
             <input type="password" name="password" class="form-control" required minlength="8">
           </div>
           <div class="mb-4">
-            <label class="form-label">비밀번호 확인 <span class="text-danger">*</span></label>
+            <label class="form-label">{% trans "비밀번호 확인" %} <span class="text-danger">*</span></label>
             <input type="password" name="password2" class="form-control" required>
           </div>
-          <button type="submit" class="btn btn-primary w-100">가입하기</button>
+          <button type="submit" class="btn btn-primary w-100">{% trans "가입하기" %}</button>
         </form>
       </div>
     </div>

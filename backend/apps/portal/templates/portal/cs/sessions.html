@@ -1,8 +1,9 @@
 {% extends "portal/cs/base_cs.html" %}
-{% block title %}충전이력 - CS{% endblock %}
+{% load i18n %}
+{% block title %}{% trans "충전이력" %} - CS{% endblock %}
 
 {% block content %}
-<h4 class="fw-bold mb-4">충전이력</h4>
+<h4 class="fw-bold mb-4">{% trans "충전이력" %}</h4>
 
 <!-- 필터 -->
 <div class="card shadow-sm mb-3">
@@ -19,21 +20,21 @@
       </div>
       <div class="col-auto">
         <select name="site_id" class="form-select form-select-sm">
-          <option value="">충전소 전체</option>
+          <option value="">{% trans "충전소" %} {% trans "전체" %}</option>
           {% for site in sites %}
           <option value="{{ site.pk }}" {% if site_id == site.pk|stringformat:"s" %}selected{% endif %}>{{ site.site_name }}</option>
           {% endfor %}
         </select>
       </div>
       <div class="col">
-        <input type="text" name="station_q" class="form-control form-control-sm" placeholder="충전기 ID" value="{{ station_q }}">
+        <input type="text" name="station_q" class="form-control form-control-sm" placeholder="{% trans "충전기 ID" %}" value="{{ station_q }}">
       </div>
       <div class="col">
-        <input type="text" name="user_q" class="form-control form-control-sm" placeholder="사용자/카드" value="{{ user_q }}">
+        <input type="text" name="user_q" class="form-control form-control-sm" placeholder="{% trans "사용자" %}/카드" value="{{ user_q }}">
       </div>
       <div class="col-auto">
-        <button type="submit" class="btn btn-primary btn-sm">검색</button>
-        <a href="{% url 'portal:cs_sessions' %}" class="btn btn-outline-secondary btn-sm">초기화</a>
+        <button type="submit" class="btn btn-primary btn-sm">{% trans "검색" %}</button>
+        <a href="{% url 'portal:cs_sessions' %}" class="btn btn-outline-secondary btn-sm">{% trans "초기화" %}</a>
       </div>
     </form>
   </div>
@@ -44,8 +45,8 @@
     <table class="table table-hover table-sm mb-0">
       <thead class="table-light">
         <tr>
-          <th>TX#</th><th>충전기</th><th>충전소</th><th>카드</th><th>상태</th>
-          <th>시작</th><th>종료</th><th>충전량(kWh)</th><th>금액(원)</th>
+          <th>TX#</th><th>충전기</th><th>{% trans "충전소" %}</th><th>카드</th><th>{% trans "상태" %}</th>
+          <th>{% trans "시작 시간" %}</th><th>{% trans "종료 시간" %}</th><th>{% trans "충전량(kWh)" %}</th><th>금액(원)</th>
         </tr>
       </thead>
       <tbody>

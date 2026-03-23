@@ -1,39 +1,40 @@
 {% extends "portal/base.html" %}
+{% load i18n %}
 
 {% block sidebar %}
 <a href="{% url 'portal:cs_dashboard' %}" class="nav-link {% if request.resolver_match.url_name == 'cs_dashboard' or request.resolver_match.url_name == 'cs_stats_detail' %}active{% endif %}">
-  <i class="bi bi-speedometer2 me-2"></i>대시보드
+  <i class="bi bi-speedometer2 me-2"></i>{% trans "대시보드" %}
 </a>
 <a href="{% url 'portal:cs_users' %}" class="nav-link {% if 'cs_user' in request.resolver_match.url_name %}active{% endif %}">
-  <i class="bi bi-people me-2"></i>사용자 관리
+  <i class="bi bi-people me-2"></i>{% trans "사용자 관리" %}
 </a>
 <a href="{% url 'portal:cs_partners' %}" class="nav-link {% if 'cs_partner' in request.resolver_match.url_name %}active{% endif %}">
-  <i class="bi bi-building me-2"></i>파트너 관리
+  <i class="bi bi-building me-2"></i>{% trans "파트너 관리" %}
 </a>
 <a href="{% url 'portal:cs_chargers' %}" class="nav-link {% if 'cs_charger' in request.resolver_match.url_name %}active{% endif %}">
-  <i class="bi bi-lightning-charge me-2"></i>충전기 관리
+  <i class="bi bi-lightning-charge me-2"></i>{% trans "충전기 관리" %}
 </a>
 <a href="{% url 'portal:cs_sites' %}" class="nav-link {% if 'cs_site' in request.resolver_match.url_name %}active{% endif %}">
-  <i class="bi bi-geo-alt me-2"></i>충전소 관리
+  <i class="bi bi-geo-alt me-2"></i>{% trans "충전소 관리" %}
 </a>
 <a href="{% url 'portal:cs_sessions' %}" class="nav-link {% if request.resolver_match.url_name == 'cs_sessions' %}active{% endif %}">
-  <i class="bi bi-clock-history me-2"></i>충전이력
+  <i class="bi bi-clock-history me-2"></i>{% trans "충전이력" %}
 </a>
 <a href="{% url 'portal:cs_payments' %}" class="nav-link {% if request.resolver_match.url_name == 'cs_payments' %}active{% endif %}">
-  <i class="bi bi-receipt me-2"></i>정산내역
+  <i class="bi bi-receipt me-2"></i>{% trans "정산내역" %}
 </a>
 <a href="{% url 'portal:cs_idtokens' %}" class="nav-link {% if 'cs_idtoken' in request.resolver_match.url_name %}active{% endif %}">
-  <i class="bi bi-credit-card-2-front me-2"></i>충전카드 관리
+  <i class="bi bi-credit-card-2-front me-2"></i>{% trans "충전카드 관리" %}
 </a>
 
-<div class="mt-2 mb-1 px-2" style="color:#6c757d;font-size:.75rem;text-transform:uppercase;letter-spacing:.05em;">시스템 운영</div>
+<div class="mt-2 mb-1 px-2" style="color:#6c757d;font-size:.75rem;text-transform:uppercase;letter-spacing:.05em;">{% trans "시스템 운영" %}</div>
 <a href="{% url 'portal:cs_ops_config' %}" class="nav-link ps-4 {% if request.resolver_match.url_name == 'cs_ops_config' %}active{% endif %}">
-  <i class="bi bi-gear me-2"></i>운영변수 설정
+  <i class="bi bi-gear me-2"></i>{% trans "운영변수 설정" %}
 </a>
 <a href="{% url 'portal:cs_ops_active' %}" class="nav-link ps-4 {% if 'cs_ops_active' in request.resolver_match.url_name %}active{% endif %}">
-  <i class="bi bi-router me-2"></i>Active 충전기 설정
+  <i class="bi bi-router me-2"></i>{% trans "Active 충전기 설정" %}
 </a>
 <a href="{% url 'portal:cs_ops_msglog' %}" class="nav-link ps-4 {% if request.resolver_match.url_name == 'cs_ops_msglog' %}active{% endif %}">
-  <i class="bi bi-journal-text me-2"></i>메세지 로그
+  <i class="bi bi-journal-text me-2"></i>{% trans "메세지 로그" %}
 </a>
 {% endblock %}

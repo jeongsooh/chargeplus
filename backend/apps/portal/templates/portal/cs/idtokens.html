@@ -1,9 +1,10 @@
 {% extends "portal/cs/base_cs.html" %}
-{% block title %}충전카드 관리 - CS{% endblock %}
+{% load i18n %}
+{% block title %}{% trans "충전카드 관리" %} - CS{% endblock %}
 
 {% block content %}
 <div class="d-flex align-items-center mb-4">
-  <h4 class="fw-bold mb-0">충전카드 관리</h4>
+  <h4 class="fw-bold mb-0">{% trans "충전카드 관리" %}</h4>
   <a href="{% url 'portal:cs_idtoken_create' %}" class="btn btn-primary btn-sm ms-auto">
     <i class="bi bi-plus-lg me-1"></i>카드 추가
   </a>
@@ -15,7 +16,7 @@
     <form method="get" class="row g-2 align-items-center">
       <div class="col-auto">
         <select name="status" class="form-select form-select-sm">
-          <option value="">상태 전체</option>
+          <option value="">{% trans "상태" %} {% trans "전체" %}</option>
           {% for val, label in status_choices %}
           <option value="{{ val }}" {% if status_filter == val %}selected{% endif %}>{{ label }}</option>
           {% endfor %}
@@ -23,7 +24,7 @@
       </div>
       <div class="col-auto">
         <select name="token_type" class="form-select form-select-sm">
-          <option value="">타입 전체</option>
+          <option value="">{% trans "타입" %} {% trans "전체" %}</option>
           {% for val, label in type_choices %}
           <option value="{{ val }}" {% if type_filter == val %}selected{% endif %}>{{ label }}</option>
           {% endfor %}
@@ -33,8 +34,8 @@
         <input type="text" name="q" class="form-control form-control-sm" placeholder="카드번호 / 사용자ID" value="{{ q }}">
       </div>
       <div class="col-auto">
-        <button type="submit" class="btn btn-primary btn-sm">검색</button>
-        <a href="{% url 'portal:cs_idtokens' %}" class="btn btn-outline-secondary btn-sm">초기화</a>
+        <button type="submit" class="btn btn-primary btn-sm">{% trans "검색" %}</button>
+        <a href="{% url 'portal:cs_idtokens' %}" class="btn btn-outline-secondary btn-sm">{% trans "초기화" %}</a>
       </div>
     </form>
   </div>
@@ -44,7 +45,7 @@
   <div class="table-responsive">
     <table class="table table-hover mb-0">
       <thead class="table-light">
-        <tr><th>카드 번호</th><th>타입</th><th>상태</th><th>사용자</th><th>만료일</th><th>등록일</th><th></th></tr>
+        <tr><th>카드 번호</th><th>{% trans "타입" %}</th><th>{% trans "상태" %}</th><th>{% trans "사용자" %}</th><th>만료일</th><th>{% trans "등록일" %}</th><th></th></tr>
       </thead>
       <tbody>
         {% for token in page %}
@@ -61,11 +62,11 @@
           <td class="text-muted small">{{ token.expiry_date|date:"Y-m-d"|default:"-" }}</td>
           <td class="text-muted small">{{ token.created_at|date:"Y-m-d" }}</td>
           <td class="text-nowrap">
-            <a href="{% url 'portal:cs_idtoken_edit' token.id_token %}" class="btn btn-sm btn-outline-primary">수정</a>
+            <a href="{% url 'portal:cs_idtoken_edit' token.id_token %}" class="btn btn-sm btn-outline-primary">{% trans "수정" %}</a>
             <form method="post" action="{% url 'portal:cs_idtoken_delete' token.id_token %}" class="d-inline"
                   onsubmit="return confirm('충전카드를 삭제하시겠습니까?')">
               {% csrf_token %}
-              <button class="btn btn-sm btn-outline-danger">삭제</button>
+              <button class="btn btn-sm btn-outline-danger">{% trans "삭제" %}</button>
             </form>
           </td>
         </tr>

@@ -1,8 +1,9 @@
 {% extends "portal/cs/base_cs.html" %}
-{% block title %}정산내역 - CS{% endblock %}
+{% load i18n %}
+{% block title %}{% trans "정산내역" %} - CS{% endblock %}
 
 {% block content %}
-<h4 class="fw-bold mb-4">정산내역</h4>
+<h4 class="fw-bold mb-4">{% trans "정산내역" %}</h4>
 
 <div class="card shadow-sm mb-3">
   <div class="card-body py-2">
@@ -15,22 +16,22 @@
         <input type="date" name="date_to" class="form-control form-control-sm" value="{{ date_to }}">
       </div>
       <div class="col">
-        <input type="text" name="station_q" class="form-control form-control-sm" placeholder="충전기 ID" value="{{ station_q }}">
+        <input type="text" name="station_q" class="form-control form-control-sm" placeholder="{% trans "충전기 ID" %}" value="{{ station_q }}">
       </div>
       <div class="col">
-        <input type="text" name="user_q" class="form-control form-control-sm" placeholder="사용자(아이디/이름/이메일)" value="{{ user_q }}">
+        <input type="text" name="user_q" class="form-control form-control-sm" placeholder="{% trans "사용자" %}(아이디/이름/이메일)" value="{{ user_q }}">
       </div>
       <div class="col-auto">
         <select name="status_q" class="form-select form-select-sm">
-          <option value="">상태 전체</option>
+          <option value="">{% trans "상태" %} {% trans "전체" %}</option>
           {% for val, label in status_choices %}
           <option value="{{ val }}" {% if status_q == val %}selected{% endif %}>{{ label }}</option>
           {% endfor %}
         </select>
       </div>
       <div class="col-auto">
-        <button type="submit" class="btn btn-primary btn-sm">검색</button>
-        <a href="{% url 'portal:cs_payments' %}" class="btn btn-outline-secondary btn-sm">초기화</a>
+        <button type="submit" class="btn btn-primary btn-sm">{% trans "검색" %}</button>
+        <a href="{% url 'portal:cs_payments' %}" class="btn btn-outline-secondary btn-sm">{% trans "초기화" %}</a>
       </div>
     </form>
   </div>
@@ -41,9 +42,9 @@
     <table class="table table-hover table-sm mb-0">
       <thead class="table-light">
         <tr>
-          <th>주문번호</th><th>충전기</th><th>사용자</th>
+          <th>{% trans "주문번호" %}</th><th>충전기</th><th>{% trans "사용자" %}</th>
           <th class="text-end">선결제(원)</th><th class="text-end">실사용(원)</th><th class="text-end">환불(원)</th>
-          <th>상태</th><th>MB거래ID</th><th>일시</th>
+          <th>{% trans "상태" %}</th><th>MB거래ID</th><th>{% trans "시간" %}</th>
         </tr>
       </thead>
       <tbody>
@@ -69,7 +70,7 @@
           <td class="text-nowrap"><small>{{ p.created_at|date:"m-d H:i" }}</small></td>
         </tr>
         {% empty %}
-        <tr><td colspan="9" class="text-center text-muted py-3">정산내역이 없습니다.</td></tr>
+        <tr><td colspan="9" class="text-center text-muted py-3">{% trans "정산내역" %}이 없습니다.</td></tr>
         {% endfor %}
       </tbody>
     </table>

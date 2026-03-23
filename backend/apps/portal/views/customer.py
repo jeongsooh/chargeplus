@@ -1,6 +1,7 @@
 from django.core.paginator import Paginator
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib import messages
+from django.utils.translation import gettext as _
 from django.views.decorators.http import require_http_methods
 
 from apps.portal.decorators import role_required
@@ -39,10 +40,10 @@ def cards_list(request):
 def card_add(request):
     id_token_val = request.POST.get('id_token', '').strip().upper()
     if not id_token_val:
-        messages.error(request, '카드 번호를 입력해 주세요.')
+        messages.error(request, _('카드 번호를 입력해 주세요.'))
         return redirect('portal:customer_cards')
     if IdToken.objects.filter(id_token=id_token_val).exists():
-        messages.error(request, '이미 등록된 카드 번호입니다.')
+        messages.error(request, _('이미 등록된 카드 번호입니다.'))
         return redirect('portal:customer_cards')
     IdToken.objects.create(
         id_token=id_token_val,
@@ -50,7 +51,7 @@ def card_add(request):
         status='Accepted',
         user=request.user,
     )
-    messages.success(request, f"카드 {id_token_val}가 등록되었습니다.")
+    messages.success(request, _(f"카드 {id_token_val}가 등록되었습니다."))
     return redirect('portal:customer_cards')
 
 
@@ -59,7 +60,7 @@ def card_add(request):
 def card_delete(request, token_id):
     card = get_object_or_404(IdToken, id_token=token_id, user=request.user)
     card.delete()
-    messages.success(request, '카드가 삭제되었습니다.')
+    messages.success(request, _('카드가 삭제되었습니다.'))
     return redirect('portal:customer_cards')
 
 
@@ -95,12 +96,12 @@ def profile_view(request):
         new_password = request.POST.get('new_password', '')
         if new_password:
             if len(new_password) < 8:
-                messages.error(request, '비밀번호는 8자 이상이어야 합니다.')
+                messages.error(request, _('비밀번호는 8자 이상이어야 합니다.'))
                 return render(request, 'portal/customer/profile.html')
             user.set_password(new_password)
 
         user.save()
-        messages.success(request, '프로필이 업데이트되었습니다.')
+        messages.success(request, _('프로필이 업데이트되었습니다.'))
         if new_password:
             from django.contrib.auth import update_session_auth_hash
             update_session_auth_hash(request, user)

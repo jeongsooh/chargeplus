@@ -1,0 +1,474 @@
+# English translation of ChargePlus
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: en\n"
+
+msgid "대시보드"
+msgstr "Dashboard"
+
+msgid "사용자 관리"
+msgstr "User Management"
+
+msgid "파트너 관리"
+msgstr "Partner Management"
+
+msgid "충전기 관리"
+msgstr "Charger Management"
+
+msgid "충전소 관리"
+msgstr "Site Management"
+
+msgid "충전이력"
+msgstr "Charging History"
+
+msgid "정산내역"
+msgstr "Payments"
+
+msgid "충전카드 관리"
+msgstr "Card Management"
+
+msgid "시스템 운영"
+msgstr "System Operations"
+
+msgid "운영변수 설정"
+msgstr "System Config"
+
+msgid "Active 충전기 설정"
+msgstr "Active Chargers"
+
+msgid "메세지 로그"
+msgstr "Message Log"
+
+msgid "로그아웃"
+msgstr "Logout"
+
+msgid "내 충전소"
+msgstr "My Sites"
+
+msgid "충전기 현황"
+msgstr "Charger Status"
+
+msgid "통계"
+msgstr "Statistics"
+
+msgid "카드 관리"
+msgstr "Card Management"
+
+msgid "프로필"
+msgstr "Profile"
+
+msgid "포털 로그인"
+msgstr "Portal Login"
+
+msgid "아이디"
+msgstr "Username"
+
+msgid "비밀번호"
+msgstr "Password"
+
+msgid "로그인"
+msgstr "Login"
+
+msgid "계정이 없으신가요?"
+msgstr "Don't have an account?"
+
+msgid "가입하기"
+msgstr "Sign Up"
+
+msgid "언어 선택"
+msgstr "Language"
+
+msgid "한국어"
+msgstr "Korean"
+
+msgid "회원가입 유형을 선택해 주세요"
+msgstr "Select Account Type"
+
+msgid "고객"
+msgstr "Customer"
+
+msgid "파트너"
+msgstr "Partner"
+
+msgid "고객센터 직원"
+msgstr "CS Staff"
+
+msgid "이름"
+msgstr "Name"
+
+msgid "이메일"
+msgstr "Email"
+
+msgid "전화번호"
+msgstr "Phone"
+
+msgid "비밀번호 확인"
+msgstr "Confirm Password"
+
+msgid "사업체명"
+msgstr "Business Name"
+
+msgid "사업자번호"
+msgstr "Business Number"
+
+msgid "담당자 연락처"
+msgstr "Contact Phone"
+
+msgid "아이디 또는 비밀번호가 올바르지 않습니다."
+msgstr "Invalid username or password."
+
+msgid "계정이 활성화되어 있지 않습니다. 관리자 승인을 기다려 주세요."
+msgstr "Account is not active. Please wait for admin approval."
+
+msgid "가입을 환영합니다!"
+msgstr "Welcome!"
+
+msgid "파트너 가입 신청이 완료되었습니다. 관리자 승인 후 이용하실 수 있습니다."
+msgstr "Partner registration complete. You can use the service after admin approval."
+
+msgid "고객센터 가입 신청이 완료되었습니다. Django 관리자 승인 후 이용하실 수 있습니다."
+msgstr "CS registration complete. You can use the service after Django admin approval."
+
+msgid "아이디를 입력해 주세요."
+msgstr "Please enter username."
+
+msgid "이미 사용 중인 아이디입니다."
+msgstr "Username already taken."
+
+msgid "비밀번호는 8자 이상이어야 합니다."
+msgstr "Password must be at least 8 characters."
+
+msgid "비밀번호가 일치하지 않습니다."
+msgstr "Passwords do not match."
+
+msgid "사업체명을 입력해 주세요."
+msgstr "Please enter business name."
+
+msgid "사업자번호를 입력해 주세요."
+msgstr "Please enter business number."
+
+msgid "아이디와 비밀번호를 입력해주세요."
+msgstr "Please enter username and password."
+
+msgid "아이디 또는 비밀번호가 틀렸습니다."
+msgstr "Invalid username or password."
+
+msgid "비활성화된 계정입니다."
+msgstr "Account is deactivated."
+
+msgid "qr_code 파라미터가 필요합니다."
+msgstr "qr_code parameter is required."
+
+msgid "goal_value는 0보다 큰 숫자여야 합니다."
+msgstr "goal_value must be a positive number."
+
+msgid "존재하지 않는 충전기입니다."
+msgstr "Charger not found."
+
+msgid "충전기가 오프라인입니다."
+msgstr "Charger is offline."
+
+msgid "이미 충전 중인 세션이 있습니다."
+msgstr "Active charging session already exists."
+
+msgid "사용 가능한 커넥터가 없습니다."
+msgstr "No available connector."
+
+msgid "충전기가 원격 충전을 거부했습니다."
+msgstr "Charger rejected remote start."
+
+msgid "충전기 통신 오류가 발생했습니다."
+msgstr "Charger communication error."
+
+msgid "session_id 파라미터가 필요합니다."
+msgstr "session_id parameter is required."
+
+msgid "트랜잭션을 찾을 수 없습니다."
+msgstr "Transaction not found."
+
+msgid "아이디와 사업체명은 필수입니다."
+msgstr "Username and business name are required."
+
+msgid "카드 번호를 입력해 주세요."
+msgstr "Please enter card number."
+
+msgid "이미 등록된 카드 번호입니다."
+msgstr "Card number already registered."
+
+msgid "올바른 금액을 입력해 주세요."
+msgstr "Please enter a valid amount."
+
+msgid "자기 자신은 삭제할 수 없습니다."
+msgstr "You cannot delete yourself."
+
+msgid "자기 자신의 상태는 변경할 수 없습니다."
+msgstr "You cannot change your own status."
+
+msgid "충전소명과 파트너를 선택해 주세요."
+msgstr "Please enter site name and select partner."
+
+msgid "장애 내용을 입력해 주세요."
+msgstr "Please enter fault description."
+
+msgid "장애이력이 등록되었습니다."
+msgstr "Fault log registered."
+
+msgid "사용자 정보가 수정되었습니다."
+msgstr "User information updated."
+
+msgid "카드가 등록되었습니다."
+msgstr "Card registered."
+
+msgid "카드가 삭제되었습니다."
+msgstr "Card deleted."
+
+msgid "파트너 정보가 수정되었습니다."
+msgstr "Partner information updated."
+
+msgid "프로필이 업데이트되었습니다."
+msgstr "Profile updated."
+
+msgid "저장"
+msgstr "Save"
+
+msgid "수정"
+msgstr "Edit"
+
+msgid "삭제"
+msgstr "Delete"
+
+msgid "등록"
+msgstr "Register"
+
+msgid "취소"
+msgstr "Cancel"
+
+msgid "검색"
+msgstr "Search"
+
+msgid "초기화"
+msgstr "Reset"
+
+msgid "확인"
+msgstr "Confirm"
+
+msgid "이전"
+msgstr "Previous"
+
+msgid "다음"
+msgstr "Next"
+
+msgid "상태"
+msgstr "Status"
+
+msgid "활성"
+msgstr "Active"
+
+msgid "차단"
+msgstr "Blocked"
+
+msgid "승인"
+msgstr "Approve"
+
+msgid "반려"
+msgstr "Reject"
+
+msgid "대기중"
+msgstr "Pending"
+
+msgid "전체"
+msgstr "All"
+
+msgid "없음"
+msgstr "None"
+
+msgid "충전기 ID"
+msgstr "Charger ID"
+
+msgid "충전소"
+msgstr "Site"
+
+msgid "운영사"
+msgstr "Operator"
+
+msgid "사용자"
+msgstr "User"
+
+msgid "등록일"
+msgstr "Registered"
+
+msgid "생성일"
+msgstr "Created"
+
+msgid "수정일"
+msgstr "Updated"
+
+msgid "시작 시간"
+msgstr "Start Time"
+
+msgid "종료 시간"
+msgstr "End Time"
+
+msgid "충전량(kWh)"
+msgstr "Energy (kWh)"
+
+msgid "금액"
+msgstr "Amount"
+
+msgid "결제수단"
+msgstr "Payment Method"
+
+msgid "결제상태"
+msgstr "Payment Status"
+
+msgid "주문번호"
+msgstr "Order No."
+
+msgid "세션ID"
+msgstr "Session ID"
+
+msgid "커넥터"
+msgstr "Connector"
+
+msgid "타입"
+msgstr "Type"
+
+msgid "연결됨"
+msgstr "Connected"
+
+msgid "오프라인"
+msgstr "Offline"
+
+msgid "설정"
+msgstr "Settings"
+
+msgid "값"
+msgstr "Value"
+
+msgid "설명"
+msgstr "Description"
+
+msgid "액션"
+msgstr "Action"
+
+msgid "방향"
+msgstr "Direction"
+
+msgid "시간"
+msgstr "Time"
+
+msgid "비밀번호 변경 (변경 시에만 입력)"
+msgstr "Change Password (leave blank to keep)"
+
+msgid "새 비밀번호"
+msgstr "New Password"
+
+msgid "연락처"
+msgstr "Contact"
+
+msgid "사업자 정보"
+msgstr "Business Info"
+
+msgid "월"
+msgstr "Month"
+
+msgid "이번 달"
+msgstr "This Month"
+
+msgid "지난 달"
+msgstr "Last Month"
+
+msgid "에너지(kWh)"
+msgstr "Energy (kWh)"
+
+msgid "세션 수"
+msgstr "Sessions"
+
+msgid "매출(VND)"
+msgstr "Revenue (VND)"
+
+msgid "충전단가"
+msgstr "Unit Price"
+
+msgid "단가 수정"
+msgstr "Update Price"
+
+msgid "충전기 수"
+msgstr "Chargers"
+
+msgid "사이트"
+msgstr "Site"
+
+msgid "OCPP 메시지 로그"
+msgstr "OCPP Message Log"
+
+msgid "메시지 ID"
+msgstr "Message ID"
+
+msgid "데이터 없음"
+msgstr "No data"
+
+msgid "카드 번호 (RFID)"
+msgstr "Card Number (RFID)"
+
+msgid "최근 충전"
+msgstr "Recent Charges"
+
+msgid "등록된 카드"
+msgstr "Registered Cards"
+
+msgid "충전 세션 없음"
+msgstr "No charging sessions"
+
+msgid "등록된 카드가 없습니다."
+msgstr "No registered cards."
+
+msgid "장애이력"
+msgstr "Fault History"
+
+msgid "장애 등록"
+msgstr "Register Fault"
+
+msgid "장애 내용"
+msgstr "Fault Description"
+
+msgid "운영변수"
+msgstr "System Variables"
+
+msgid "현재 접속 중인 충전기"
+msgstr "Currently Connected Chargers"
+
+msgid "원격 명령"
+msgstr "Remote Command"
+
+msgid "충전기 정보"
+msgstr "Charger Info"
+
+msgid "충전 시작"
+msgstr "Start Charging"
+
+msgid "충전 종료"
+msgstr "Stop Charging"
+
+msgid "재부팅"
+msgstr "Reboot"
+
+msgid "초기화 확인"
+msgstr "Reset Confirm"
+
+msgid "전체 통계"
+msgstr "Total Statistics"
+
+msgid "승인 대기"
+msgstr "Pending Approval"
+
+msgid "사업체"
+msgstr "Business"
+
+msgid "주소"
+msgstr "Address"
+
+msgid "단가(VND/kWh)"
+msgstr "Unit Price (VND/kWh)"

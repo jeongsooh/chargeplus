@@ -1,5 +1,6 @@
 {% extends "portal/partner/base_partner.html" %}
-{% block title %}충전기 현황 - 파트너{% endblock %}
+{% load i18n %}
+{% block title %}{% trans "충전기 현황" %} - {% trans "파트너" %}{% endblock %}
 
 {% block extra_js %}
 <script>
@@ -10,8 +11,8 @@
 
 {% block content %}
 <div class="d-flex align-items-center mb-4">
-  <h4 class="fw-bold mb-0">충전기 현황</h4>
-  <span class="text-muted small ms-3">30초마다 자동 갱신</span>
+  <h4 class="fw-bold mb-0">{% trans "충전기 현황" %}</h4>
+  <span class="text-muted small ms-3">{% trans "30초마다 자동 갱신" %}</span>
 </div>
 
 <div class="row g-3">
@@ -30,7 +31,7 @@
         {% for evse in s.evses.all %}
           {% for conn in evse.connectors.all %}
           <div class="d-flex justify-content-between align-items-center border rounded px-2 py-1 mb-1">
-            <span class="small">커넥터 {{ conn.connector_id }}</span>
+            <span class="small">{% trans "커넥터" %} {{ conn.connector_id }}</span>
             {% if conn.current_status == 'Available' %}<span class="badge bg-success">Available</span>
             {% elif conn.current_status == 'Charging' %}<span class="badge bg-primary">Charging</span>
             {% elif conn.current_status == 'Faulted' %}<span class="badge bg-danger">Faulted</span>
@@ -39,13 +40,13 @@
           {% endfor %}
         {% endfor %}
         <p class="text-muted small mb-0 mt-2">
-          마지막 하트비트: {{ s.last_heartbeat|date:"H:i:s"|default:"없음" }}
+          {% trans "마지막 하트비트" %}: {{ s.last_heartbeat|date:"H:i:s"|default:"없음" }}
         </p>
       </div>
     </div>
   </div>
   {% empty %}
-  <div class="col"><p class="text-muted">소속 충전기가 없습니다.</p></div>
+  <div class="col"><p class="text-muted">{% trans "소속 충전기가 없습니다." %}</p></div>
   {% endfor %}
 </div>
 {% endblock %}

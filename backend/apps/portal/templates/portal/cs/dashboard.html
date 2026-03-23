@@ -1,8 +1,9 @@
 {% extends "portal/cs/base_cs.html" %}
-{% block title %}대시보드 - CS{% endblock %}
+{% load i18n %}
+{% block title %}{% trans "대시보드" %} - CS{% endblock %}
 
 {% block content %}
-<h4 class="mb-4 fw-bold">고객센터 대시보드</h4>
+<h4 class="mb-4 fw-bold">{% trans "대시보드" %}</h4>
 
 <!-- 요약 카드 -->
 <div class="row g-3 mb-4">
@@ -26,9 +27,9 @@
   <div class="col-md-3">
     <div class="card border-0 shadow-sm">
       <div class="card-body">
-        <div class="text-muted small">파트너</div>
+        <div class="text-muted small">{% trans "파트너" %}</div>
         <div class="fs-3 fw-bold text-warning">{{ stats.total_partners }}</div>
-        {% if stats.pending_partners %}<div class="text-danger small">승인대기 {{ stats.pending_partners }}건</div>{% endif %}
+        {% if stats.pending_partners %}<div class="text-danger small">{% trans "승인 대기" %} {{ stats.pending_partners }}건</div>{% endif %}
       </div>
     </div>
   </div>
@@ -45,8 +46,8 @@
 
 {% if stats.pending_partners %}
 <div class="alert alert-warning">
-  <i class="bi bi-exclamation-triangle me-2"></i>파트너 승인 대기 {{ stats.pending_partners }}건
-  <a href="{% url 'portal:cs_partners' %}?pending=1" class="alert-link ms-2">승인 처리 →</a>
+  <i class="bi bi-exclamation-triangle me-2"></i>{% trans "파트너" %} {% trans "승인 대기" %} {{ stats.pending_partners }}건
+  <a href="{% url 'portal:cs_partners' %}?pending=1" class="alert-link ms-2">{% trans "승인" %} 처리 →</a>
 </div>
 {% endif %}
 
@@ -65,7 +66,7 @@
       <thead class="table-light">
         <tr>
           <th>기간</th>
-          <th>충전량(kWh)</th><th class="text-muted small">증감</th>
+          <th>{% trans "충전량(kWh)" %}</th><th class="text-muted small">증감</th>
           <th>결제금액(원)</th><th class="text-muted small">증감</th>
           <th>충전횟수</th><th class="text-muted small">증감</th>
           <th></th>
@@ -90,7 +91,7 @@
           </td>
         </tr>
         {% empty %}
-        <tr><td colspan="8" class="text-center text-muted py-3">데이터가 없습니다.</td></tr>
+        <tr><td colspan="8" class="text-center text-muted py-3">{% trans "데이터 없음" %}</td></tr>
         {% endfor %}
       </tbody>
     </table>

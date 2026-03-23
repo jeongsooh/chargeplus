@@ -1,9 +1,10 @@
 {% extends "portal/cs/base_cs.html" %}
-{% block title %}사용자 상세 - CS{% endblock %}
+{% load i18n %}
+{% block title %}{% trans "사용자" %} 상세 - CS{% endblock %}
 
 {% block content %}
 <div class="d-flex align-items-center mb-4">
-  <h4 class="fw-bold mb-0">사용자 상세 — {{ target.username }}</h4>
+  <h4 class="fw-bold mb-0">{% trans "사용자" %} 상세 — {{ target.username }}</h4>
   <a href="{% url 'portal:cs_users' %}" class="btn btn-sm btn-outline-secondary ms-3">← 목록</a>
 </div>
 
@@ -17,46 +18,46 @@
           {% csrf_token %}
           <input type="hidden" name="action" value="update_profile">
           <div class="mb-3">
-            <label class="form-label">아이디</label>
+            <label class="form-label">{% trans "아이디" %}</label>
             <input type="text" class="form-control" value="{{ target.username }}" disabled>
           </div>
           <div class="mb-3">
-            <label class="form-label">이름</label>
+            <label class="form-label">{% trans "이름" %}</label>
             <input type="text" name="first_name" class="form-control" value="{{ target.first_name }}">
           </div>
           <div class="mb-3">
-            <label class="form-label">이메일</label>
+            <label class="form-label">{% trans "이메일" %}</label>
             <input type="email" name="email" class="form-control" value="{{ target.email }}">
           </div>
           <div class="mb-3">
-            <label class="form-label">연락처</label>
+            <label class="form-label">{% trans "연락처" %}</label>
             <input type="text" name="phone" class="form-control" value="{{ target.phone }}">
           </div>
           <div class="row g-2 mb-3">
             <div class="col">
               <label class="form-label">역할</label>
               <select name="role" class="form-select">
-                <option value="customer" {% if target.role == 'customer' %}selected{% endif %}>고객</option>
-                <option value="partner" {% if target.role == 'partner' %}selected{% endif %}>파트너</option>
+                <option value="customer" {% if target.role == 'customer' %}selected{% endif %}>{% trans "고객" %}</option>
+                <option value="partner" {% if target.role == 'partner' %}selected{% endif %}>{% trans "파트너" %}</option>
                 <option value="cs" {% if target.role == 'cs' %}selected{% endif %}>고객센터</option>
               </select>
             </div>
             <div class="col">
-              <label class="form-label">상태</label>
+              <label class="form-label">{% trans "상태" %}</label>
               <select name="status" class="form-select">
-                <option value="active" {% if target.status == 'active' %}selected{% endif %}>활성</option>
+                <option value="active" {% if target.status == 'active' %}selected{% endif %}>{% trans "활성" %}</option>
                 <option value="pending" {% if target.status == 'pending' %}selected{% endif %}>승인대기</option>
                 <option value="inactive" {% if target.status == 'inactive' %}selected{% endif %}>비활성</option>
               </select>
             </div>
           </div>
           <div class="mb-3">
-            <label class="form-label">새 비밀번호 (변경 시만 입력)</label>
+            <label class="form-label">{% trans "새 비밀번호" %} (변경 시만 입력)</label>
             <input type="password" name="new_password" class="form-control" minlength="8">
           </div>
-          <button type="submit" class="btn btn-primary">저장</button>
+          <button type="submit" class="btn btn-primary">{% trans "저장" %}</button>
           {% if target != request.user %}
-          <a href="#" onclick="document.getElementById('deleteForm').submit()" class="btn btn-outline-danger ms-2">사용자 삭제</a>
+          <a href="#" onclick="document.getElementById('deleteForm').submit()" class="btn btn-outline-danger ms-2">{% trans "사용자" %} {% trans "삭제" %}</a>
           {% endif %}
         </form>
         <form id="deleteForm" method="post" action="{% url 'portal:cs_user_delete' target.pk %}"
@@ -121,12 +122,12 @@
               {% csrf_token %}
               <input type="hidden" name="action" value="delete_card">
               <input type="hidden" name="card_id" value="{{ card.pk }}">
-              <button class="btn btn-xs btn-outline-danger" style="font-size:.75rem;padding:.1rem .4rem;">삭제</button>
+              <button class="btn btn-xs btn-outline-danger" style="font-size:.75rem;padding:.1rem .4rem;">{% trans "삭제" %}</button>
             </form>
           </div>
         </div>
         {% empty %}
-        <p class="text-muted small">등록된 카드가 없습니다.</p>
+        <p class="text-muted small">{% trans "등록된 카드가 없습니다." %}</p>
         {% endfor %}
       </div>
     </div>

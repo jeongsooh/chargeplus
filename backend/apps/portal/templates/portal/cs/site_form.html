@@ -1,9 +1,10 @@
 {% extends "portal/cs/base_cs.html" %}
-{% block title %}충전소 등록 - CS{% endblock %}
+{% load i18n %}
+{% block title %}{% trans "충전소" %} {% trans "등록" %} - CS{% endblock %}
 
 {% block content %}
 <div class="d-flex align-items-center mb-4">
-  <h4 class="fw-bold mb-0">충전소 등록</h4>
+  <h4 class="fw-bold mb-0">{% trans "충전소" %} {% trans "등록" %}</h4>
 </div>
 
 <div class="card shadow-sm" style="max-width:500px;">
@@ -11,7 +12,7 @@
     <form method="post">
       {% csrf_token %}
       <div class="mb-3">
-        <label class="form-label">파트너 <span class="text-danger">*</span></label>
+        <label class="form-label">{% trans "파트너" %} <span class="text-danger">*</span></label>
         <select name="partner_id" class="form-select" required>
           <option value="">선택하세요</option>
           {% for p in partners %}
@@ -24,16 +25,16 @@
         <input type="text" name="site_name" class="form-control" required>
       </div>
       <div class="mb-3">
-        <label class="form-label">주소</label>
+        <label class="form-label">{% trans "주소" %}</label>
         <input type="text" name="address" class="form-control">
       </div>
       <div class="mb-4">
-        <label class="form-label">충전단가 (원/kWh)</label>
+        <label class="form-label">{% trans "충전단가" %} (원/kWh)</label>
         <input type="number" name="unit_price" class="form-control" value="0" min="0" step="10">
       </div>
       <div class="d-flex gap-2">
-        <button type="submit" class="btn btn-primary">등록</button>
-        <a href="{% url 'portal:cs_sites' %}" class="btn btn-outline-secondary">취소</a>
+        <button type="submit" class="btn btn-primary">{% trans "등록" %}</button>
+        <a href="{% url 'portal:cs_sites' %}" class="btn btn-outline-secondary">{% trans "취소" %}</a>
       </div>
     </form>
   </div>

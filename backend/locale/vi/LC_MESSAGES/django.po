@@ -1,0 +1,474 @@
+# Vietnamese translation of ChargePlus
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: vi\n"
+
+msgid "대시보드"
+msgstr "Bảng điều khiển"
+
+msgid "사용자 관리"
+msgstr "Quản lý người dùng"
+
+msgid "파트너 관리"
+msgstr "Quản lý đối tác"
+
+msgid "충전기 관리"
+msgstr "Quản lý trạm sạc"
+
+msgid "충전소 관리"
+msgstr "Quản lý địa điểm sạc"
+
+msgid "충전이력"
+msgstr "Lịch sử sạc"
+
+msgid "정산내역"
+msgstr "Lịch sử thanh toán"
+
+msgid "충전카드 관리"
+msgstr "Quản lý thẻ sạc"
+
+msgid "시스템 운영"
+msgstr "Vận hành hệ thống"
+
+msgid "운영변수 설정"
+msgstr "Cấu hình vận hành"
+
+msgid "Active 충전기 설정"
+msgstr "Trạm đang hoạt động"
+
+msgid "메세지 로그"
+msgstr "Nhật ký tin nhắn"
+
+msgid "로그아웃"
+msgstr "Đăng xuất"
+
+msgid "내 충전소"
+msgstr "Địa điểm của tôi"
+
+msgid "충전기 현황"
+msgstr "Tình trạng trạm sạc"
+
+msgid "통계"
+msgstr "Thống kê"
+
+msgid "카드 관리"
+msgstr "Quản lý thẻ"
+
+msgid "프로필"
+msgstr "Hồ sơ"
+
+msgid "포털 로그인"
+msgstr "Đăng nhập cổng thông tin"
+
+msgid "아이디"
+msgstr "Tên đăng nhập"
+
+msgid "비밀번호"
+msgstr "Mật khẩu"
+
+msgid "로그인"
+msgstr "Đăng nhập"
+
+msgid "계정이 없으신가요?"
+msgstr "Chưa có tài khoản?"
+
+msgid "가입하기"
+msgstr "Đăng ký"
+
+msgid "언어 선택"
+msgstr "Ngôn ngữ"
+
+msgid "한국어"
+msgstr "Tiếng Hàn"
+
+msgid "회원가입 유형을 선택해 주세요"
+msgstr "Chọn loại tài khoản"
+
+msgid "고객"
+msgstr "Khách hàng"
+
+msgid "파트너"
+msgstr "Đối tác"
+
+msgid "고객센터 직원"
+msgstr "Nhân viên CSKH"
+
+msgid "이름"
+msgstr "Họ tên"
+
+msgid "이메일"
+msgstr "Email"
+
+msgid "전화번호"
+msgstr "Số điện thoại"
+
+msgid "비밀번호 확인"
+msgstr "Xác nhận mật khẩu"
+
+msgid "사업체명"
+msgstr "Tên doanh nghiệp"
+
+msgid "사업자번호"
+msgstr "Mã số doanh nghiệp"
+
+msgid "담당자 연락처"
+msgstr "Số điện thoại liên hệ"
+
+msgid "아이디 또는 비밀번호가 올바르지 않습니다."
+msgstr "Tên đăng nhập hoặc mật khẩu không đúng."
+
+msgid "계정이 활성화되어 있지 않습니다. 관리자 승인을 기다려 주세요."
+msgstr "Tài khoản chưa được kích hoạt. Vui lòng chờ quản trị viên phê duyệt."
+
+msgid "가입을 환영합니다!"
+msgstr "Chào mừng bạn!"
+
+msgid "파트너 가입 신청이 완료되었습니다. 관리자 승인 후 이용하실 수 있습니다."
+msgstr "Đăng ký đối tác hoàn tất. Bạn có thể sử dụng sau khi quản trị viên phê duyệt."
+
+msgid "고객센터 가입 신청이 완료되었습니다. Django 관리자 승인 후 이용하실 수 있습니다."
+msgstr "Đăng ký nhân viên CSKH hoàn tất. Bạn có thể sử dụng sau khi quản trị viên Django phê duyệt."
+
+msgid "아이디를 입력해 주세요."
+msgstr "Vui lòng nhập tên đăng nhập."
+
+msgid "이미 사용 중인 아이디입니다."
+msgstr "Tên đăng nhập đã được sử dụng."
+
+msgid "비밀번호는 8자 이상이어야 합니다."
+msgstr "Mật khẩu phải có ít nhất 8 ký tự."
+
+msgid "비밀번호가 일치하지 않습니다."
+msgstr "Mật khẩu không khớp."
+
+msgid "사업체명을 입력해 주세요."
+msgstr "Vui lòng nhập tên doanh nghiệp."
+
+msgid "사업자번호를 입력해 주세요."
+msgstr "Vui lòng nhập mã số doanh nghiệp."
+
+msgid "아이디와 비밀번호를 입력해주세요."
+msgstr "Vui lòng nhập tên đăng nhập và mật khẩu."
+
+msgid "아이디 또는 비밀번호가 틀렸습니다."
+msgstr "Tên đăng nhập hoặc mật khẩu không đúng."
+
+msgid "비활성화된 계정입니다."
+msgstr "Tài khoản bị vô hiệu hóa."
+
+msgid "qr_code 파라미터가 필요합니다."
+msgstr "Cần tham số qr_code."
+
+msgid "goal_value는 0보다 큰 숫자여야 합니다."
+msgstr "goal_value phải là số dương."
+
+msgid "존재하지 않는 충전기입니다."
+msgstr "Không tìm thấy trạm sạc."
+
+msgid "충전기가 오프라인입니다."
+msgstr "Trạm sạc đang offline."
+
+msgid "이미 충전 중인 세션이 있습니다."
+msgstr "Đã có phiên sạc đang hoạt động."
+
+msgid "사용 가능한 커넥터가 없습니다."
+msgstr "Không có đầu nối khả dụng."
+
+msgid "충전기가 원격 충전을 거부했습니다."
+msgstr "Trạm sạc từ chối khởi động từ xa."
+
+msgid "충전기 통신 오류가 발생했습니다."
+msgstr "Lỗi giao tiếp với trạm sạc."
+
+msgid "session_id 파라미터가 필요합니다."
+msgstr "Cần tham số session_id."
+
+msgid "트랜잭션을 찾을 수 없습니다."
+msgstr "Không tìm thấy giao dịch."
+
+msgid "아이디와 사업체명은 필수입니다."
+msgstr "Tên đăng nhập và tên doanh nghiệp là bắt buộc."
+
+msgid "카드 번호를 입력해 주세요."
+msgstr "Vui lòng nhập số thẻ."
+
+msgid "이미 등록된 카드 번호입니다."
+msgstr "Số thẻ đã được đăng ký."
+
+msgid "올바른 금액을 입력해 주세요."
+msgstr "Vui lòng nhập số tiền hợp lệ."
+
+msgid "자기 자신은 삭제할 수 없습니다."
+msgstr "Bạn không thể xóa chính mình."
+
+msgid "자기 자신의 상태는 변경할 수 없습니다."
+msgstr "Bạn không thể thay đổi trạng thái của chính mình."
+
+msgid "충전소명과 파트너를 선택해 주세요."
+msgstr "Vui lòng nhập tên địa điểm và chọn đối tác."
+
+msgid "장애 내용을 입력해 주세요."
+msgstr "Vui lòng nhập mô tả sự cố."
+
+msgid "장애이력이 등록되었습니다."
+msgstr "Đã đăng ký lịch sử sự cố."
+
+msgid "사용자 정보가 수정되었습니다."
+msgstr "Thông tin người dùng đã được cập nhật."
+
+msgid "카드가 등록되었습니다."
+msgstr "Thẻ đã được đăng ký."
+
+msgid "카드가 삭제되었습니다."
+msgstr "Thẻ đã bị xóa."
+
+msgid "파트너 정보가 수정되었습니다."
+msgstr "Thông tin đối tác đã được cập nhật."
+
+msgid "프로필이 업데이트되었습니다."
+msgstr "Hồ sơ đã được cập nhật."
+
+msgid "저장"
+msgstr "Lưu"
+
+msgid "수정"
+msgstr "Sửa"
+
+msgid "삭제"
+msgstr "Xóa"
+
+msgid "등록"
+msgstr "Đăng ký"
+
+msgid "취소"
+msgstr "Hủy"
+
+msgid "검색"
+msgstr "Tìm kiếm"
+
+msgid "초기화"
+msgstr "Đặt lại"
+
+msgid "확인"
+msgstr "Xác nhận"
+
+msgid "이전"
+msgstr "Trước"
+
+msgid "다음"
+msgstr "Tiếp"
+
+msgid "상태"
+msgstr "Trạng thái"
+
+msgid "활성"
+msgstr "Hoạt động"
+
+msgid "차단"
+msgstr "Bị chặn"
+
+msgid "승인"
+msgstr "Phê duyệt"
+
+msgid "반려"
+msgstr "Từ chối"
+
+msgid "대기중"
+msgstr "Đang chờ"
+
+msgid "전체"
+msgstr "Tất cả"
+
+msgid "없음"
+msgstr "Không có"
+
+msgid "충전기 ID"
+msgstr "ID Trạm sạc"
+
+msgid "충전소"
+msgstr "Địa điểm sạc"
+
+msgid "운영사"
+msgstr "Đơn vị vận hành"
+
+msgid "사용자"
+msgstr "Người dùng"
+
+msgid "등록일"
+msgstr "Ngày đăng ký"
+
+msgid "생성일"
+msgstr "Ngày tạo"
+
+msgid "수정일"
+msgstr "Ngày sửa"
+
+msgid "시작 시간"
+msgstr "Thời gian bắt đầu"
+
+msgid "종료 시간"
+msgstr "Thời gian kết thúc"
+
+msgid "충전량(kWh)"
+msgstr "Điện năng (kWh)"
+
+msgid "금액"
+msgstr "Số tiền"
+
+msgid "결제수단"
+msgstr "Phương thức thanh toán"
+
+msgid "결제상태"
+msgstr "Trạng thái thanh toán"
+
+msgid "주문번호"
+msgstr "Mã đơn hàng"
+
+msgid "세션ID"
+msgstr "ID phiên"
+
+msgid "커넥터"
+msgstr "Đầu nối"
+
+msgid "타입"
+msgstr "Loại"
+
+msgid "연결됨"
+msgstr "Đã kết nối"
+
+msgid "오프라인"
+msgstr "Ngoại tuyến"
+
+msgid "설정"
+msgstr "Cài đặt"
+
+msgid "값"
+msgstr "Giá trị"
+
+msgid "설명"
+msgstr "Mô tả"
+
+msgid "액션"
+msgstr "Hành động"
+
+msgid "방향"
+msgstr "Hướng"
+
+msgid "시간"
+msgstr "Thời gian"
+
+msgid "비밀번호 변경 (변경 시에만 입력)"
+msgstr "Đổi mật khẩu (để trống nếu không đổi)"
+
+msgid "새 비밀번호"
+msgstr "Mật khẩu mới"
+
+msgid "연락처"
+msgstr "Liên hệ"
+
+msgid "사업자 정보"
+msgstr "Thông tin doanh nghiệp"
+
+msgid "월"
+msgstr "Tháng"
+
+msgid "이번 달"
+msgstr "Tháng này"
+
+msgid "지난 달"
+msgstr "Tháng trước"
+
+msgid "에너지(kWh)"
+msgstr "Điện năng (kWh)"
+
+msgid "세션 수"
+msgstr "Số phiên"
+
+msgid "매출(VND)"
+msgstr "Doanh thu (VND)"
+
+msgid "충전단가"
+msgstr "Đơn giá sạc"
+
+msgid "단가 수정"
+msgstr "Cập nhật đơn giá"
+
+msgid "충전기 수"
+msgstr "Số trạm sạc"
+
+msgid "사이트"
+msgstr "Địa điểm"
+
+msgid "OCPP 메시지 로그"
+msgstr "Nhật ký tin nhắn OCPP"
+
+msgid "메시지 ID"
+msgstr "ID tin nhắn"
+
+msgid "데이터 없음"
+msgstr "Không có dữ liệu"
+
+msgid "카드 번호 (RFID)"
+msgstr "Số thẻ (RFID)"
+
+msgid "최근 충전"
+msgstr "Lần sạc gần đây"
+
+msgid "등록된 카드"
+msgstr "Thẻ đã đăng ký"
+
+msgid "충전 세션 없음"
+msgstr "Không có phiên sạc"
+
+msgid "등록된 카드가 없습니다."
+msgstr "Không có thẻ đã đăng ký."
+
+msgid "장애이력"
+msgstr "Lịch sử sự cố"
+
+msgid "장애 등록"
+msgstr "Đăng ký sự cố"
+
+msgid "장애 내용"
+msgstr "Nội dung sự cố"
+
+msgid "운영변수"
+msgstr "Biến vận hành"
+
+msgid "현재 접속 중인 충전기"
+msgstr "Trạm sạc đang kết nối"
+
+msgid "원격 명령"
+msgstr "Lệnh từ xa"
+
+msgid "충전기 정보"
+msgstr "Thông tin trạm sạc"
+
+msgid "충전 시작"
+msgstr "Bắt đầu sạc"
+
+msgid "충전 종료"
+msgstr "Kết thúc sạc"
+
+msgid "재부팅"
+msgstr "Khởi động lại"
+
+msgid "초기화 확인"
+msgstr "Xác nhận khởi tạo lại"
+
+msgid "전체 통계"
+msgstr "Thống kê tổng"
+
+msgid "승인 대기"
+msgstr "Chờ phê duyệt"
+
+msgid "사업체"
+msgstr "Doanh nghiệp"
+
+msgid "주소"
+msgstr "Địa chỉ"
+
+msgid "단가(VND/kWh)"
+msgstr "Đơn giá (VND/kWh)"

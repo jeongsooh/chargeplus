@@ -1,9 +1,10 @@
 {% extends "portal/cs/base_cs.html" %}
+{% load i18n %}
 {% block title %}충전기 상세 - CS{% endblock %}
 
 {% block content %}
 <div class="d-flex align-items-center mb-4">
-  <h4 class="fw-bold mb-0">충전기 상세 — <code>{{ station.station_id }}</code></h4>
+  <h4 class="fw-bold mb-0">{% trans "충전기 정보" %} — <code>{{ station.station_id }}</code></h4>
   <a href="{% url 'portal:cs_chargers' %}" class="btn btn-sm btn-outline-secondary ms-3">← 목록</a>
 </div>
 
@@ -14,15 +15,15 @@
       <div class="card-header fw-bold">기본 정보</div>
       <div class="card-body">
         <dl class="row mb-0">
-          <dt class="col-5 text-muted">충전기 ID</dt>
+          <dt class="col-5 text-muted">{% trans "충전기 ID" %}</dt>
           <dd class="col-7"><code>{{ station.station_id }}</code></dd>
-          <dt class="col-5 text-muted">운영사</dt>
+          <dt class="col-5 text-muted">{% trans "운영사" %}</dt>
           <dd class="col-7">{{ station.operator.name }}</dd>
-          <dt class="col-5 text-muted">충전소</dt>
+          <dt class="col-5 text-muted">{% trans "충전소" %}</dt>
           <dd class="col-7">{{ station.site.site_name|default:"-" }}</dd>
-          <dt class="col-5 text-muted">주소</dt>
+          <dt class="col-5 text-muted">{% trans "주소" %}</dt>
           <dd class="col-7">{{ station.address|default:"-" }}</dd>
-          <dt class="col-5 text-muted">상태</dt>
+          <dt class="col-5 text-muted">{% trans "상태" %}</dt>
           <dd class="col-7">
             {% if station.status == 'Available' %}<span class="badge bg-success">{{ station.status }}</span>
             {% elif station.status == 'Faulted' %}<span class="badge bg-danger">{{ station.status }}</span>
@@ -37,7 +38,7 @@
 
     <!-- 장애 등록 폼 -->
     <div class="card shadow-sm mt-3">
-      <div class="card-header fw-bold">장애이력 등록</div>
+      <div class="card-header fw-bold">{% trans "장애 등록" %}</div>
       <div class="card-body">
         <form method="post" action="{% url 'portal:cs_charger_fault_add' station.pk %}">
           {% csrf_token %}
@@ -56,10 +57,10 @@
             </select>
           </div>
           <div class="mb-2">
-            <label class="form-label small">내용 <span class="text-danger">*</span></label>
+            <label class="form-label small">{% trans "장애 내용" %} <span class="text-danger">*</span></label>
             <textarea name="description" class="form-control form-control-sm" rows="3" required></textarea>
           </div>
-          <button type="submit" class="btn btn-sm btn-warning w-100">장애 등록</button>
+          <button type="submit" class="btn btn-sm btn-warning w-100">{% trans "장애 등록" %}</button>
         </form>
       </div>
     </div>
@@ -68,11 +69,11 @@
   <div class="col-md-8">
     <!-- 장애이력 -->
     <div class="card shadow-sm mb-3">
-      <div class="card-header fw-bold">장애이력 ({{ fault_logs|length }}건)</div>
+      <div class="card-header fw-bold">{% trans "장애이력" %} ({{ fault_logs|length }}건)</div>
       <div class="table-responsive">
         <table class="table table-sm table-hover mb-0">
           <thead class="table-light">
-            <tr><th>발생일시</th><th>유형</th><th>내용</th><th>처리일시</th><th>등록자</th></tr>
+            <tr><th>발생일시</th><th>유형</th><th>{% trans "장애 내용" %}</th><th>처리일시</th><th>등록자</th></tr>
           </thead>
           <tbody>
             {% for log in fault_logs %}
@@ -84,7 +85,7 @@
               <td>{{ log.reported_by }}</td>
             </tr>
             {% empty %}
-            <tr><td colspan="5" class="text-center text-muted py-2">장애이력이 없습니다.</td></tr>
+            <tr><td colspan="5" class="text-center text-muted py-2">{% trans "장애이력" %}이 없습니다.</td></tr>
             {% endfor %}
           </tbody>
         </table>
@@ -97,7 +98,7 @@
       <div class="table-responsive">
         <table class="table table-sm table-hover mb-0">
           <thead class="table-light">
-            <tr><th>TX#</th><th>카드</th><th>상태</th><th>시작</th><th>종료</th><th>충전량(kWh)</th><th>금액(원)</th></tr>
+            <tr><th>TX#</th><th>카드</th><th>{% trans "상태" %}</th><th>{% trans "시작 시간" %}</th><th>{% trans "종료 시간" %}</th><th>{% trans "충전량(kWh)" %}</th><th>금액(원)</th></tr>
           </thead>
           <tbody>
             {% for s in sessions %}

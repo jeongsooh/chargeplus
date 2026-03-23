@@ -3,6 +3,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib import messages
 from django.db.models import Sum, Count, Q
 from django.utils import timezone
+from django.utils.translation import gettext as _
 
 from apps.portal.decorators import role_required
 from apps.stations.models import ChargingStation, ChargingSite
@@ -60,9 +61,9 @@ def site_update_price(request, site_id):
     try:
         site.unit_price = float(unit_price)
         site.save(update_fields=['unit_price'])
-        messages.success(request, f"'{site.site_name}' 충전단가가 업데이트되었습니다.")
+        messages.success(request, _(f"'{site.site_name}' 충전단가가 업데이트되었습니다."))
     except ValueError:
-        messages.error(request, '올바른 금액을 입력해 주세요.')
+        messages.error(request, _('올바른 금액을 입력해 주세요.'))
     return redirect('portal:partner_sites')
 
 

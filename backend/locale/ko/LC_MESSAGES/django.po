@@ -1,0 +1,474 @@
+# Korean translation of ChargePlus
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: ko\n"
+
+msgid "대시보드"
+msgstr "대시보드"
+
+msgid "사용자 관리"
+msgstr "사용자 관리"
+
+msgid "파트너 관리"
+msgstr "파트너 관리"
+
+msgid "충전기 관리"
+msgstr "충전기 관리"
+
+msgid "충전소 관리"
+msgstr "충전소 관리"
+
+msgid "충전이력"
+msgstr "충전이력"
+
+msgid "정산내역"
+msgstr "정산내역"
+
+msgid "충전카드 관리"
+msgstr "충전카드 관리"
+
+msgid "시스템 운영"
+msgstr "시스템 운영"
+
+msgid "운영변수 설정"
+msgstr "운영변수 설정"
+
+msgid "Active 충전기 설정"
+msgstr "Active 충전기 설정"
+
+msgid "메세지 로그"
+msgstr "메세지 로그"
+
+msgid "로그아웃"
+msgstr "로그아웃"
+
+msgid "내 충전소"
+msgstr "내 충전소"
+
+msgid "충전기 현황"
+msgstr "충전기 현황"
+
+msgid "통계"
+msgstr "통계"
+
+msgid "카드 관리"
+msgstr "카드 관리"
+
+msgid "프로필"
+msgstr "프로필"
+
+msgid "포털 로그인"
+msgstr "포털 로그인"
+
+msgid "아이디"
+msgstr "아이디"
+
+msgid "비밀번호"
+msgstr "비밀번호"
+
+msgid "로그인"
+msgstr "로그인"
+
+msgid "계정이 없으신가요?"
+msgstr "계정이 없으신가요?"
+
+msgid "가입하기"
+msgstr "가입하기"
+
+msgid "언어 선택"
+msgstr "언어 선택"
+
+msgid "한국어"
+msgstr "한국어"
+
+msgid "회원가입 유형을 선택해 주세요"
+msgstr "회원가입 유형을 선택해 주세요"
+
+msgid "고객"
+msgstr "고객"
+
+msgid "파트너"
+msgstr "파트너"
+
+msgid "고객센터 직원"
+msgstr "고객센터 직원"
+
+msgid "이름"
+msgstr "이름"
+
+msgid "이메일"
+msgstr "이메일"
+
+msgid "전화번호"
+msgstr "전화번호"
+
+msgid "비밀번호 확인"
+msgstr "비밀번호 확인"
+
+msgid "사업체명"
+msgstr "사업체명"
+
+msgid "사업자번호"
+msgstr "사업자번호"
+
+msgid "담당자 연락처"
+msgstr "담당자 연락처"
+
+msgid "아이디 또는 비밀번호가 올바르지 않습니다."
+msgstr "아이디 또는 비밀번호가 올바르지 않습니다."
+
+msgid "계정이 활성화되어 있지 않습니다. 관리자 승인을 기다려 주세요."
+msgstr "계정이 활성화되어 있지 않습니다. 관리자 승인을 기다려 주세요."
+
+msgid "가입을 환영합니다!"
+msgstr "가입을 환영합니다!"
+
+msgid "파트너 가입 신청이 완료되었습니다. 관리자 승인 후 이용하실 수 있습니다."
+msgstr "파트너 가입 신청이 완료되었습니다. 관리자 승인 후 이용하실 수 있습니다."
+
+msgid "고객센터 가입 신청이 완료되었습니다. Django 관리자 승인 후 이용하실 수 있습니다."
+msgstr "고객센터 가입 신청이 완료되었습니다. Django 관리자 승인 후 이용하실 수 있습니다."
+
+msgid "아이디를 입력해 주세요."
+msgstr "아이디를 입력해 주세요."
+
+msgid "이미 사용 중인 아이디입니다."
+msgstr "이미 사용 중인 아이디입니다."
+
+msgid "비밀번호는 8자 이상이어야 합니다."
+msgstr "비밀번호는 8자 이상이어야 합니다."
+
+msgid "비밀번호가 일치하지 않습니다."
+msgstr "비밀번호가 일치하지 않습니다."
+
+msgid "사업체명을 입력해 주세요."
+msgstr "사업체명을 입력해 주세요."
+
+msgid "사업자번호를 입력해 주세요."
+msgstr "사업자번호를 입력해 주세요."
+
+msgid "아이디와 비밀번호를 입력해주세요."
+msgstr "아이디와 비밀번호를 입력해주세요."
+
+msgid "아이디 또는 비밀번호가 틀렸습니다."
+msgstr "아이디 또는 비밀번호가 틀렸습니다."
+
+msgid "비활성화된 계정입니다."
+msgstr "비활성화된 계정입니다."
+
+msgid "qr_code 파라미터가 필요합니다."
+msgstr "qr_code 파라미터가 필요합니다."
+
+msgid "goal_value는 0보다 큰 숫자여야 합니다."
+msgstr "goal_value는 0보다 큰 숫자여야 합니다."
+
+msgid "존재하지 않는 충전기입니다."
+msgstr "존재하지 않는 충전기입니다."
+
+msgid "충전기가 오프라인입니다."
+msgstr "충전기가 오프라인입니다."
+
+msgid "이미 충전 중인 세션이 있습니다."
+msgstr "이미 충전 중인 세션이 있습니다."
+
+msgid "사용 가능한 커넥터가 없습니다."
+msgstr "사용 가능한 커넥터가 없습니다."
+
+msgid "충전기가 원격 충전을 거부했습니다."
+msgstr "충전기가 원격 충전을 거부했습니다."
+
+msgid "충전기 통신 오류가 발생했습니다."
+msgstr "충전기 통신 오류가 발생했습니다."
+
+msgid "session_id 파라미터가 필요합니다."
+msgstr "session_id 파라미터가 필요합니다."
+
+msgid "트랜잭션을 찾을 수 없습니다."
+msgstr "트랜잭션을 찾을 수 없습니다."
+
+msgid "아이디와 사업체명은 필수입니다."
+msgstr "아이디와 사업체명은 필수입니다."
+
+msgid "카드 번호를 입력해 주세요."
+msgstr "카드 번호를 입력해 주세요."
+
+msgid "이미 등록된 카드 번호입니다."
+msgstr "이미 등록된 카드 번호입니다."
+
+msgid "올바른 금액을 입력해 주세요."
+msgstr "올바른 금액을 입력해 주세요."
+
+msgid "자기 자신은 삭제할 수 없습니다."
+msgstr "자기 자신은 삭제할 수 없습니다."
+
+msgid "자기 자신의 상태는 변경할 수 없습니다."
+msgstr "자기 자신의 상태는 변경할 수 없습니다."
+
+msgid "충전소명과 파트너를 선택해 주세요."
+msgstr "충전소명과 파트너를 선택해 주세요."
+
+msgid "장애 내용을 입력해 주세요."
+msgstr "장애 내용을 입력해 주세요."
+
+msgid "장애이력이 등록되었습니다."
+msgstr "장애이력이 등록되었습니다."
+
+msgid "사용자 정보가 수정되었습니다."
+msgstr "사용자 정보가 수정되었습니다."
+
+msgid "카드가 등록되었습니다."
+msgstr "카드가 등록되었습니다."
+
+msgid "카드가 삭제되었습니다."
+msgstr "카드가 삭제되었습니다."
+
+msgid "파트너 정보가 수정되었습니다."
+msgstr "파트너 정보가 수정되었습니다."
+
+msgid "프로필이 업데이트되었습니다."
+msgstr "프로필이 업데이트되었습니다."
+
+msgid "저장"
+msgstr "저장"
+
+msgid "수정"
+msgstr "수정"
+
+msgid "삭제"
+msgstr "삭제"
+
+msgid "등록"
+msgstr "등록"
+
+msgid "취소"
+msgstr "취소"
+
+msgid "검색"
+msgstr "검색"
+
+msgid "초기화"
+msgstr "초기화"
+
+msgid "확인"
+msgstr "확인"
+
+msgid "이전"
+msgstr "이전"
+
+msgid "다음"
+msgstr "다음"
+
+msgid "상태"
+msgstr "상태"
+
+msgid "활성"
+msgstr "활성"
+
+msgid "차단"
+msgstr "차단"
+
+msgid "승인"
+msgstr "승인"
+
+msgid "반려"
+msgstr "반려"
+
+msgid "대기중"
+msgstr "대기중"
+
+msgid "전체"
+msgstr "전체"
+
+msgid "없음"
+msgstr "없음"
+
+msgid "충전기 ID"
+msgstr "충전기 ID"
+
+msgid "충전소"
+msgstr "충전소"
+
+msgid "운영사"
+msgstr "운영사"
+
+msgid "사용자"
+msgstr "사용자"
+
+msgid "등록일"
+msgstr "등록일"
+
+msgid "생성일"
+msgstr "생성일"
+
+msgid "수정일"
+msgstr "수정일"
+
+msgid "시작 시간"
+msgstr "시작 시간"
+
+msgid "종료 시간"
+msgstr "종료 시간"
+
+msgid "충전량(kWh)"
+msgstr "충전량(kWh)"
+
+msgid "금액"
+msgstr "금액"
+
+msgid "결제수단"
+msgstr "결제수단"
+
+msgid "결제상태"
+msgstr "결제상태"
+
+msgid "주문번호"
+msgstr "주문번호"
+
+msgid "세션ID"
+msgstr "세션ID"
+
+msgid "커넥터"
+msgstr "커넥터"
+
+msgid "타입"
+msgstr "타입"
+
+msgid "연결됨"
+msgstr "연결됨"
+
+msgid "오프라인"
+msgstr "오프라인"
+
+msgid "설정"
+msgstr "설정"
+
+msgid "값"
+msgstr "값"
+
+msgid "설명"
+msgstr "설명"
+
+msgid "액션"
+msgstr "액션"
+
+msgid "방향"
+msgstr "방향"
+
+msgid "시간"
+msgstr "시간"
+
+msgid "비밀번호 변경 (변경 시에만 입력)"
+msgstr "비밀번호 변경 (변경 시에만 입력)"
+
+msgid "새 비밀번호"
+msgstr "새 비밀번호"
+
+msgid "연락처"
+msgstr "연락처"
+
+msgid "사업자 정보"
+msgstr "사업자 정보"
+
+msgid "월"
+msgstr "월"
+
+msgid "이번 달"
+msgstr "이번 달"
+
+msgid "지난 달"
+msgstr "지난 달"
+
+msgid "에너지(kWh)"
+msgstr "에너지(kWh)"
+
+msgid "세션 수"
+msgstr "세션 수"
+
+msgid "매출(VND)"
+msgstr "매출(VND)"
+
+msgid "충전단가"
+msgstr "충전단가"
+
+msgid "단가 수정"
+msgstr "단가 수정"
+
+msgid "충전기 수"
+msgstr "충전기 수"
+
+msgid "사이트"
+msgstr "사이트"
+
+msgid "OCPP 메시지 로그"
+msgstr "OCPP 메시지 로그"
+
+msgid "메시지 ID"
+msgstr "메시지 ID"
+
+msgid "데이터 없음"
+msgstr "데이터 없음"
+
+msgid "카드 번호 (RFID)"
+msgstr "카드 번호 (RFID)"
+
+msgid "최근 충전"
+msgstr "최근 충전"
+
+msgid "등록된 카드"
+msgstr "등록된 카드"
+
+msgid "충전 세션 없음"
+msgstr "충전 세션 없음"
+
+msgid "등록된 카드가 없습니다."
+msgstr "등록된 카드가 없습니다."
+
+msgid "장애이력"
+msgstr "장애이력"
+
+msgid "장애 등록"
+msgstr "장애 등록"
+
+msgid "장애 내용"
+msgstr "장애 내용"
+
+msgid "운영변수"
+msgstr "운영변수"
+
+msgid "현재 접속 중인 충전기"
+msgstr "현재 접속 중인 충전기"
+
+msgid "원격 명령"
+msgstr "원격 명령"
+
+msgid "충전기 정보"
+msgstr "충전기 정보"
+
+msgid "충전 시작"
+msgstr "충전 시작"
+
+msgid "충전 종료"
+msgstr "충전 종료"
+
+msgid "재부팅"
+msgstr "재부팅"
+
+msgid "초기화 확인"
+msgstr "초기화 확인"
+
+msgid "전체 통계"
+msgstr "전체 통계"
+
+msgid "승인 대기"
+msgstr "승인 대기"
+
+msgid "사업체"
+msgstr "사업체"
+
+msgid "주소"
+msgstr "주소"
+
+msgid "단가(VND/kWh)"
+msgstr "단가(VND/kWh)"

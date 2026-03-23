@@ -1,8 +1,9 @@
 {% extends "portal/cs/base_cs.html" %}
-{% block title %}메세지 로그 - CS{% endblock %}
+{% load i18n %}
+{% block title %}{% trans "메세지 로그" %} - CS{% endblock %}
 
 {% block content %}
-<h4 class="fw-bold mb-4">OCPP 메세지 로그</h4>
+<h4 class="fw-bold mb-4">{% trans "OCPP 메시지 로그" %}</h4>
 
 <!-- 필터 -->
 <div class="card shadow-sm mb-3">
@@ -18,14 +19,14 @@
         <input type="date" name="date_to" class="form-control form-control-sm" value="{{ date_to }}">
       </div>
       <div class="col">
-        <input type="text" name="station_q" class="form-control form-control-sm" placeholder="충전기 ID" value="{{ station_q }}">
+        <input type="text" name="station_q" class="form-control form-control-sm" placeholder="{% trans "충전기 ID" %}" value="{{ station_q }}">
       </div>
       <div class="col">
         <input type="text" name="action_q" class="form-control form-control-sm" placeholder="Action (예: Heartbeat)" value="{{ action_q }}">
       </div>
       <div class="col-auto">
-        <button type="submit" class="btn btn-primary btn-sm">검색</button>
-        <a href="{% url 'portal:cs_ops_msglog' %}" class="btn btn-outline-secondary btn-sm">초기화</a>
+        <button type="submit" class="btn btn-primary btn-sm">{% trans "검색" %}</button>
+        <a href="{% url 'portal:cs_ops_msglog' %}" class="btn btn-outline-secondary btn-sm">{% trans "초기화" %}</a>
       </div>
     </form>
   </div>
@@ -35,7 +36,7 @@
   <div class="table-responsive">
     <table class="table table-hover table-sm mb-0">
       <thead class="table-light">
-        <tr><th>시각</th><th>충전기</th><th>방향</th><th>Action</th><th>Msg ID</th><th>Payload</th></tr>
+        <tr><th>{% trans "시간" %}</th><th>충전기</th><th>{% trans "방향" %}</th><th>Action</th><th>{% trans "메시지 ID" %}</th><th>Payload</th></tr>
       </thead>
       <tbody>
         {% for msg in page %}

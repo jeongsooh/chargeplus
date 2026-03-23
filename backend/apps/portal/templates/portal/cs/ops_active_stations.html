@@ -1,9 +1,10 @@
 {% extends "portal/cs/base_cs.html" %}
-{% block title %}Active 충전기 설정 - CS{% endblock %}
+{% load i18n %}
+{% block title %}{% trans "Active 충전기 설정" %} - CS{% endblock %}
 
 {% block content %}
 <div class="d-flex justify-content-between align-items-center mb-4">
-  <h4 class="fw-bold mb-0">Active 충전기 설정</h4>
+  <h4 class="fw-bold mb-0">{% trans "Active 충전기 설정" %}</h4>
   <a href="{{ request.path }}" class="btn btn-outline-secondary btn-sm"><i class="bi bi-arrow-clockwise me-1"></i>새로고침</a>
 </div>
 
@@ -24,7 +25,7 @@
     <button class="btn btn-primary btn-sm"
             onclick="openOpsModal('{{ st.station_id }}')"
             data-bs-toggle="modal" data-bs-target="#opsModal">
-      <i class="bi bi-tools me-1"></i>설정
+      <i class="bi bi-tools me-1"></i>{% trans "설정" %}
     </button>
   </div>
   <div class="card-body py-2">
@@ -45,7 +46,7 @@
         {% endif %}
       </div>
       {% empty %}
-      <span class="text-muted small">커넥터 정보 없음</span>
+      <span class="text-muted small">{% trans "커넥터" %} 정보 없음</span>
       {% endfor %}
     </div>
   </div>
@@ -59,12 +60,12 @@
   <div class="modal-dialog modal-lg modal-dialog-scrollable">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="opsModalLabel">충전기 원격 운영</h5>
+        <h5 class="modal-title" id="opsModalLabel">충전기 {% trans "원격 명령" %}</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
       </div>
       <div class="modal-body">
         <div class="mb-3">
-          <label class="form-label fw-semibold">충전기 ID</label>
+          <label class="form-label fw-semibold">{% trans "충전기 ID" %}</label>
           <input type="text" id="modalStationId" class="form-control form-control-sm" readonly>
         </div>
         <div class="mb-3">
@@ -391,7 +392,7 @@ async function sendCommand() {
   if (!action || !currentStationId) return;
 
   const payload = buildPayload(action);
-  if (payload === null) return; // validation error already alerted
+  if (payload === null) return;
 
   const btn = document.getElementById('btnSendCmd');
   const spinner = document.getElementById('btnSpinner');

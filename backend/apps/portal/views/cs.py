@@ -8,6 +8,7 @@ from django.db.models import Count, Sum, Q
 from django.db.models.functions import TruncDay, TruncWeek, TruncMonth
 from django.shortcuts import render, get_object_or_404, redirect
 from django.utils import timezone
+from django.utils.translation import gettext as _
 from django.views.decorators.http import require_POST
 
 from django.db.models import ProtectedError
@@ -237,10 +238,10 @@ def user_create(request):
         status = 'active' if role == 'customer' else request.POST.get('status', 'pending')
 
         if not username or not password:
-            messages.error(request, '아이디와 비밀번호는 필수입니다.')
+            messages.error(request, _('아이디와 비밀번호는 필수입니다.'))
             return render(request, 'portal/cs/user_form.html')
         if User.objects.filter(username=username).exists():
-            messages.error(request, '이미 사용 중인 아이디입니다.')
+            messages.error(request, _('이미 사용 중인 아이디입니다.'))
             return render(request, 'portal/cs/user_form.html')
 
         user = User.objects.create_user(
@@ -255,7 +256,7 @@ def user_create(request):
                 business_no=request.POST.get('business_no', '').strip(),
                 contact_phone=request.POST.get('contact_phone', '').strip(),
             )
-        messages.success(request, f"사용자 '{username}'이 생성되었습니다.")
+        messages.success(request, _(f"사용자 '{username}'이 생성되었습니다."))
         return redirect('portal:cs_users')
     return render(request, 'portal/cs/user_form.html')
 
@@ -277,7 +278,7 @@ def user_detail(request, user_id):
             if new_pw:
                 target.set_password(new_pw)
             target.save()
-            messages.success(request, '사용자 정보가 수정되었습니다.')
+            messages.success(request, _('사용자 정보가 수정되었습니다.'))
 
         elif action == 'add_card':
             nickname = request.POST.get('nickname', '').strip()
@@ -294,14 +295,14 @@ def user_detail(request, user_id):
                     card_last4=card_last4, card_type=card_type,
                     is_default=is_default,
                 )
-                messages.success(request, '카드가 등록되었습니다.')
+                messages.success(request, _('카드가 등록되었습니다.'))
             else:
-                messages.error(request, '카드 별칭과 끝 4자리를 입력해 주세요.')
+                messages.error(request, _('카드 별칭과 끝 4자리를 입력해 주세요.'))
 
         elif action == 'delete_card':
             card_id = request.POST.get('card_id')
             PaymentCard.objects.filter(pk=card_id, user=target).delete()
-            messages.success(request, '카드가 삭제되었습니다.')
+            messages.success(request, _('카드가 삭제되었습니다.'))
 
         elif action == 'set_default_card':
             card_id = request.POST.get('card_id')
@@ -322,14 +323,14 @@ def user_detail(request, user_id):
 def user_delete(request, user_id):
     target = get_object_or_404(User, pk=user_id)
     if target == request.user:
-        messages.error(request, '자기 자신은 삭제할 수 없습니다.')
+        messages.error(request, _('자기 자신은 삭제할 수 없습니다.'))
         return redirect('portal:cs_users')
     username = target.username
     try:
         target.delete()
-        messages.success(request, f"'{username}' 사용자가 삭제되었습니다.")
+        messages.success(request, _(f"'{username}' 사용자가 삭제되었습니다."))
     except ProtectedError:
-        messages.error(request, f"'{username}' 사용자는 연결된 데이터(충전이력 등)가 있어 삭제할 수 없습니다.")
+        messages.error(request, _(f"'{username}' 사용자는 연결된 데이터(충전이력 등)가 있어 삭제할 수 없습니다."))
     return redirect('portal:cs_users')
 
 
@@ -338,11 +339,11 @@ def user_delete(request, user_id):
 def user_toggle_status(request, user_id):
     user = get_object_or_404(User, pk=user_id)
     if user == request.user:
-        messages.error(request, '자기 자신의 상태는 변경할 수 없습니다.')
+        messages.error(request, _('자기 자신의 상태는 변경할 수 없습니다.'))
     else:
         user.status = 'inactive' if user.status == 'active' else 'active'
         user.save(update_fields=['status'])
-        messages.success(request, f"{user.username} 상태가 {user.status}로 변경되었습니다.")
+        messages.success(request, _(f"{user.username} 상태가 {user.status}로 변경되었습니다."))
     return redirect('portal:cs_users')
 
 
@@ -371,10 +372,10 @@ def partner_create(request):
         contact_phone = request.POST.get('contact_phone', '').strip()
 
         if not username or not business_name:
-            messages.error(request, '아이디와 사업체명은 필수입니다.')
+            messages.error(request, _('아이디와 사업체명은 필수입니다.'))
             return render(request, 'portal/cs/partner_form.html')
         if User.objects.filter(username=username).exists():
-            messages.error(request, '이미 사용 중인 아이디입니다.')
+            messages.error(request, _('이미 사용 중인 아이디입니다.'))
             return render(request, 'portal/cs/partner_form.html')
 
         user = User.objects.create_user(
@@ -386,7 +387,7 @@ def partner_create(request):
             user=user, business_name=business_name,
             business_no=business_no, contact_phone=contact_phone,
         )
-        messages.success(request, f"파트너 '{business_name}'이 생성되었습니다. 초기 비밀번호: {password}")
+        messages.success(request, _(f"파트너 '{business_name}'이 생성되었습니다. 초기 비밀번호: {password}"))
         return redirect('portal:cs_partners')
     return render(request, 'portal/cs/partner_form.html')
 
@@ -409,7 +410,7 @@ def partner_detail(request, partner_id):
             profile.user.first_name = request.POST.get('first_name', '').strip()
             profile.user.email = request.POST.get('email', '').strip()
             profile.user.save(update_fields=['first_name', 'email'])
-            messages.success(request, '파트너 정보가 수정되었습니다.')
+            messages.success(request, _('파트너 정보가 수정되었습니다.'))
         return redirect('portal:cs_partner_detail', partner_id=partner_id)
 
     return render(request, 'portal/cs/partner_detail.html', {
@@ -425,11 +426,11 @@ def partner_approve(request, partner_id):
     if action == 'approve':
         profile.user.status = 'active'
         profile.user.save(update_fields=['status'])
-        messages.success(request, f"{profile.business_name} 파트너가 승인되었습니다.")
+        messages.success(request, _(f"{profile.business_name} 파트너가 승인되었습니다."))
     elif action == 'reject':
         profile.user.status = 'inactive'
         profile.user.save(update_fields=['status'])
-        messages.warning(request, f"{profile.business_name} 파트너가 반려되었습니다.")
+        messages.warning(request, _(f"{profile.business_name} 파트너가 반려되었습니다."))
     return redirect('portal:cs_partners')
 
 
@@ -440,9 +441,9 @@ def partner_delete(request, partner_id):
     name = profile.business_name
     try:
         profile.user.delete()  # cascades to PartnerProfile
-        messages.success(request, f"파트너 '{name}'이 삭제되었습니다.")
+        messages.success(request, _(f"파트너 '{name}'이 삭제되었습니다."))
     except ProtectedError:
-        messages.error(request, f"'{name}' 파트너는 소속 충전소가 있어 삭제할 수 없습니다. 충전소를 먼저 삭제해 주세요.")
+        messages.error(request, _(f"'{name}' 파트너는 소속 충전소가 있어 삭제할 수 없습니다. 충전소를 먼저 삭제해 주세요."))
     return redirect('portal:cs_partners')
 
 
@@ -474,9 +475,9 @@ def charger_create(request):
         address = request.POST.get('address', '').strip()
 
         if not station_id or not operator_id:
-            messages.error(request, '충전기 ID와 운영사는 필수입니다.')
+            messages.error(request, _('충전기 ID와 운영사는 필수입니다.'))
         elif ChargingStation.objects.filter(station_id=station_id).exists():
-            messages.error(request, '이미 존재하는 충전기 ID입니다.')
+            messages.error(request, _('이미 존재하는 충전기 ID입니다.'))
         else:
             ChargingStation.objects.create(
                 station_id=station_id,
@@ -485,7 +486,7 @@ def charger_create(request):
                 address=address,
                 status=ChargingStation.Status.OFFLINE,
             )
-            messages.success(request, f"충전기 '{station_id}'이 등록되었습니다.")
+            messages.success(request, _(f"충전기 '{station_id}'이 등록되었습니다."))
             return redirect('portal:cs_chargers')
 
     return render(request, 'portal/cs/charger_form.html', {
@@ -518,7 +519,7 @@ def charger_fault_add(request, station_pk):
     reported_at_str = request.POST.get('reported_at', '')
 
     if not description:
-        messages.error(request, '장애 내용을 입력해 주세요.')
+        messages.error(request, _('장애 내용을 입력해 주세요.'))
         return redirect('portal:cs_charger_detail', station_pk=station_pk)
 
     try:
@@ -536,7 +537,7 @@ def charger_fault_add(request, station_pk):
         description=description,
         reported_by=request.user.username,
     )
-    messages.success(request, '장애이력이 등록되었습니다.')
+    messages.success(request, _('장애이력이 등록되었습니다.'))
     return redirect('portal:cs_charger_detail', station_pk=station_pk)
 
 
@@ -547,9 +548,9 @@ def charger_delete(request, station_pk):
     station_id = station.station_id
     try:
         station.delete()
-        messages.success(request, f"충전기 '{station_id}'이 삭제되었습니다.")
+        messages.success(request, _(f"충전기 '{station_id}'이 삭제되었습니다."))
     except ProtectedError:
-        messages.error(request, f"'{station_id}' 충전기는 충전이력이 있어 삭제할 수 없습니다.")
+        messages.error(request, _(f"'{station_id}' 충전기는 충전이력이 있어 삭제할 수 없습니다."))
     return redirect('portal:cs_chargers')
 
 
@@ -601,17 +602,17 @@ def idtoken_create(request):
         expiry_date = _parse_expiry(request.POST.get('expiry_date', ''))
 
         if not id_token_val:
-            messages.error(request, '카드 번호를 입력해 주세요.')
+            messages.error(request, _('카드 번호를 입력해 주세요.'))
             return render(request, 'portal/cs/idtoken_form.html', ctx)
         if IdToken.objects.filter(id_token=id_token_val).exists():
-            messages.error(request, '이미 등록된 카드 번호입니다.')
+            messages.error(request, _('이미 등록된 카드 번호입니다.'))
             return render(request, 'portal/cs/idtoken_form.html', ctx)
 
         IdToken.objects.create(
             id_token=id_token_val, token_type=token_type,
             status=status, user_id=user_id, expiry_date=expiry_date,
         )
-        messages.success(request, f"충전카드 '{id_token_val}'이 등록되었습니다.")
+        messages.success(request, _(f"충전카드 '{id_token_val}'이 등록되었습니다."))
         return redirect('portal:cs_idtokens')
 
     return render(request, 'portal/cs/idtoken_form.html', ctx)
@@ -628,7 +629,7 @@ def idtoken_edit(request, token_id):
         token.user_id = request.POST.get('user_id', '') or None
         token.expiry_date = _parse_expiry(request.POST.get('expiry_date', ''))
         token.save()
-        messages.success(request, f"충전카드 '{token.id_token}'이 수정되었습니다.")
+        messages.success(request, _(f"충전카드 '{token.id_token}'이 수정되었습니다."))
         return redirect('portal:cs_idtokens')
 
     return render(request, 'portal/cs/idtoken_form.html', ctx)
@@ -641,9 +642,9 @@ def idtoken_delete(request, token_id):
     token_val = token.id_token
     try:
         token.delete()
-        messages.success(request, f"충전카드 '{token_val}'이 삭제되었습니다.")
+        messages.success(request, _(f"충전카드 '{token_val}'이 삭제되었습니다."))
     except ProtectedError:
-        messages.error(request, f"'{token_val}' 카드는 충전이력이 있어 삭제할 수 없습니다.")
+        messages.error(request, _(f"'{token_val}' 카드는 충전이력이 있어 삭제할 수 없습니다."))
     return redirect('portal:cs_idtokens')
 
 
@@ -676,13 +677,13 @@ def site_create(request):
         address = request.POST.get('address', '').strip()
         unit_price = request.POST.get('unit_price', '0')
         if not site_name or not partner_id:
-            messages.error(request, '충전소명과 파트너를 선택해 주세요.')
+            messages.error(request, _('충전소명과 파트너를 선택해 주세요.'))
         else:
             ChargingSite.objects.create(
                 partner_id=partner_id, site_name=site_name,
                 address=address, unit_price=unit_price,
             )
-            messages.success(request, f"충전소 '{site_name}'이 등록되었습니다.")
+            messages.success(request, _(f"충전소 '{site_name}'이 등록되었습니다."))
             return redirect('portal:cs_sites')
     partners = PartnerProfile.objects.select_related('user').filter(user__status='active')
     return render(request, 'portal/cs/site_form.html', {'partners': partners})
@@ -845,7 +846,7 @@ def ops_config(request):
             CsmsVariable.objects.filter(key=key).update(
                 value=value, updated_by=request.user.username,
             )
-            messages.success(request, f"'{key}' 변수가 업데이트되었습니다.")
+            messages.success(request, _(f"'{key}' 변수가 업데이트되었습니다."))
             return redirect('portal:cs_ops_config')
     return render(request, 'portal/cs/ops_config.html', {'variables': variables})
 

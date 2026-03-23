@@ -1,0 +1,12 @@
+{% load i18n %}
+<form action="/i18n/set_language/" method="post" class="d-inline">
+  {% csrf_token %}
+  <input name="next" type="hidden" value="{{ request.get_full_path }}">
+  <select name="language" onchange="this.form.submit()"
+          class="form-select form-select-sm bg-transparent border-secondary text-secondary"
+          style="width:auto;">
+    <option value="ko" {% if LANGUAGE_CODE == 'ko' %}selected{% endif %}>🇰🇷 한국어</option>
+    <option value="en" {% if LANGUAGE_CODE == 'en' %}selected{% endif %}>🇺🇸 English</option>
+    <option value="vi" {% if LANGUAGE_CODE == 'vi' %}selected{% endif %}>🇻🇳 Tiếng Việt</option>
+  </select>
+</form>

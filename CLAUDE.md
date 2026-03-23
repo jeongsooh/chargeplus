@@ -115,7 +115,7 @@ gcloud compute ssh chargeplus-vm --project chargeplus-490312 --zone asia-northea
 cd ~/chargeplus
 git pull origin master
 sudo docker compose pull
-sudo docker compose up -d --build
+sudo docker compose up -d --build backend  # 반드시 --build backend 포함 (코드가 이미지에 빌드됨, 없으면 변경사항 미반영)
 sudo docker compose exec backend python manage.py migrate
 ```
 
