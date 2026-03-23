@@ -7,7 +7,7 @@
   <div class="col-md-5">
     <div class="text-center mb-4">
       <h4 class="fw-bold"><i class="bi bi-headset text-danger me-2"></i>{% trans "고객센터 직원" %} {% trans "가입하기" %}</h4>
-      <p class="text-muted small">Django 관리자에서 직접 승인 처리됩니다.</p>
+      <p class="text-muted small">{% trans "Django 관리자에서 직접 승인 처리됩니다." %}</p>
     </div>
     <div class="card shadow-sm">
       <div class="card-body p-4">
@@ -42,7 +42,7 @@
       </div>
     </div>
     <div class="text-center mt-3">
-      <a href="{% url 'portal:register_select' %}" class="text-muted small">뒤로</a>
+      <a href="{% url 'portal:register_select' %}" class="text-muted small">{% trans "뒤로" %}</a>
     </div>
   </div>
 </div>

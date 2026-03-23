@@ -6,7 +6,7 @@
 <div class="d-flex align-items-center mb-4">
   <h4 class="fw-bold mb-0">{% trans "충전기 관리" %}</h4>
   <a href="{% url 'portal:cs_charger_create' %}" class="btn btn-primary btn-sm ms-auto">
-    <i class="bi bi-plus-lg me-1"></i>충전기 추가
+    <i class="bi bi-plus-lg me-1"></i>{% trans "충전기 추가" %}
   </a>
 </div>
 
@@ -22,7 +22,7 @@
         </select>
       </div>
       <div class="col">
-        <input type="text" name="q" class="form-control form-control-sm" placeholder="충전기ID / 주소" value="{{ q }}">
+        <input type="text" name="q" class="form-control form-control-sm" placeholder="{% trans '충전기ID / 주소' %}" value="{{ q }}">
       </div>
       <div class="col-auto">
         <button type="submit" class="btn btn-primary btn-sm">{% trans "검색" %}</button>
@@ -35,7 +35,7 @@
   <div class="table-responsive">
     <table class="table table-hover mb-0">
       <thead class="table-light">
-        <tr><th>{% trans "충전기 ID" %}</th><th>{% trans "운영사" %}</th><th>{% trans "충전소" %}</th><th>{% trans "주소" %}</th><th>{% trans "상태" %}</th><th>최종 하트비트</th><th></th></tr>
+        <tr><th>{% trans "충전기 ID" %}</th><th>{% trans "운영사" %}</th><th>{% trans "충전소" %}</th><th>{% trans "주소" %}</th><th>{% trans "상태" %}</th><th>{% trans "최종 하트비트" %}</th><th></th></tr>
       </thead>
       <tbody>
         {% for s in stations %}
@@ -52,16 +52,16 @@
           </td>
           <td>{{ s.last_heartbeat|date:"Y-m-d H:i"|default:"-" }}</td>
           <td class="text-nowrap">
-            <a href="{% url 'portal:cs_charger_detail' s.pk %}" class="btn btn-sm btn-outline-primary">상세</a>
+            <a href="{% url 'portal:cs_charger_detail' s.pk %}" class="btn btn-sm btn-outline-primary">{% trans "상세" %}</a>
             <form method="post" action="{% url 'portal:cs_charger_delete' s.pk %}" class="d-inline"
-                  onsubmit="return confirm('충전기를 비활성화하시겠습니까?')">
+                  onsubmit="return confirm('{% trans "충전기를 비활성화하시겠습니까?" %}')">
               {% csrf_token %}
               <button class="btn btn-sm btn-outline-danger">{% trans "삭제" %}</button>
             </form>
           </td>
         </tr>
         {% empty %}
-        <tr><td colspan="7" class="text-center text-muted py-3">충전기가 없습니다.</td></tr>
+        <tr><td colspan="7" class="text-center text-muted py-3">{% trans "충전기가 없습니다." %}</td></tr>
         {% endfor %}
       </tbody>
     </table>

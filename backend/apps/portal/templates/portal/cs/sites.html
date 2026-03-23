@@ -15,7 +15,7 @@
     <table class="table table-hover mb-0">
       <thead class="table-light">
         <tr>
-          <th>충전소명</th><th>{% trans "파트너" %}</th><th>{% trans "주소" %}</th><th>{% trans "충전단가" %}</th><th>{% trans "충전기 수" %}</th><th>{% trans "등록일" %}</th>
+          <th>{% trans "충전소명" %}</th><th>{% trans "파트너" %}</th><th>{% trans "주소" %}</th><th>{% trans "충전단가" %}</th><th>{% trans "충전기 수" %}</th><th>{% trans "등록일" %}</th>
         </tr>
       </thead>
       <tbody>
@@ -24,7 +24,7 @@
           <td>{{ site.site_name }}</td>
           <td>{{ site.partner.business_name }}</td>
           <td>{{ site.address|default:"-" }}</td>
-          <td>{{ site.unit_price }} 원/kWh</td>
+          <td>{{ site.unit_price }} {% trans "원" %}/kWh</td>
           <td>{{ site.station_count }}</td>
           <td>{{ site.created_at|date:"Y-m-d" }}</td>
         </tr>

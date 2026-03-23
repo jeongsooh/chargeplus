@@ -19,7 +19,7 @@
         <input type="text" name="station_q" class="form-control form-control-sm" placeholder="{% trans "충전기 ID" %}" value="{{ station_q }}">
       </div>
       <div class="col">
-        <input type="text" name="user_q" class="form-control form-control-sm" placeholder="{% trans "사용자" %}(아이디/이름/이메일)" value="{{ user_q }}">
+        <input type="text" name="user_q" class="form-control form-control-sm" placeholder="{% trans '아이디/이름/이메일' %}" value="{{ user_q }}">
       </div>
       <div class="col-auto">
         <select name="status_q" class="form-select form-select-sm">
@@ -42,8 +42,8 @@
     <table class="table table-hover table-sm mb-0">
       <thead class="table-light">
         <tr>
-          <th>{% trans "주문번호" %}</th><th>충전기</th><th>{% trans "사용자" %}</th>
-          <th class="text-end">선결제(원)</th><th class="text-end">실사용(원)</th><th class="text-end">환불(원)</th>
+          <th>{% trans "주문번호" %}</th><th>{% trans "충전기 ID" %}</th><th>{% trans "사용자" %}</th>
+          <th class="text-end">{% trans "선결제(원)" %}</th><th class="text-end">{% trans "실사용(원)" %}</th><th class="text-end">{% trans "환불(원)" %}</th>
           <th>{% trans "상태" %}</th><th>MB거래ID</th><th>{% trans "시간" %}</th>
         </tr>
       </thead>
@@ -57,13 +57,13 @@
           <td class="text-end">{{ p.actual_amount|floatformat:0|default:"-" }}</td>
           <td class="text-end">{{ p.refund_amount|floatformat:0|default:"-" }}</td>
           <td>
-            {% if p.status == 'PENDING' %}<span class="badge bg-warning text-dark">결제대기</span>
-            {% elif p.status == 'PAID' %}<span class="badge bg-info text-dark">IPN수신</span>
-            {% elif p.status == 'CHARGING' %}<span class="badge bg-primary">충전중</span>
-            {% elif p.status == 'COMPLETED' %}<span class="badge bg-success">완료</span>
-            {% elif p.status == 'REFUNDED' %}<span class="badge bg-secondary">환불완료</span>
-            {% elif p.status == 'FAILED' %}<span class="badge bg-danger">실패</span>
-            {% elif p.status == 'CANCELED' %}<span class="badge bg-secondary">취소</span>
+            {% if p.status == 'PENDING' %}<span class="badge bg-warning text-dark">{% trans "결제대기" %}</span>
+            {% elif p.status == 'PAID' %}<span class="badge bg-info text-dark">{% trans "IPN수신" %}</span>
+            {% elif p.status == 'CHARGING' %}<span class="badge bg-primary">{% trans "충전중" %}</span>
+            {% elif p.status == 'COMPLETED' %}<span class="badge bg-success">{% trans "완료" %}</span>
+            {% elif p.status == 'REFUNDED' %}<span class="badge bg-secondary">{% trans "환불완료" %}</span>
+            {% elif p.status == 'FAILED' %}<span class="badge bg-danger">{% trans "실패" %}</span>
+            {% elif p.status == 'CANCELED' %}<span class="badge bg-secondary">{% trans "취소" %}</span>
             {% else %}<span class="badge bg-light text-dark">{{ p.status }}</span>{% endif %}
           </td>
           <td><small class="text-muted">{{ p.mb_transaction_id|default:"-" }}</small></td>
@@ -78,7 +78,7 @@
 
   {% if page.paginator.num_pages > 1 %}
   <div class="card-footer d-flex justify-content-between align-items-center py-2">
-    <small class="text-muted">총 {{ page.paginator.count }}건 / {{ page.paginator.num_pages }}페이지</small>
+    <small class="text-muted">{% blocktrans with count=page.paginator.count pages=page.paginator.num_pages %}총 {{ count }}건 / {{ pages }}페이지{% endblocktrans %}</small>
     <nav>
       <ul class="pagination pagination-sm mb-0">
         {% if page.has_previous %}

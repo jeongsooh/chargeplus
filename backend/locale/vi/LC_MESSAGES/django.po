@@ -472,3 +472,463 @@ msgstr "Địa chỉ"
 
 msgid "단가(VND/kWh)"
 msgstr "Đơn giá (VND/kWh)"
+
+msgid "Django 관리자에서 직접 승인 처리됩니다."
+msgstr "Phê duyệt được xử lý trực tiếp trong Django admin."
+
+msgid "뒤로"
+msgstr "Quay lại"
+
+msgid "가입 후 관리자 승인이 필요합니다."
+msgstr "Cần phê duyệt từ quản trị viên sau khi đăng ký."
+
+msgid "계정 정보"
+msgstr "Thông tin tài khoản"
+
+msgid "충전 이력 조회, 카드 관리"
+msgstr "Xem lịch sử sạc, quản lý thẻ"
+
+msgid "즉시 활성화"
+msgstr "Kích hoạt ngay"
+
+msgid "충전소/충전기 관리, 정산"
+msgstr "Quản lý trạm/bộ sạc, quyết toán"
+
+msgid "관리자 승인 필요"
+msgstr "Cần phê duyệt quản trị viên"
+
+msgid "전체 관리자 수준 접근"
+msgstr "Quyền truy cập quản trị viên đầy đủ"
+
+msgid "Django 어드민 승인"
+msgstr "Phê duyệt Django admin"
+
+msgid "충전기 추가"
+msgstr "Thêm bộ sạc"
+
+msgid "충전기ID / 주소"
+msgstr "ID bộ sạc / Địa chỉ"
+
+msgid "상세"
+msgstr "Chi tiết"
+
+msgid "충전기를 비활성화하시겠습니까?"
+msgstr "Bạn có muốn vô hiệu hóa bộ sạc này không?"
+
+msgid "충전기가 없습니다."
+msgstr "Không có bộ sạc nào."
+
+msgid "충전기 상세"
+msgstr "Chi tiết bộ sạc"
+
+msgid "← 목록"
+msgstr "← Danh sách"
+
+msgid "기본 정보"
+msgstr "Thông tin cơ bản"
+
+msgid "최종 하트비트"
+msgstr "Heartbeat cuối"
+
+msgid "발생일시"
+msgstr "Thời gian xảy ra"
+
+msgid "유형"
+msgstr "Loại"
+
+msgid "미처리"
+msgstr "Chưa xử lý"
+
+msgid "최근 충전이력 (최대 20건)"
+msgstr "Lịch sử sạc gần đây (tối đa 20)"
+
+msgid "완료"
+msgstr "Hoàn thành"
+
+msgid "충전중"
+msgstr "Đang sạc"
+
+msgid "실패"
+msgstr "Thất bại"
+
+msgid "충전이력이 없습니다."
+msgstr "Không có lịch sử sạc."
+
+msgid "영문/숫자 조합, 대문자 저장"
+msgstr "Chữ và số, lưu in hoa"
+
+msgid "-- 선택 --"
+msgstr "-- Chọn --"
+
+msgid "-- 미지정 --"
+msgstr "-- Không chỉ định --"
+
+msgid "설치 주소"
+msgstr "Địa chỉ lắp đặt"
+
+msgid "시스템 설정"
+msgstr "Cài đặt hệ thống"
+
+msgid "시스템 설정 (CSMS Variables)"
+msgstr "Cài đặt hệ thống (CSMS Variables)"
+
+msgid "설정 변수가 없습니다."
+msgstr "Không có biến cài đặt."
+
+msgid "전체 충전기"
+msgstr "Tổng bộ sạc"
+
+msgid "전체 고객"
+msgstr "Tổng khách hàng"
+
+msgid "당월 충전건수"
+msgstr "Số lần sạc tháng này"
+
+msgid "서비스 현황"
+msgstr "Trạng thái dịch vụ"
+
+msgid "일별"
+msgstr "Theo ngày"
+
+msgid "주별"
+msgstr "Theo tuần"
+
+msgid "월별"
+msgstr "Theo tháng"
+
+msgid "기간"
+msgstr "Kỳ"
+
+msgid "결제금액(원)"
+msgstr "Thanh toán (KRW)"
+
+msgid "충전횟수"
+msgstr "Số lần sạc"
+
+msgid "상세내역"
+msgstr "Chi tiết"
+
+msgid "카드 추가"
+msgstr "Thêm thẻ"
+
+msgid "카드번호 / 사용자ID"
+msgstr "Số thẻ / ID người dùng"
+
+msgid "충전카드를 삭제하시겠습니까?"
+msgstr "Bạn có muốn xóa thẻ sạc này không?"
+
+msgid "등록된 충전카드가 없습니다."
+msgstr "Không có thẻ sạc nào được đăng ký."
+
+msgid "카드 번호"
+msgstr "Số thẻ"
+
+msgid "RFID UID 또는 앱 토큰 값 (대문자 저장)"
+msgstr "RFID UID hoặc mã thông báo ứng dụng (lưu in hoa)"
+
+msgid "만료일시"
+msgstr "Ngày hết hạn"
+
+msgid "비워두면 만료일 없음"
+msgstr "Để trống nếu không hết hạn"
+
+msgid "-- 미지정 (익명 카드) --"
+msgstr "-- Không chỉ định (ẩn danh) --"
+
+msgid "새로고침"
+msgstr "Làm mới"
+
+msgid "현재 Online 상태인 충전기가 없습니다."
+msgstr "Hiện không có bộ sạc nào trực tuyến."
+
+msgid "명령 선택"
+msgstr "Chọn lệnh"
+
+msgid "— 명령을 선택하세요 —"
+msgstr "— Chọn một lệnh —"
+
+msgid "조회"
+msgstr "Truy vấn"
+
+msgid "설정정보 읽기 (GetConfiguration)"
+msgstr "Đọc cấu hình (GetConfiguration)"
+
+msgid "로컬리스트 버전 확인 (GetLocalListVersion)"
+msgstr "Kiểm tra phiên bản danh sách cục bộ (GetLocalListVersion)"
+
+msgid "충전프로파일 확인 (GetCompositeSchedule)"
+msgstr "Kiểm tra hồ sơ sạc (GetCompositeSchedule)"
+
+msgid "설정값 셋팅 (ChangeConfiguration)"
+msgstr "Thay đổi cài đặt (ChangeConfiguration)"
+
+msgid "충전프로파일 설정 (SetChargingProfile)"
+msgstr "Đặt hồ sơ sạc (SetChargingProfile)"
+
+msgid "충전프로파일 삭제 (ClearChargingProfile)"
+msgstr "Xóa hồ sơ sạc (ClearChargingProfile)"
+
+msgid "로컬리스트 보내기 (SendLocalList)"
+msgstr "Gửi danh sách cục bộ (SendLocalList)"
+
+msgid "제어"
+msgstr "Điều khiển"
+
+msgid "충전기 리셋 (Reset)"
+msgstr "Đặt lại bộ sạc (Reset)"
+
+msgid "로컬캐시 삭제 (ClearCache)"
+msgstr "Xóa bộ nhớ đệm (ClearCache)"
+
+msgid "커넥터 해제 (UnlockConnector)"
+msgstr "Mở khóa đầu nối (UnlockConnector)"
+
+msgid "트리거 메세지 (TriggerMessage)"
+msgstr "Kích hoạt tin nhắn (TriggerMessage)"
+
+msgid "원격 충전"
+msgstr "Sạc từ xa"
+
+msgid "원격 충전시작 (RemoteStartTransaction)"
+msgstr "Bắt đầu sạc từ xa (RemoteStartTransaction)"
+
+msgid "원격 충전종료 (RemoteStopTransaction)"
+msgstr "Dừng sạc từ xa (RemoteStopTransaction)"
+
+msgid "예약"
+msgstr "Đặt chỗ"
+
+msgid "충전 예약 (ReserveNow)"
+msgstr "Đặt chỗ sạc (ReserveNow)"
+
+msgid "예약 취소 (CancelReservation)"
+msgstr "Hủy đặt chỗ (CancelReservation)"
+
+msgid "펌웨어"
+msgstr "Phần cứng"
+
+msgid "원격 펌웨어 업데이트 (UpdateFirmware)"
+msgstr "Cập nhật firmware từ xa (UpdateFirmware)"
+
+msgid "조회할 키 (빈칸=전체, 콤마로 구분)"
+msgstr "Khóa cần truy vấn (trống=tất cả, phân cách bằng dấu phẩy)"
+
+msgid "리셋 유형"
+msgstr "Loại reset"
+
+msgid "Soft (소프트 리셋)"
+msgstr "Soft (Reset mềm)"
+
+msgid "Hard (하드 리셋)"
+msgstr "Hard (Reset cứng)"
+
+msgid "추가 파라미터 없음. 실행 버튼을 누르세요."
+msgstr "Không có thêm tham số. Nhấn Thực thi."
+
+msgid "응답"
+msgstr "Phản hồi"
+
+msgid "닫기"
+msgstr "Đóng"
+
+msgid "실행"
+msgstr "Thực thi"
+
+msgid "localAuthorizationList JSON 파싱 오류: "
+msgstr "Lỗi phân tích JSON localAuthorizationList: "
+
+msgid "csChargingProfiles JSON 파싱 오류: "
+msgstr "Lỗi phân tích JSON csChargingProfiles: "
+
+msgid "성공"
+msgstr "Thành công"
+
+msgid "네트워크 오류"
+msgstr "Lỗi mạng"
+
+msgid "알 수 없는 오류"
+msgstr "Lỗi không xác định"
+
+msgid "메세지 로그가 없습니다."
+msgstr "Không có nhật ký tin nhắn."
+
+msgid "비활성"
+msgstr "Không hoạt động"
+
+msgid "비활성화"
+msgstr "Vô hiệu hóa"
+
+msgid "재활성"
+msgstr "Kích hoạt lại"
+
+msgid "담당자명"
+msgstr "Tên người phụ trách"
+
+msgid "충전소 및 충전기"
+msgstr "Bộ sạc và trạm sạc"
+
+msgid "충전기 없음"
+msgstr "Không có bộ sạc"
+
+msgid "원"
+msgstr "KRW"
+
+msgid "결제대기"
+msgstr "Chờ thanh toán"
+
+msgid "IPN수신"
+msgstr "Đã nhận IPN"
+
+msgid "환불완료"
+msgstr "Đã hoàn tiền"
+
+msgid "선결제(원)"
+msgstr "Trả trước (KRW)"
+
+msgid "실사용(원)"
+msgstr "Thực tế (KRW)"
+
+msgid "환불(원)"
+msgstr "Hoàn tiền (KRW)"
+
+msgid "시작일"
+msgstr "Ngày bắt đầu"
+
+msgid "종료일"
+msgstr "Ngày kết thúc"
+
+msgid "선택하세요"
+msgstr "Chọn"
+
+msgid "충전소명"
+msgstr "Tên trạm sạc"
+
+msgid "서비스 현황 상세내역"
+msgstr "Chi tiết trạng thái dịch vụ"
+
+msgid "충전소별"
+msgstr "Theo trạm sạc"
+
+msgid "(충전소 미지정)"
+msgstr "(Chưa có trạm sạc)"
+
+msgid "충전기별"
+msgstr "Theo bộ sạc"
+
+msgid "역할 전체"
+msgstr "Tất cả vai trò"
+
+msgid "고객센터"
+msgstr "Dịch vụ khách hàng"
+
+msgid "상태 전체"
+msgstr "Tất cả trạng thái"
+
+msgid "승인대기"
+msgstr "Chờ phê duyệt"
+
+msgid "아이디/이름/이메일"
+msgstr "ID / Tên / Email"
+
+msgid "역할"
+msgstr "Vai trò"
+
+msgid "결제 카드"
+msgstr "Thẻ thanh toán"
+
+msgid "카드 별칭"
+msgstr "Bí danh thẻ"
+
+msgid "끝 4자리"
+msgstr "4 số cuối"
+
+msgid "기본"
+msgstr "Mặc định"
+
+msgid "기본설정"
+msgstr "Đặt mặc định"
+
+msgid "카드를 삭제하시겠습니까?"
+msgstr "Bạn có muốn xóa thẻ này không?"
+
+msgid "추가"
+msgstr "Thêm"
+
+msgid "정말 삭제하시겠습니까?"
+msgstr "Bạn có chắc muốn xóa không?"
+
+msgid "활성화"
+msgstr "Kích hoạt"
+
+msgid "※ 초기 비밀번호: ChargePlus1234! (생성 후 안내)"
+msgstr "※ Mật khẩu ban đầu: ChargePlus1234! (thông báo sau khi tạo)"
+
+msgid "connectorId (선택)"
+msgstr "connectorId (tùy chọn)"
+
+msgid "id (선택)"
+msgstr "id (tùy chọn)"
+
+msgid "retries (선택)"
+msgstr "retries (tùy chọn)"
+
+msgid "retryInterval (초)"
+msgstr "retryInterval (giây)"
+
+msgid "purpose (선택)"
+msgstr "purpose (tùy chọn)"
+
+msgid "stackLevel (선택)"
+msgstr "stackLevel (tùy chọn)"
+
+msgid "chargingRateUnit (선택)"
+msgstr "chargingRateUnit (tùy chọn)"
+
+msgid "duration (초) *"
+msgstr "duration (giây) *"
+
+msgid "— 선택 안함 —"
+msgstr "— Không chọn —"
+
+msgid "localAuthorizationList (JSON 배열, 선택)"
+msgstr "localAuthorizationList (mảng JSON, tùy chọn)"
+
+msgid "Value *"
+msgstr "Value *"
+
+msgid "Key *"
+msgstr "Key *"
+
+msgid "예약 ID"
+msgstr "ID đặt chỗ"
+
+msgid "펌웨어 URL *"
+msgstr "URL firmware *"
+
+msgid "0=전체"
+msgstr "0=tất cả"
+
+msgid "선택 안함"
+msgstr "Không chọn"
+
+msgid "온라인 {{ n }}대"
+msgstr "{{ n }} trực tuyến"
+
+msgid "총 {{ count }}건 / {{ pages }}페이지"
+msgstr "Tổng {{ count }} / {{ pages }} trang"
+
+msgid "소속 충전기 ({{ n }}대)"
+msgstr "Bộ sạc ({{ n }})"
+
+msgid "{{ username }} 사용자를 비활성화하시겠습니까?"
+msgstr "Bạn có muốn vô hiệu hóa người dùng {{ username }} không?"
+
+
+msgid "충전 허용"
+msgstr "Cho phép sạc"
+
+msgid "만료"
+msgstr "Hết hạn"
+
+msgid "미등록/불가"
+msgstr "Chưa đăng ký/Không hợp lệ"

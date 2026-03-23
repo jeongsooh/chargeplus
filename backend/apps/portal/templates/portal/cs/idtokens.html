@@ -6,7 +6,7 @@
 <div class="d-flex align-items-center mb-4">
   <h4 class="fw-bold mb-0">{% trans "충전카드 관리" %}</h4>
   <a href="{% url 'portal:cs_idtoken_create' %}" class="btn btn-primary btn-sm ms-auto">
-    <i class="bi bi-plus-lg me-1"></i>카드 추가
+    <i class="bi bi-plus-lg me-1"></i>{% trans "카드 추가" %}
   </a>
 </div>
 
@@ -31,7 +31,7 @@
         </select>
       </div>
       <div class="col">
-        <input type="text" name="q" class="form-control form-control-sm" placeholder="카드번호 / 사용자ID" value="{{ q }}">
+        <input type="text" name="q" class="form-control form-control-sm" placeholder="{% trans '카드번호 / 사용자ID' %}" value="{{ q }}">
       </div>
       <div class="col-auto">
         <button type="submit" class="btn btn-primary btn-sm">{% trans "검색" %}</button>
@@ -45,7 +45,7 @@
   <div class="table-responsive">
     <table class="table table-hover mb-0">
       <thead class="table-light">
-        <tr><th>카드 번호</th><th>{% trans "타입" %}</th><th>{% trans "상태" %}</th><th>{% trans "사용자" %}</th><th>만료일</th><th>{% trans "등록일" %}</th><th></th></tr>
+        <tr><th>{% trans "카드 번호" %}</th><th>{% trans "타입" %}</th><th>{% trans "상태" %}</th><th>{% trans "사용자" %}</th><th>{% trans "만료일시" %}</th><th>{% trans "등록일" %}</th><th></th></tr>
       </thead>
       <tbody>
         {% for token in page %}
@@ -64,14 +64,14 @@
           <td class="text-nowrap">
             <a href="{% url 'portal:cs_idtoken_edit' token.id_token %}" class="btn btn-sm btn-outline-primary">{% trans "수정" %}</a>
             <form method="post" action="{% url 'portal:cs_idtoken_delete' token.id_token %}" class="d-inline"
-                  onsubmit="return confirm('충전카드를 삭제하시겠습니까?')">
+                  onsubmit="return confirm('{% trans "충전카드를 삭제하시겠습니까?" %}')">
               {% csrf_token %}
               <button class="btn btn-sm btn-outline-danger">{% trans "삭제" %}</button>
             </form>
           </td>
         </tr>
         {% empty %}
-        <tr><td colspan="7" class="text-center text-muted py-3">등록된 충전카드가 없습니다.</td></tr>
+        <tr><td colspan="7" class="text-center text-muted py-3">{% trans "등록된 충전카드가 없습니다." %}</td></tr>
         {% endfor %}
       </tbody>
     </table>
@@ -79,7 +79,7 @@
 
   {% if page.paginator.num_pages > 1 %}
   <div class="card-footer d-flex justify-content-between align-items-center py-2">
-    <small class="text-muted">총 {{ page.paginator.count }}건 / {{ page.paginator.num_pages }}페이지</small>
+    <small class="text-muted">{% blocktrans with count=page.paginator.count pages=page.paginator.num_pages %}총 {{ count }}건 / {{ pages }}페이지{% endblocktrans %}</small>
     <nav>
       <ul class="pagination pagination-sm mb-0">
         {% if page.has_previous %}

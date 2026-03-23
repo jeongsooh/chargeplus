@@ -36,7 +36,7 @@
   <div class="table-responsive">
     <table class="table table-hover table-sm mb-0">
       <thead class="table-light">
-        <tr><th>{% trans "시간" %}</th><th>충전기</th><th>{% trans "방향" %}</th><th>Action</th><th>{% trans "메시지 ID" %}</th><th>Payload</th></tr>
+        <tr><th>{% trans "시간" %}</th><th>{% trans "충전기 ID" %}</th><th>{% trans "방향" %}</th><th>Action</th><th>{% trans "메시지 ID" %}</th><th>Payload</th></tr>
       </thead>
       <tbody>
         {% for msg in page %}
@@ -59,7 +59,7 @@
           </td>
         </tr>
         {% empty %}
-        <tr><td colspan="6" class="text-center text-muted py-3">메세지 로그가 없습니다.</td></tr>
+        <tr><td colspan="6" class="text-center text-muted py-3">{% trans "메세지 로그가 없습니다." %}</td></tr>
         {% endfor %}
       </tbody>
     </table>
@@ -68,7 +68,7 @@
   <!-- 페이지네이션 -->
   {% if page.paginator.num_pages > 1 %}
   <div class="card-footer d-flex justify-content-between align-items-center py-2">
-    <small class="text-muted">총 {{ page.paginator.count }}건 / {{ page.paginator.num_pages }}페이지</small>
+    <small class="text-muted">{% blocktrans with count=page.paginator.count pages=page.paginator.num_pages %}총 {{ count }}건 / {{ pages }}페이지{% endblocktrans %}</small>
     <nav>
       <ul class="pagination pagination-sm mb-0">
         {% if page.has_previous %}

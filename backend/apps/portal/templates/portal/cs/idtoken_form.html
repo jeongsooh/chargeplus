@@ -1,11 +1,11 @@
 {% extends "portal/cs/base_cs.html" %}
 {% load i18n %}
-{% block title %}{% if token %}충전카드 {% trans "수정" %}{% else %}충전카드 추가{% endif %} - CS{% endblock %}
+{% block title %}{% if token %}{% trans "충전카드" %} {% trans "수정" %}{% else %}{% trans "카드 추가" %}{% endif %} - CS{% endblock %}
 
 {% block content %}
 <div class="d-flex align-items-center mb-4">
-  <h4 class="fw-bold mb-0">{% if token %}충전카드 {% trans "수정" %} — <code>{{ token.id_token }}</code>{% else %}충전카드 추가{% endif %}</h4>
-  <a href="{% url 'portal:cs_idtokens' %}" class="btn btn-sm btn-outline-secondary ms-3">← 목록</a>
+  <h4 class="fw-bold mb-0">{% if token %}{% trans "충전카드" %} {% trans "수정" %} — <code>{{ token.id_token }}</code>{% else %}{% trans "카드 추가" %}{% endif %}</h4>
+  <a href="{% url 'portal:cs_idtokens' %}" class="btn btn-sm btn-outline-secondary ms-3">{% trans "← 목록" %}</a>
 </div>
 
 <div class="card shadow-sm" style="max-width:520px;">
@@ -15,10 +15,10 @@
 
       {% if not token %}
       <div class="mb-3">
-        <label class="form-label">카드 번호 <span class="text-danger">*</span></label>
+        <label class="form-label">{% trans "카드 번호" %} <span class="text-danger">*</span></label>
         <input type="text" name="id_token" class="form-control text-uppercase"
                placeholder="예: 1A2B3C4D 또는 04:AB:CD:EF:12:34:56" required>
-        <div class="form-text">RFID UID 또는 앱 토큰 값 (대문자 저장)</div>
+        <div class="form-text">{% trans "RFID UID 또는 앱 토큰 값 (대문자 저장)" %}</div>
       </div>
       {% endif %}
 
@@ -39,17 +39,17 @@
           {% endfor %}
         </select>
         <div class="form-text">
-          <strong>Accepted</strong>: 충전 허용 &nbsp;|&nbsp;
+          <strong>Accepted</strong>: {% trans "충전 허용" %} &nbsp;|&nbsp;
           <strong>Blocked</strong>: {% trans "차단" %} (Reject) &nbsp;|&nbsp;
-          <strong>Expired</strong>: 만료 &nbsp;|&nbsp;
-          <strong>Invalid</strong>: 미등록/불가
+          <strong>Expired</strong>: {% trans "만료" %} &nbsp;|&nbsp;
+          <strong>Invalid</strong>: {% trans "미등록/불가" %}
         </div>
       </div>
 
       <div class="mb-3">
         <label class="form-label">{% trans "사용자" %} 연결</label>
         <select name="user_id" class="form-select">
-          <option value="">-- 미지정 (익명 카드) --</option>
+          <option value="">{% trans "-- 미지정 (익명 카드) --" %}</option>
           {% for u in users %}
           <option value="{{ u.pk }}" {% if token.user_id == u.pk %}selected{% endif %}>
             {{ u.username }}{% if u.first_name %} ({{ u.first_name }}){% endif %}
@@ -59,10 +59,10 @@
       </div>
 
       <div class="mb-4">
-        <label class="form-label">만료일시</label>
+        <label class="form-label">{% trans "만료일시" %}</label>
         <input type="datetime-local" name="expiry_date" class="form-control"
                value="{% if token.expiry_date %}{{ token.expiry_date|date:'Y-m-d' }}T{{ token.expiry_date|date:'H:i' }}{% endif %}">
-        <div class="form-text">비워두면 만료일 없음</div>
+        <div class="form-text">{% trans "비워두면 만료일 없음" %}</div>
       </div>
 
       <div class="d-flex gap-2">

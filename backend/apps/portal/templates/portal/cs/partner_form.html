@@ -1,22 +1,22 @@
 {% extends "portal/cs/base_cs.html" %}
 {% load i18n %}
-{% block title %}{% trans "파트너" %} 추가 - CS{% endblock %}
+{% block title %}{% trans "파트너" %} {% trans "추가" %} - CS{% endblock %}
 
 {% block content %}
 <div class="d-flex align-items-center mb-4">
-  <h4 class="fw-bold mb-0">{% trans "파트너" %} 추가</h4>
+  <h4 class="fw-bold mb-0">{% trans "파트너" %} {% trans "추가" %}</h4>
 </div>
 <div class="card shadow-sm" style="max-width:520px;">
   <div class="card-body p-4">
     <form method="post">
       {% csrf_token %}
-      <h6 class="text-muted mb-3">계정 정보</h6>
+      <h6 class="text-muted mb-3">{% trans "계정 정보" %}</h6>
       <div class="mb-3">
         <label class="form-label">{% trans "아이디" %} <span class="text-danger">*</span></label>
         <input type="text" name="username" class="form-control" required>
       </div>
       <div class="mb-3">
-        <label class="form-label">담당자명</label>
+        <label class="form-label">{% trans "담당자명" %}</label>
         <input type="text" name="first_name" class="form-control">
       </div>
       <div class="mb-3">
@@ -37,7 +37,7 @@
         <label class="form-label">{% trans "담당자 연락처" %}</label>
         <input type="text" name="contact_phone" class="form-control">
       </div>
-      <p class="text-muted small">※ 초기 비밀번호: <code>ChargePlus1234!</code> (생성 후 안내)</p>
+      <p class="text-muted small">{% trans "※ 초기 비밀번호: ChargePlus1234! (생성 후 안내)" %}</p>
       <div class="d-flex gap-2">
         <button type="submit" class="btn btn-primary">{% trans "저장" %}</button>
         <a href="{% url 'portal:cs_partners' %}" class="btn btn-outline-secondary">{% trans "취소" %}</a>

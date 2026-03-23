@@ -5,11 +5,11 @@
 {% block content %}
 <div class="d-flex justify-content-between align-items-center mb-4">
   <h4 class="fw-bold mb-0">{% trans "Active 충전기 설정" %}</h4>
-  <a href="{{ request.path }}" class="btn btn-outline-secondary btn-sm"><i class="bi bi-arrow-clockwise me-1"></i>새로고침</a>
+  <a href="{{ request.path }}" class="btn btn-outline-secondary btn-sm"><i class="bi bi-arrow-clockwise me-1"></i>{% trans "새로고침" %}</a>
 </div>
 
 {% if not station_list %}
-<div class="alert alert-info">현재 Online 상태인 충전기가 없습니다.</div>
+<div class="alert alert-info">{% trans "현재 Online 상태인 충전기가 없습니다." %}</div>
 {% else %}
 
 {% for item in station_list %}
@@ -60,7 +60,7 @@
   <div class="modal-dialog modal-lg modal-dialog-scrollable">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="opsModalLabel">충전기 {% trans "원격 명령" %}</h5>
+        <h5 class="modal-title" id="opsModalLabel">{% trans "원격 명령" %}</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
       </div>
       <div class="modal-body">
@@ -69,36 +69,36 @@
           <input type="text" id="modalStationId" class="form-control form-control-sm" readonly>
         </div>
         <div class="mb-3">
-          <label class="form-label fw-semibold">명령 선택</label>
+          <label class="form-label fw-semibold">{% trans "명령 선택" %}</label>
           <select id="actionSelect" class="form-select" onchange="showActionParams()">
-            <option value="">— 명령을 선택하세요 —</option>
-            <optgroup label="조회">
-              <option value="GetConfiguration">설정정보 읽기 (GetConfiguration)</option>
-              <option value="GetLocalListVersion">로컬리스트 버전 확인 (GetLocalListVersion)</option>
-              <option value="GetCompositeSchedule">충전프로파일 확인 (GetCompositeSchedule)</option>
+            <option value="">{% trans "— 명령을 선택하세요 —" %}</option>
+            <optgroup label="{% trans '조회' %}">
+              <option value="GetConfiguration">{% trans "설정정보 읽기 (GetConfiguration)" %}</option>
+              <option value="GetLocalListVersion">{% trans "로컬리스트 버전 확인 (GetLocalListVersion)" %}</option>
+              <option value="GetCompositeSchedule">{% trans "충전프로파일 확인 (GetCompositeSchedule)" %}</option>
             </optgroup>
-            <optgroup label="설정">
-              <option value="ChangeConfiguration">설정값 셋팅 (ChangeConfiguration)</option>
-              <option value="SetChargingProfile">충전프로파일 설정 (SetChargingProfile)</option>
-              <option value="ClearChargingProfile">충전프로파일 삭제 (ClearChargingProfile)</option>
-              <option value="SendLocalList">로컬리스트 보내기 (SendLocalList)</option>
+            <optgroup label="{% trans '설정' %}">
+              <option value="ChangeConfiguration">{% trans "설정값 셋팅 (ChangeConfiguration)" %}</option>
+              <option value="SetChargingProfile">{% trans "충전프로파일 설정 (SetChargingProfile)" %}</option>
+              <option value="ClearChargingProfile">{% trans "충전프로파일 삭제 (ClearChargingProfile)" %}</option>
+              <option value="SendLocalList">{% trans "로컬리스트 보내기 (SendLocalList)" %}</option>
             </optgroup>
-            <optgroup label="제어">
-              <option value="Reset">충전기 리셋 (Reset)</option>
-              <option value="ClearCache">로컬캐시 삭제 (ClearCache)</option>
-              <option value="UnlockConnector">커넥터 해제 (UnlockConnector)</option>
-              <option value="TriggerMessage">트리거 메세지 (TriggerMessage)</option>
+            <optgroup label="{% trans '제어' %}">
+              <option value="Reset">{% trans "충전기 리셋 (Reset)" %}</option>
+              <option value="ClearCache">{% trans "로컬캐시 삭제 (ClearCache)" %}</option>
+              <option value="UnlockConnector">{% trans "커넥터 해제 (UnlockConnector)" %}</option>
+              <option value="TriggerMessage">{% trans "트리거 메세지 (TriggerMessage)" %}</option>
             </optgroup>
-            <optgroup label="원격 충전">
-              <option value="RemoteStartTransaction">원격 충전시작 (RemoteStartTransaction)</option>
-              <option value="RemoteStopTransaction">원격 충전종료 (RemoteStopTransaction)</option>
+            <optgroup label="{% trans '원격 충전' %}">
+              <option value="RemoteStartTransaction">{% trans "원격 충전시작 (RemoteStartTransaction)" %}</option>
+              <option value="RemoteStopTransaction">{% trans "원격 충전종료 (RemoteStopTransaction)" %}</option>
             </optgroup>
-            <optgroup label="예약">
-              <option value="ReserveNow">충전 예약 (ReserveNow)</option>
-              <option value="CancelReservation">예약 취소 (CancelReservation)</option>
+            <optgroup label="{% trans '예약' %}">
+              <option value="ReserveNow">{% trans "충전 예약 (ReserveNow)" %}</option>
+              <option value="CancelReservation">{% trans "예약 취소 (CancelReservation)" %}</option>
             </optgroup>
-            <optgroup label="펌웨어">
-              <option value="UpdateFirmware">원격 펌웨어 업데이트 (UpdateFirmware)</option>
+            <optgroup label="{% trans '펌웨어' %}">
+              <option value="UpdateFirmware">{% trans "원격 펌웨어 업데이트 (UpdateFirmware)" %}</option>
             </optgroup>
           </select>
         </div>
@@ -106,7 +106,7 @@
         <!-- GetConfiguration -->
         <div id="params-GetConfiguration" class="action-params d-none">
           <div class="mb-2">
-            <label class="form-label small">조회할 키 (빈칸=전체, 콤마로 구분)</label>
+            <label class="form-label small">{% trans "조회할 키 (빈칸=전체, 콤마로 구분)" %}</label>
             <input type="text" id="gc-key" class="form-control form-control-sm" placeholder="예: HeartbeatInterval,MeterValueInterval">
           </div>
         </div>
@@ -114,17 +114,17 @@
         <!-- ChangeConfiguration -->
         <div id="params-ChangeConfiguration" class="action-params d-none">
           <div class="row g-2">
-            <div class="col-6"><label class="form-label small">Key *</label><input type="text" id="cc-key" class="form-control form-control-sm" placeholder="예: HeartbeatInterval"></div>
-            <div class="col-6"><label class="form-label small">Value *</label><input type="text" id="cc-value" class="form-control form-control-sm" placeholder="예: 60"></div>
+            <div class="col-6"><label class="form-label small">{% trans "Key *" %}</label><input type="text" id="cc-key" class="form-control form-control-sm" placeholder="예: HeartbeatInterval"></div>
+            <div class="col-6"><label class="form-label small">{% trans "Value *" %}</label><input type="text" id="cc-value" class="form-control form-control-sm" placeholder="예: 60"></div>
           </div>
         </div>
 
         <!-- Reset -->
         <div id="params-Reset" class="action-params d-none">
-          <label class="form-label small">리셋 유형 *</label>
+          <label class="form-label small">{% trans "리셋 유형" %} *</label>
           <select id="reset-type" class="form-select form-select-sm">
-            <option value="Soft">Soft (소프트 리셋)</option>
-            <option value="Hard">Hard (하드 리셋)</option>
+            <option value="Soft">{% trans "Soft (소프트 리셋)" %}</option>
+            <option value="Hard">{% trans "Hard (하드 리셋)" %}</option>
           </select>
         </div>
 
@@ -145,12 +145,12 @@
         <!-- UpdateFirmware -->
         <div id="params-UpdateFirmware" class="action-params d-none">
           <div class="row g-2">
-            <div class="col-8"><label class="form-label small">펌웨어 URL *</label><input type="url" id="uf-location" class="form-control form-control-sm" placeholder="https://..."></div>
+            <div class="col-8"><label class="form-label small">{% trans "펌웨어 URL *" %}</label><input type="url" id="uf-location" class="form-control form-control-sm" placeholder="https://..."></div>
             <div class="col-4"><label class="form-label small">retrieveDate *</label><input type="datetime-local" id="uf-date" class="form-control form-control-sm"></div>
           </div>
           <div class="mt-2 row g-2">
-            <div class="col-4"><label class="form-label small">retries (선택)</label><input type="number" id="uf-retries" class="form-control form-control-sm" placeholder="3"></div>
-            <div class="col-4"><label class="form-label small">retryInterval (초)</label><input type="number" id="uf-interval" class="form-control form-control-sm" placeholder="60"></div>
+            <div class="col-4"><label class="form-label small">{% trans "retries (선택)" %}</label><input type="number" id="uf-retries" class="form-control form-control-sm" placeholder="3"></div>
+            <div class="col-4"><label class="form-label small">{% trans "retryInterval (초)" %}</label><input type="number" id="uf-interval" class="form-control form-control-sm" placeholder="60"></div>
           </div>
         </div>
 
@@ -168,7 +168,7 @@
                 <option value="StatusNotification">StatusNotification</option>
               </select>
             </div>
-            <div class="col-4"><label class="form-label small">connectorId (선택)</label><input type="number" id="tm-connector" class="form-control form-control-sm" placeholder="0=전체"></div>
+            <div class="col-4"><label class="form-label small">{% trans "connectorId (선택)" %}</label><input type="number" id="tm-connector" class="form-control form-control-sm" placeholder="{% trans '0=전체' %}"></div>
           </div>
         </div>
 
@@ -180,7 +180,7 @@
 
         <!-- ClearCache -->
         <div id="params-ClearCache" class="action-params d-none">
-          <p class="text-muted small">추가 파라미터 없음. 실행 버튼을 누르세요.</p>
+          <p class="text-muted small">{% trans "{% trans "추가 파라미터 없음. 실행 버튼을 누르세요." %}" %}</p>
         </div>
 
         <!-- ReserveNow -->
@@ -196,7 +196,7 @@
         <!-- CancelReservation -->
         <div id="params-CancelReservation" class="action-params d-none">
           <label class="form-label small">reservationId *</label>
-          <input type="number" id="cr-resid" class="form-control form-control-sm" placeholder="예약 ID">
+          <input type="number" id="cr-resid" class="form-control form-control-sm" placeholder="{% trans '예약 ID' %}">
         </div>
 
         <!-- SendLocalList -->
@@ -211,13 +211,13 @@
               </select>
             </div>
           </div>
-          <div class="mt-2"><label class="form-label small">localAuthorizationList (JSON 배열, 선택)</label>
+          <div class="mt-2"><label class="form-label small">{% trans "localAuthorizationList (JSON 배열, 선택)" %}</label>
           <textarea id="sll-list" class="form-control form-control-sm font-monospace" rows="3" placeholder='[{"idTag":"RFID001","idTagInfo":{"status":"Accepted"}}]'></textarea></div>
         </div>
 
         <!-- GetLocalListVersion -->
         <div id="params-GetLocalListVersion" class="action-params d-none">
-          <p class="text-muted small">추가 파라미터 없음. 실행 버튼을 누르세요.</p>
+          <p class="text-muted small">{% trans "{% trans "추가 파라미터 없음. 실행 버튼을 누르세요." %}" %}</p>
         </div>
 
         <!-- SetChargingProfile -->
@@ -231,18 +231,18 @@
         <!-- ClearChargingProfile -->
         <div id="params-ClearChargingProfile" class="action-params d-none">
           <div class="row g-2">
-            <div class="col-3"><label class="form-label small">id (선택)</label><input type="number" id="ccp-id" class="form-control form-control-sm"></div>
-            <div class="col-3"><label class="form-label small">connectorId (선택)</label><input type="number" id="ccp-connector" class="form-control form-control-sm"></div>
+            <div class="col-3"><label class="form-label small">{% trans "id (선택)" %}</label><input type="number" id="ccp-id" class="form-control form-control-sm"></div>
+            <div class="col-3"><label class="form-label small">{% trans "connectorId (선택)" %}</label><input type="number" id="ccp-connector" class="form-control form-control-sm"></div>
             <div class="col-3">
-              <label class="form-label small">purpose (선택)</label>
+              <label class="form-label small">{% trans "purpose (선택)" %}</label>
               <select id="ccp-purpose" class="form-select form-select-sm">
-                <option value="">— 선택 안함 —</option>
+                <option value="">{% trans "— 선택 안함 —" %}</option>
                 <option value="ChargePointMaxProfile">ChargePointMaxProfile</option>
                 <option value="TxDefaultProfile">TxDefaultProfile</option>
                 <option value="TxProfile">TxProfile</option>
               </select>
             </div>
-            <div class="col-3"><label class="form-label small">stackLevel (선택)</label><input type="number" id="ccp-level" class="form-control form-control-sm"></div>
+            <div class="col-3"><label class="form-label small">{% trans "stackLevel (선택)" %}</label><input type="number" id="ccp-level" class="form-control form-control-sm"></div>
           </div>
         </div>
 
@@ -250,11 +250,11 @@
         <div id="params-GetCompositeSchedule" class="action-params d-none">
           <div class="row g-2">
             <div class="col-4"><label class="form-label small">connectorId *</label><input type="number" id="gcs-connector" class="form-control form-control-sm" value="1" min="0"></div>
-            <div class="col-4"><label class="form-label small">duration (초) *</label><input type="number" id="gcs-duration" class="form-control form-control-sm" placeholder="86400"></div>
+            <div class="col-4"><label class="form-label small">{% trans "duration (초) *" %}</label><input type="number" id="gcs-duration" class="form-control form-control-sm" placeholder="86400"></div>
             <div class="col-4">
-              <label class="form-label small">chargingRateUnit (선택)</label>
+              <label class="form-label small">{% trans "chargingRateUnit (선택)" %}</label>
               <select id="gcs-unit" class="form-select form-select-sm">
-                <option value="">— 선택 안함 —</option>
+                <option value="">{% trans "— 선택 안함 —" %}</option>
                 <option value="W">W</option>
                 <option value="A">A</option>
               </select>
@@ -266,16 +266,16 @@
         <div id="cmdResult" class="d-none mt-3">
           <hr>
           <div class="d-flex align-items-center mb-1">
-            <span class="fw-semibold me-2">응답</span>
+            <span class="fw-semibold me-2">{% trans "응답" %}</span>
             <span id="cmdResultBadge"></span>
           </div>
           <pre id="cmdResultBody" class="bg-light rounded p-2 small" style="max-height:200px;overflow:auto;"></pre>
         </div>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{% trans "닫기" %}</button>
         <button type="button" id="btnSendCmd" class="btn btn-primary" onclick="sendCommand()" disabled>
-          <span id="btnSpinner" class="spinner-border spinner-border-sm d-none me-1"></span>실행
+          <span id="btnSpinner" class="spinner-border spinner-border-sm d-none me-1"></span>{% trans "실행" %}
         </button>
       </div>
     </div>
@@ -358,7 +358,7 @@ function buildPayload(action) {
     case 'SendLocalList': {
       const p = { listVersion: gi('sll-version'), updateType: g('sll-type') };
       const listRaw = g('sll-list');
-      if (listRaw) { try { p.localAuthorizationList = JSON.parse(listRaw); } catch(e) { alert('localAuthorizationList JSON 파싱 오류: ' + e); return null; } }
+      if (listRaw) { try { p.localAuthorizationList = JSON.parse(listRaw); } catch(e) { alert('{% trans "localAuthorizationList JSON 파싱 오류: " %}' + e); return null; } }
       return p;
     }
     case 'GetLocalListVersion':
@@ -366,7 +366,7 @@ function buildPayload(action) {
     case 'SetChargingProfile': {
       const profileRaw = g('scp-profile');
       let profile;
-      try { profile = JSON.parse(profileRaw); } catch(e) { alert('csChargingProfiles JSON 파싱 오류: ' + e); return null; }
+      try { profile = JSON.parse(profileRaw); } catch(e) { alert('{% trans "csChargingProfiles JSON 파싱 오류: " %}' + e); return null; }
       return { connectorId: gi('scp-connector'), csChargingProfiles: profile };
     }
     case 'ClearChargingProfile': {
@@ -415,15 +415,15 @@ async function sendCommand() {
 
     resultEl.classList.remove('d-none');
     if (data.success) {
-      badgeEl.innerHTML = '<span class="badge bg-success">성공</span>';
+      badgeEl.innerHTML = '<span class="badge bg-success">{% trans "성공" %}</span>';
       bodyEl.textContent = JSON.stringify(data.result, null, 2);
     } else {
-      badgeEl.innerHTML = '<span class="badge bg-danger">실패</span>';
-      bodyEl.textContent = data.error || '알 수 없는 오류';
+      badgeEl.innerHTML = '<span class="badge bg-danger">{% trans "실패" %}</span>';
+      bodyEl.textContent = data.error || '{% trans "알 수 없는 오류" %}';
     }
   } catch(e) {
     resultEl.classList.remove('d-none');
-    badgeEl.innerHTML = '<span class="badge bg-danger">네트워크 오류</span>';
+    badgeEl.innerHTML = '<span class="badge bg-danger">{% trans "네트워크 오류" %}</span>';
     bodyEl.textContent = String(e);
   } finally {
     btn.disabled = false;

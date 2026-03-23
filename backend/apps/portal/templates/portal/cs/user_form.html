@@ -1,10 +1,10 @@
 {% extends "portal/cs/base_cs.html" %}
 {% load i18n %}
-{% block title %}{% trans "사용자" %} 추가 - CS{% endblock %}
+{% block title %}{% trans "사용자" %} {% trans "추가" %} - CS{% endblock %}
 
 {% block content %}
 <div class="d-flex align-items-center mb-4">
-  <h4 class="fw-bold mb-0">{% trans "사용자" %} 추가</h4>
+  <h4 class="fw-bold mb-0">{% trans "사용자" %} {% trans "추가" %}</h4>
 </div>
 
 <div class="card shadow-sm" style="max-width:560px;">
@@ -12,11 +12,11 @@
     <form method="post" id="userForm">
       {% csrf_token %}
       <div class="mb-3">
-        <label class="form-label">역할 <span class="text-danger">*</span></label>
+        <label class="form-label">{% trans "역할" %} <span class="text-danger">*</span></label>
         <select name="role" class="form-select" id="roleSelect" required>
           <option value="customer">{% trans "고객" %}</option>
           <option value="partner">{% trans "파트너" %}</option>
-          <option value="cs">고객센터</option>
+          <option value="cs">{% trans "고객센터" %}</option>
         </select>
       </div>
       <div class="mb-3">
@@ -24,7 +24,7 @@
         <input type="text" name="username" class="form-control" required>
       </div>
       <div class="mb-3">
-        <label class="form-label">임시 {% trans "비밀번호" %} <span class="text-danger">*</span></label>
+        <label class="form-label">{% trans "비밀번호" %} <span class="text-danger">*</span></label>
         <input type="text" name="password" class="form-control" value="ChargePlus1234!" required>
       </div>
       <div class="mb-3">
@@ -43,7 +43,7 @@
         <label class="form-label">{% trans "상태" %}</label>
         <select name="status" class="form-select">
           <option value="active">{% trans "활성" %}</option>
-          <option value="pending">승인대기</option>
+          <option value="pending">{% trans "승인대기" %}</option>
         </select>
       </div>
 

@@ -472,3 +472,463 @@ msgstr "주소"
 
 msgid "단가(VND/kWh)"
 msgstr "단가(VND/kWh)"
+
+msgid "Django 관리자에서 직접 승인 처리됩니다."
+msgstr ""
+
+msgid "뒤로"
+msgstr ""
+
+msgid "가입 후 관리자 승인이 필요합니다."
+msgstr ""
+
+msgid "계정 정보"
+msgstr ""
+
+msgid "충전 이력 조회, 카드 관리"
+msgstr ""
+
+msgid "즉시 활성화"
+msgstr ""
+
+msgid "충전소/충전기 관리, 정산"
+msgstr ""
+
+msgid "관리자 승인 필요"
+msgstr ""
+
+msgid "전체 관리자 수준 접근"
+msgstr ""
+
+msgid "Django 어드민 승인"
+msgstr ""
+
+msgid "충전기 추가"
+msgstr ""
+
+msgid "충전기ID / 주소"
+msgstr ""
+
+msgid "상세"
+msgstr ""
+
+msgid "충전기를 비활성화하시겠습니까?"
+msgstr ""
+
+msgid "충전기가 없습니다."
+msgstr ""
+
+msgid "충전기 상세"
+msgstr ""
+
+msgid "← 목록"
+msgstr ""
+
+msgid "기본 정보"
+msgstr ""
+
+msgid "최종 하트비트"
+msgstr ""
+
+msgid "발생일시"
+msgstr ""
+
+msgid "유형"
+msgstr ""
+
+msgid "미처리"
+msgstr ""
+
+msgid "최근 충전이력 (최대 20건)"
+msgstr ""
+
+msgid "완료"
+msgstr ""
+
+msgid "충전중"
+msgstr ""
+
+msgid "실패"
+msgstr ""
+
+msgid "충전이력이 없습니다."
+msgstr ""
+
+msgid "영문/숫자 조합, 대문자 저장"
+msgstr ""
+
+msgid "-- 선택 --"
+msgstr ""
+
+msgid "-- 미지정 --"
+msgstr ""
+
+msgid "설치 주소"
+msgstr ""
+
+msgid "시스템 설정"
+msgstr ""
+
+msgid "시스템 설정 (CSMS Variables)"
+msgstr ""
+
+msgid "설정 변수가 없습니다."
+msgstr ""
+
+msgid "전체 충전기"
+msgstr ""
+
+msgid "전체 고객"
+msgstr ""
+
+msgid "당월 충전건수"
+msgstr ""
+
+msgid "서비스 현황"
+msgstr ""
+
+msgid "일별"
+msgstr ""
+
+msgid "주별"
+msgstr ""
+
+msgid "월별"
+msgstr ""
+
+msgid "기간"
+msgstr ""
+
+msgid "결제금액(원)"
+msgstr ""
+
+msgid "충전횟수"
+msgstr ""
+
+msgid "상세내역"
+msgstr ""
+
+msgid "카드 추가"
+msgstr ""
+
+msgid "카드번호 / 사용자ID"
+msgstr ""
+
+msgid "충전카드를 삭제하시겠습니까?"
+msgstr ""
+
+msgid "등록된 충전카드가 없습니다."
+msgstr ""
+
+msgid "카드 번호"
+msgstr ""
+
+msgid "RFID UID 또는 앱 토큰 값 (대문자 저장)"
+msgstr ""
+
+msgid "만료일시"
+msgstr ""
+
+msgid "비워두면 만료일 없음"
+msgstr ""
+
+msgid "-- 미지정 (익명 카드) --"
+msgstr ""
+
+msgid "새로고침"
+msgstr ""
+
+msgid "현재 Online 상태인 충전기가 없습니다."
+msgstr ""
+
+msgid "명령 선택"
+msgstr ""
+
+msgid "— 명령을 선택하세요 —"
+msgstr ""
+
+msgid "조회"
+msgstr ""
+
+msgid "설정정보 읽기 (GetConfiguration)"
+msgstr ""
+
+msgid "로컬리스트 버전 확인 (GetLocalListVersion)"
+msgstr ""
+
+msgid "충전프로파일 확인 (GetCompositeSchedule)"
+msgstr ""
+
+msgid "설정값 셋팅 (ChangeConfiguration)"
+msgstr ""
+
+msgid "충전프로파일 설정 (SetChargingProfile)"
+msgstr ""
+
+msgid "충전프로파일 삭제 (ClearChargingProfile)"
+msgstr ""
+
+msgid "로컬리스트 보내기 (SendLocalList)"
+msgstr ""
+
+msgid "제어"
+msgstr ""
+
+msgid "충전기 리셋 (Reset)"
+msgstr ""
+
+msgid "로컬캐시 삭제 (ClearCache)"
+msgstr ""
+
+msgid "커넥터 해제 (UnlockConnector)"
+msgstr ""
+
+msgid "트리거 메세지 (TriggerMessage)"
+msgstr ""
+
+msgid "원격 충전"
+msgstr ""
+
+msgid "원격 충전시작 (RemoteStartTransaction)"
+msgstr ""
+
+msgid "원격 충전종료 (RemoteStopTransaction)"
+msgstr ""
+
+msgid "예약"
+msgstr ""
+
+msgid "충전 예약 (ReserveNow)"
+msgstr ""
+
+msgid "예약 취소 (CancelReservation)"
+msgstr ""
+
+msgid "펌웨어"
+msgstr ""
+
+msgid "원격 펌웨어 업데이트 (UpdateFirmware)"
+msgstr ""
+
+msgid "조회할 키 (빈칸=전체, 콤마로 구분)"
+msgstr ""
+
+msgid "리셋 유형"
+msgstr ""
+
+msgid "Soft (소프트 리셋)"
+msgstr ""
+
+msgid "Hard (하드 리셋)"
+msgstr ""
+
+msgid "추가 파라미터 없음. 실행 버튼을 누르세요."
+msgstr ""
+
+msgid "응답"
+msgstr ""
+
+msgid "닫기"
+msgstr ""
+
+msgid "실행"
+msgstr ""
+
+msgid "localAuthorizationList JSON 파싱 오류: "
+msgstr ""
+
+msgid "csChargingProfiles JSON 파싱 오류: "
+msgstr ""
+
+msgid "성공"
+msgstr ""
+
+msgid "네트워크 오류"
+msgstr ""
+
+msgid "알 수 없는 오류"
+msgstr ""
+
+msgid "메세지 로그가 없습니다."
+msgstr ""
+
+msgid "비활성"
+msgstr ""
+
+msgid "비활성화"
+msgstr ""
+
+msgid "재활성"
+msgstr ""
+
+msgid "담당자명"
+msgstr ""
+
+msgid "충전소 및 충전기"
+msgstr ""
+
+msgid "충전기 없음"
+msgstr ""
+
+msgid "원"
+msgstr ""
+
+msgid "결제대기"
+msgstr ""
+
+msgid "IPN수신"
+msgstr ""
+
+msgid "환불완료"
+msgstr ""
+
+msgid "선결제(원)"
+msgstr ""
+
+msgid "실사용(원)"
+msgstr ""
+
+msgid "환불(원)"
+msgstr ""
+
+msgid "시작일"
+msgstr ""
+
+msgid "종료일"
+msgstr ""
+
+msgid "선택하세요"
+msgstr ""
+
+msgid "충전소명"
+msgstr ""
+
+msgid "서비스 현황 상세내역"
+msgstr ""
+
+msgid "충전소별"
+msgstr ""
+
+msgid "(충전소 미지정)"
+msgstr ""
+
+msgid "충전기별"
+msgstr ""
+
+msgid "역할 전체"
+msgstr ""
+
+msgid "고객센터"
+msgstr ""
+
+msgid "상태 전체"
+msgstr ""
+
+msgid "승인대기"
+msgstr ""
+
+msgid "아이디/이름/이메일"
+msgstr ""
+
+msgid "역할"
+msgstr ""
+
+msgid "결제 카드"
+msgstr ""
+
+msgid "카드 별칭"
+msgstr ""
+
+msgid "끝 4자리"
+msgstr ""
+
+msgid "기본"
+msgstr ""
+
+msgid "기본설정"
+msgstr ""
+
+msgid "카드를 삭제하시겠습니까?"
+msgstr ""
+
+msgid "추가"
+msgstr ""
+
+msgid "정말 삭제하시겠습니까?"
+msgstr ""
+
+msgid "활성화"
+msgstr ""
+
+msgid "※ 초기 비밀번호: ChargePlus1234! (생성 후 안내)"
+msgstr ""
+
+msgid "connectorId (선택)"
+msgstr ""
+
+msgid "id (선택)"
+msgstr ""
+
+msgid "retries (선택)"
+msgstr ""
+
+msgid "retryInterval (초)"
+msgstr ""
+
+msgid "purpose (선택)"
+msgstr ""
+
+msgid "stackLevel (선택)"
+msgstr ""
+
+msgid "chargingRateUnit (선택)"
+msgstr ""
+
+msgid "duration (초) *"
+msgstr ""
+
+msgid "— 선택 안함 —"
+msgstr ""
+
+msgid "localAuthorizationList (JSON 배열, 선택)"
+msgstr ""
+
+msgid "Value *"
+msgstr ""
+
+msgid "Key *"
+msgstr ""
+
+msgid "예약 ID"
+msgstr ""
+
+msgid "펌웨어 URL *"
+msgstr ""
+
+msgid "0=전체"
+msgstr ""
+
+msgid "선택 안함"
+msgstr ""
+
+msgid "온라인 {{ n }}대"
+msgstr ""
+
+msgid "총 {{ count }}건 / {{ pages }}페이지"
+msgstr ""
+
+msgid "소속 충전기 ({{ n }}대)"
+msgstr ""
+
+msgid "{{ username }} 사용자를 비활성화하시겠습니까?"
+msgstr ""
+
+
+msgid "충전 허용"
+msgstr ""
+
+msgid "만료"
+msgstr ""
+
+msgid "미등록/불가"
+msgstr ""

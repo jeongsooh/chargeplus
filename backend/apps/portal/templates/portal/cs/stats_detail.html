@@ -1,26 +1,26 @@
 {% extends "portal/cs/base_cs.html" %}
 {% load i18n %}
-{% block title %}상세내역 - CS{% endblock %}
+{% block title %}{% trans "상세내역" %} - CS{% endblock %}
 
 {% block content %}
 <div class="d-flex align-items-center mb-4">
-  <h4 class="fw-bold mb-0">서비스 현황 상세내역</h4>
+  <h4 class="fw-bold mb-0">{% trans "서비스 현황 상세내역" %}</h4>
   <a href="{% url 'portal:cs_dashboard' %}?tab={{ tab }}" class="btn btn-sm btn-outline-secondary ms-3">← {% trans "대시보드" %}</a>
 </div>
 <p class="text-muted">{{ start|date:"Y-m-d H:i" }} ~ {{ end|date:"Y-m-d H:i" }}</p>
 
 <!-- 충전소별 -->
-<h6 class="fw-bold mb-2">충전소별</h6>
+<h6 class="fw-bold mb-2">{% trans "충전소별" %}</h6>
 <div class="card shadow-sm mb-4">
   <div class="table-responsive">
     <table class="table table-sm table-hover mb-0">
       <thead class="table-light">
-        <tr><th>{% trans "충전소" %}</th><th>{% trans "충전량(kWh)" %}</th><th>결제금액(원)</th><th>충전횟수</th></tr>
+        <tr><th>{% trans "충전소" %}</th><th>{% trans "충전량(kWh)" %}</th><th>{% trans "결제금액(원)" %}</th><th>{% trans "충전횟수" %}</th></tr>
       </thead>
       <tbody>
         {% for row in by_site %}
         <tr>
-          <td>{{ row.charging_station__site__site_name|default:"(충전소 미지정)" }}</td>
+          {% trans "(충전소 미지정)" as t_no_site %}<td>{{ row.charging_station__site__site_name|default:t_no_site }}</td>
           <td>{{ row.energy|floatformat:1|default:"-" }}</td>
           <td>{{ row.amount|floatformat:0|default:"-" }}</td>
           <td>{{ row.count }}</td>
@@ -34,7 +34,7 @@
 </div>
 
 <!-- 충전기별 -->
-<h6 class="fw-bold mb-2">충전기별</h6>
+<h6 class="fw-bold mb-2">{% trans "충전기별" %}</h6>
 <div class="card shadow-sm">
   <div class="table-responsive">
     <table class="table table-sm table-hover mb-0">
@@ -42,8 +42,8 @@
         <tr>
           <th>{% trans "충전기 ID" %}</th><th>{% trans "충전소" %}</th>
           <th>{% trans "충전량(kWh)" %}</th><th class="text-muted small">증감</th>
-          <th>결제금액(원)</th><th class="text-muted small">증감</th>
-          <th>충전횟수</th><th class="text-muted small">증감</th>
+          <th>{% trans "결제금액(원)" %}</th><th class="text-muted small">증감</th>
+          <th>{% trans "충전횟수" %}</th><th class="text-muted small">증감</th>
         </tr>
       </thead>
       <tbody>

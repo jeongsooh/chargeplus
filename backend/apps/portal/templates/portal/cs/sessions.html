@@ -10,13 +10,13 @@
   <div class="card-body py-2">
     <form method="get" class="row g-2 align-items-center">
       <div class="col-auto">
-        <input type="date" name="date_from" class="form-control form-control-sm" value="{{ date_from }}" placeholder="시작일">
+        <input type="date" name="date_from" class="form-control form-control-sm" value="{{ date_from }}" placeholder="{% trans '시작일' %}">
       </div>
       <div class="col-auto">
         <span class="text-muted">~</span>
       </div>
       <div class="col-auto">
-        <input type="date" name="date_to" class="form-control form-control-sm" value="{{ date_to }}" placeholder="종료일">
+        <input type="date" name="date_to" class="form-control form-control-sm" value="{{ date_to }}" placeholder="{% trans '종료일' %}">
       </div>
       <div class="col-auto">
         <select name="site_id" class="form-select form-select-sm">
@@ -30,7 +30,7 @@
         <input type="text" name="station_q" class="form-control form-control-sm" placeholder="{% trans "충전기 ID" %}" value="{{ station_q }}">
       </div>
       <div class="col">
-        <input type="text" name="user_q" class="form-control form-control-sm" placeholder="{% trans "사용자" %}/카드" value="{{ user_q }}">
+        <input type="text" name="user_q" class="form-control form-control-sm" placeholder="{% trans '사용자' %}/{% trans '카드 번호' %}" value="{{ user_q }}">
       </div>
       <div class="col-auto">
         <button type="submit" class="btn btn-primary btn-sm">{% trans "검색" %}</button>
@@ -45,8 +45,8 @@
     <table class="table table-hover table-sm mb-0">
       <thead class="table-light">
         <tr>
-          <th>TX#</th><th>충전기</th><th>{% trans "충전소" %}</th><th>카드</th><th>{% trans "상태" %}</th>
-          <th>{% trans "시작 시간" %}</th><th>{% trans "종료 시간" %}</th><th>{% trans "충전량(kWh)" %}</th><th>금액(원)</th>
+          <th>TX#</th><th>{% trans "충전기 ID" %}</th><th>{% trans "충전소" %}</th><th>{% trans "카드 번호" %}</th><th>{% trans "상태" %}</th>
+          <th>{% trans "시작 시간" %}</th><th>{% trans "종료 시간" %}</th><th>{% trans "충전량(kWh)" %}</th><th>{% trans "결제금액(원)" %}</th>
         </tr>
       </thead>
       <tbody>
@@ -57,9 +57,9 @@
           <td>{{ s.charging_station.site.site_name|default:"-" }}</td>
           <td>{{ s.id_token_id|default:"-" }}</td>
           <td>
-            {% if s.state == 'Completed' %}<span class="badge bg-success">완료</span>
-            {% elif s.state == 'Active' %}<span class="badge bg-primary">충전중</span>
-            {% elif s.state == 'Failed' %}<span class="badge bg-danger">실패</span>
+            {% if s.state == 'Completed' %}<span class="badge bg-success">{% trans "완료" %}</span>
+            {% elif s.state == 'Active' %}<span class="badge bg-primary">{% trans "충전중" %}</span>
+            {% elif s.state == 'Failed' %}<span class="badge bg-danger">{% trans "실패" %}</span>
             {% else %}<span class="badge bg-secondary">{{ s.state }}</span>{% endif %}
           </td>
           <td class="text-nowrap">{{ s.time_start|date:"m-d H:i"|default:"-" }}</td>
@@ -68,7 +68,7 @@
           <td>{{ s.amount|floatformat:0|default:"-" }}</td>
         </tr>
         {% empty %}
-        <tr><td colspan="9" class="text-center text-muted py-3">충전이력이 없습니다.</td></tr>
+        <tr><td colspan="9" class="text-center text-muted py-3">{% trans "충전이력이 없습니다." %}</td></tr>
         {% endfor %}
       </tbody>
     </table>
@@ -77,7 +77,7 @@
   <!-- 페이지네이션 -->
   {% if page.paginator.num_pages > 1 %}
   <div class="card-footer d-flex justify-content-between align-items-center py-2">
-    <small class="text-muted">총 {{ page.paginator.count }}건 / {{ page.paginator.num_pages }}페이지</small>
+    <small class="text-muted">{% blocktrans with count=page.paginator.count pages=page.paginator.num_pages %}총 {{ count }}건 / {{ pages }}페이지{% endblocktrans %}</small>
     <nav>
       <ul class="pagination pagination-sm mb-0">
         {% if page.has_previous %}
