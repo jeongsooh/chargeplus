@@ -1,5 +1,5 @@
 {% load i18n %}
-<form action="/i18n/set_language/" method="post" class="d-inline">
+<form action="{% url 'set_language' %}" method="post" class="d-inline">
   {% csrf_token %}
   <input name="next" type="hidden" value="{{ request.get_full_path }}">
   <select name="language" onchange="this.form.submit()"
