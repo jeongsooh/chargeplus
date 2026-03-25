@@ -432,41 +432,131 @@ gcloud compute addresses list --project=chargeplus-490312
 
 ## 10. 배포 업데이트 방법
 
-코드 변경 후 GCE VM에 반영하는 절차:
+코드 변경 후 GCE VM에 반영하는 절차.
 
-### 로컬에서
+> **핵심 주의사항:** backend 코드는 Docker 이미지에 빌드되므로 반드시 `--build backend` 옵션을 붙여야 변경사항이 반영된다. `git pull`만 하거나 `docker compose up -d`만 하면 이전 이미지가 그대로 실행된다.
+
+---
+
+### Step 1 — 로컬: 커밋 및 push
 
 ```bash
-# 변경사항 커밋 및 push
 cd D:/projects/ChargePlus
-git add .
-git commit -m "변경 내용 설명"
+
+# 변경 파일 확인
+git status
+
+# 스테이징 (파일 지정 권장, git add . 는 .env 등 실수 위험)
+git add backend/apps/... gateway/...
+
+# 커밋
+git commit -m "feat: 변경 내용 설명"
+
+# GitHub push
 git push origin master
 ```
 
-### VM에서 (gcloud SSH 또는 직접)
+---
+
+### Step 2 — GCP VM: pull → 빌드 → 재시작
+
+#### 방법 A: 로컬에서 원격 명령 한 번에 실행 (권장)
 
 ```bash
+# backend만 재빌드 (코드 변경 시 가장 자주 사용)
 gcloud compute ssh chargeplus-vm \
   --zone=asia-northeast3-a \
   --project=chargeplus-490312 \
-  --command="cd ~/chargeplus && git pull && sudo docker compose up -d --build 2>&1 | tail -20"
+  --command="cd ~/chargeplus && git pull origin master && sudo docker compose up -d --build backend 2>&1 | tail -30"
 ```
 
-특정 서비스만 업데이트:
 ```bash
-# backend만 재빌드
+# 마이그레이션이 포함된 경우 (models.py 추가/변경, makemigrations 실행 후)
 gcloud compute ssh chargeplus-vm \
   --zone=asia-northeast3-a \
   --project=chargeplus-490312 \
-  --command="cd ~/chargeplus && git pull && sudo docker compose build backend && sudo docker compose up -d backend"
-
-# nginx만 재시작 (설정 변경 시)
-gcloud compute ssh chargeplus-vm \
-  --zone=asia-northeast3-a \
-  --project=chargeplus-490312 \
-  --command="cd ~/chargeplus && git pull && sudo docker compose up -d nginx"
+  --command="cd ~/chargeplus && git pull origin master && sudo docker compose up -d --build backend && sudo docker compose exec backend python manage.py migrate"
 ```
+
+```bash
+# gateway 코드도 변경된 경우 (gateway + backend 동시 재빌드)
+gcloud compute ssh chargeplus-vm \
+  --zone=asia-northeast3-a \
+  --project=chargeplus-490312 \
+  --command="cd ~/chargeplus && git pull origin master && sudo docker compose up -d --build backend gateway 2>&1 | tail -30"
+```
+
+```bash
+# nginx 설정만 변경된 경우 (--build 불필요, 설정 파일은 볼륨 마운트)
+gcloud compute ssh chargeplus-vm \
+  --zone=asia-northeast3-a \
+  --project=chargeplus-490312 \
+  --command="cd ~/chargeplus && git pull origin master && sudo docker compose up -d nginx"
+```
+
+```bash
+# 전체 스택 재빌드 (대규모 변경, requirements.txt 변경 등)
+gcloud compute ssh chargeplus-vm \
+  --zone=asia-northeast3-a \
+  --project=chargeplus-490312 \
+  --command="cd ~/chargeplus && git pull origin master && sudo docker compose up -d --build 2>&1 | tail -30"
+```
+
+#### 방법 B: VM에 직접 SSH 접속 후 실행
+
+```bash
+# VM 접속
+gcloud compute ssh chargeplus-vm \
+  --zone=asia-northeast3-a \
+  --project=chargeplus-490312
+
+# VM 내부에서 순서대로 실행
+cd ~/chargeplus
+git pull origin master
+sudo docker compose up -d --build backend
+sudo docker compose exec backend python manage.py migrate   # 마이그레이션 있을 때만
+sudo docker compose ps                                      # 상태 확인
+```
+
+---
+
+### Step 3 — 배포 확인
+
+```bash
+# 컨테이너 전체 상태 확인
+gcloud compute ssh chargeplus-vm \
+  --zone=asia-northeast3-a \
+  --project=chargeplus-490312 \
+  --command="cd ~/chargeplus && sudo docker compose ps"
+
+# backend 로그 (최근 30줄)
+gcloud compute ssh chargeplus-vm \
+  --zone=asia-northeast3-a \
+  --project=chargeplus-490312 \
+  --command="cd ~/chargeplus && sudo docker compose logs backend --tail=30"
+
+# 헬스체크 (외부에서)
+curl -s https://chargeplus.kr/health
+# OK
+
+# API 응답 확인
+curl -s https://chargeplus.kr/api/v1/stations/
+# {"detail":"자격 인증데이터..."}  ← 401이면 정상 동작
+```
+
+---
+
+### 서비스별 재빌드 필요 여부 정리
+
+| 변경 내용 | 재빌드 대상 | 마이그레이션 |
+|-----------|-------------|-------------|
+| `backend/` Python 코드 | `backend` | 불필요 |
+| `backend/apps/*/models.py` | `backend` | **필요** |
+| `backend/requirements.txt` | `backend` | 불필요 |
+| `gateway/` Python 코드 | `gateway` | 불필요 |
+| `gateway/requirements.txt` | `gateway` | 불필요 |
+| `nginx/nginx.conf` | (재빌드 불필요, 볼륨) | 불필요 |
+| `docker-compose.yml` 환경변수 | 해당 서비스 전체 | 불필요 |
 
 ---
 
