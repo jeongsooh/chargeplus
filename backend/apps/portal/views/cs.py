@@ -512,6 +512,33 @@ def charger_detail(request, station_pk):
 
 @role_required('cs')
 @require_POST
+def charger_serial_update(request, station_pk):
+    station = get_object_or_404(ChargingStation, pk=station_pk)
+    serial = request.POST.get('serial_number', '').strip()
+
+    if not serial:
+        station.serial_number = ''
+        station.save(update_fields=['serial_number'])
+        messages.success(request, _('시리얼 번호가 삭제되었습니다.'))
+        return redirect('portal:cs_charger_detail', station_pk=station_pk)
+
+    # 다른 충전기가 동일 시리얼을 이미 사용 중인지 확인
+    duplicate = ChargingStation.objects.filter(serial_number=serial).exclude(pk=station_pk).first()
+    if duplicate:
+        messages.error(
+            request,
+            _(f"시리얼 번호 '{serial}'은 이미 '{duplicate.station_id}'에 등록되어 있습니다."),
+        )
+        return redirect('portal:cs_charger_detail', station_pk=station_pk)
+
+    station.serial_number = serial
+    station.save(update_fields=['serial_number'])
+    messages.success(request, _(f"시리얼 번호가 '{serial}'으로 저장되었습니다."))
+    return redirect('portal:cs_charger_detail', station_pk=station_pk)
+
+
+@role_required('cs')
+@require_POST
 def charger_fault_add(request, station_pk):
     station = get_object_or_404(ChargingStation, pk=station_pk)
     fault_type = request.POST.get('fault_type', 'other')

@@ -34,6 +34,7 @@ urlpatterns = [
     path('portal/cs/chargers/', cs.chargers_list, name='cs_chargers'),
     path('portal/cs/chargers/create/', cs.charger_create, name='cs_charger_create'),
     path('portal/cs/chargers/<int:station_pk>/', cs.charger_detail, name='cs_charger_detail'),
+    path('portal/cs/chargers/<int:station_pk>/serial/', cs.charger_serial_update, name='cs_charger_serial_update'),
     path('portal/cs/chargers/<int:station_pk>/fault/', cs.charger_fault_add, name='cs_charger_fault_add'),
     path('portal/cs/chargers/<int:station_pk>/delete/', cs.charger_delete, name='cs_charger_delete'),
 

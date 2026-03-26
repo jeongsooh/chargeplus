@@ -298,3 +298,6 @@ MB_IPN_URL     = os.environ.get('MB_IPN_URL', 'https://chargeplus.kr/api/payment
 MB_RETURN_URL  = os.environ.get('MB_RETURN_URL', 'https://chargeplus.kr/api/payment/return/')
 MB_CANCEL_URL  = os.environ.get('MB_CANCEL_URL', 'https://chargeplus.kr/api/payment/cancel/')
 MB_PREPAID_AMOUNT = int(os.environ.get('MB_PREPAID_AMOUNT', '100000'))
+
+# --- Provisioning ---
+CSMS_WS_BASE_URL = os.environ.get('CSMS_WS_BASE_URL', 'wss://chargeplus.kr/ocpp/1.6')

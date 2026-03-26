@@ -1,9 +1,13 @@
 from django.contrib import admin
 from django.urls import path, include
 
+from apps.stations.views import ProvisioningView
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('i18n/', include('django.conf.urls.i18n')),
+    # Provisioning server (no auth)
+    path('config', ProvisioningView.as_view(), name='provisioning'),
     # Portal (session-based, web UI)
     path('', include('apps.portal.urls', namespace='portal')),
     # REST API (JWT-based)
