@@ -17,6 +17,7 @@ ChargePlus OCPP 1.6 CSMS를 Google Cloud Platform(GCE VM)에 배포하는 전체
 9. [IP 고정](#9-ip-고정)
 10. [배포 업데이트 방법](#10-배포-업데이트-방법)
 11. [VM 스펙 변경](#11-vm-스펙-변경)
+12. [추가 도메인 연결](#12-추가-도메인-연결)
 
 ---
 
@@ -186,7 +187,7 @@ cat > .env << 'EOF'
 SECRET_KEY=1QpuOB7K1Ey54If6J68fa6MPwtU_6M1FoC9_1ONCtrSLFFYeye
 DJANGO_SETTINGS_MODULE=chargeplus.settings.development
 ALLOWED_HOSTS=*
-CSRF_TRUSTED_ORIGINS=https://chargeplus.kr,https://www.chargeplus.kr
+CSRF_TRUSTED_ORIGINS=https://chargeplus.kr,https://www.chargeplus.kr,https://csms.pvpentech.com
 
 # Database
 POSTGRES_DB=chargeplus
@@ -434,129 +435,90 @@ gcloud compute addresses list --project=chargeplus-490312
 
 코드 변경 후 GCE VM에 반영하는 절차.
 
-> **핵심 주의사항:** backend 코드는 Docker 이미지에 빌드되므로 반드시 `--build backend` 옵션을 붙여야 변경사항이 반영된다. `git pull`만 하거나 `docker compose up -d`만 하면 이전 이미지가 그대로 실행된다.
+배포는 레포에 포함된 `deploy.sh` 스크립트로 실행한다.
+변경된 파일을 자동 감지해서 필요한 서비스만 재빌드하고, 마이그레이션 파일이 추가된 경우 자동으로 `migrate`까지 실행한다.
 
 ---
 
 ### Step 1 — 로컬: 커밋 및 push
 
 ```bash
-cd D:/projects/ChargePlus
-
-# 변경 파일 확인
-git status
+cd D:/projects/chargeplus
 
 # 스테이징 (파일 지정 권장, git add . 는 .env 등 실수 위험)
 git add backend/apps/... gateway/...
-
-# 커밋
 git commit -m "feat: 변경 내용 설명"
-
-# GitHub push
 git push origin master
 ```
 
 ---
 
-### Step 2 — GCP VM: pull → 빌드 → 재시작
+### Step 2 — VM: deploy.sh 실행
 
-#### 방법 A: 로컬에서 원격 명령 한 번에 실행 (권장)
-
-```bash
-# backend만 재빌드 (코드 변경 시 가장 자주 사용)
-gcloud compute ssh chargeplus-vm \
-  --zone=asia-northeast3-a \
-  --project=chargeplus-490312 \
-  --command="cd ~/chargeplus && git pull origin master && sudo docker compose up -d --build backend 2>&1 | tail -30"
-```
+VM에 SSH 접속 후:
 
 ```bash
-# 마이그레이션이 포함된 경우 (models.py 추가/변경, makemigrations 실행 후)
-gcloud compute ssh chargeplus-vm \
-  --zone=asia-northeast3-a \
-  --project=chargeplus-490312 \
-  --command="cd ~/chargeplus && git pull origin master && sudo docker compose up -d --build backend && sudo docker compose exec backend python manage.py migrate"
-```
-
-```bash
-# gateway 코드도 변경된 경우 (gateway + backend 동시 재빌드)
-gcloud compute ssh chargeplus-vm \
-  --zone=asia-northeast3-a \
-  --project=chargeplus-490312 \
-  --command="cd ~/chargeplus && git pull origin master && sudo docker compose up -d --build backend gateway 2>&1 | tail -30"
-```
-
-```bash
-# nginx 설정만 변경된 경우 (--build 불필요, 설정 파일은 볼륨 마운트)
-gcloud compute ssh chargeplus-vm \
-  --zone=asia-northeast3-a \
-  --project=chargeplus-490312 \
-  --command="cd ~/chargeplus && git pull origin master && sudo docker compose up -d nginx"
-```
-
-```bash
-# 전체 스택 재빌드 (대규모 변경, requirements.txt 변경 등)
-gcloud compute ssh chargeplus-vm \
-  --zone=asia-northeast3-a \
-  --project=chargeplus-490312 \
-  --command="cd ~/chargeplus && git pull origin master && sudo docker compose up -d --build 2>&1 | tail -30"
-```
-
-#### 방법 B: VM에 직접 SSH 접속 후 실행
-
-```bash
-# VM 접속
 gcloud compute ssh chargeplus-vm \
   --zone=asia-northeast3-a \
   --project=chargeplus-490312
-
-# VM 내부에서 순서대로 실행
-cd ~/chargeplus
-git pull origin master
-sudo docker compose up -d --build backend
-sudo docker compose exec backend python manage.py migrate   # 마이그레이션 있을 때만
-sudo docker compose ps                                      # 상태 확인
 ```
 
----
-
-### Step 3 — 배포 확인
+VM 내부에서:
 
 ```bash
-# 컨테이너 전체 상태 확인
-gcloud compute ssh chargeplus-vm \
-  --zone=asia-northeast3-a \
-  --project=chargeplus-490312 \
-  --command="cd ~/chargeplus && sudo docker compose ps"
-
-# backend 로그 (최근 30줄)
-gcloud compute ssh chargeplus-vm \
-  --zone=asia-northeast3-a \
-  --project=chargeplus-490312 \
-  --command="cd ~/chargeplus && sudo docker compose logs backend --tail=30"
-
-# 헬스체크 (외부에서)
-curl -s https://chargeplus.kr/health
-# OK
-
-# API 응답 확인
-curl -s https://chargeplus.kr/api/v1/stations/
-# {"detail":"자격 인증데이터..."}  ← 401이면 정상 동작
+cd ~/chargeplus
+./deploy.sh
 ```
+
+스크립트가 자동으로 수행하는 작업:
+
+1. `git pull origin master`
+2. 변경 파일 분석
+3. 변경된 서비스만 재빌드 (`--build backend` / `--build gateway`)
+4. `nginx/nginx.conf` 변경 시 무중단 리로드 (`nginx -s reload`)
+5. 새 마이그레이션 파일 감지 시 자동 `migrate`
+6. 헬스체크 (`/health` → HTTP 200 확인)
+
+**이미 최신 상태인 경우** 아무것도 하지 않고 종료된다.
 
 ---
 
-### 서비스별 재빌드 필요 여부 정리
+### 강제 재배포 (이미 최신이지만 다시 빌드해야 할 때)
 
-| 변경 내용 | 재빌드 대상 | 마이그레이션 |
-|-----------|-------------|-------------|
-| `backend/` Python 코드 | `backend` | 불필요 |
-| `backend/apps/*/models.py` | `backend` | **필요** |
-| `backend/requirements.txt` | `backend` | 불필요 |
-| `gateway/` Python 코드 | `gateway` | 불필요 |
-| `gateway/requirements.txt` | `gateway` | 불필요 |
-| `nginx/nginx.conf` | (재빌드 불필요, 볼륨) | 불필요 |
-| `docker-compose.yml` 환경변수 | 해당 서비스 전체 | 불필요 |
+```bash
+./deploy.sh --force
+```
+
+backend + nginx를 강제 재빌드한다. `.env` 수정 후 환경변수를 반영할 때 사용한다.
+
+---
+
+### deploy.sh 자동 감지 규칙
+
+| 변경된 파일 경로 | 수행 작업 |
+|-----------------|-----------|
+| `backend/**` | backend 재빌드 |
+| `backend/apps/*/migrations/[0-9]*` | backend 재빌드 + `migrate` |
+| `gateway/**` | gateway 재빌드 |
+| `nginx/nginx.conf` | nginx 무중단 리로드 |
+| `docker-compose.yml` | backend + gateway 재빌드 |
+| `docs/`, `tests/`, `*.md` 등 | 배포 없음 |
+
+---
+
+### 배포 상태 확인
+
+```bash
+# 컨테이너 전체 상태
+sudo docker compose ps
+
+# backend 로그 (최근 30줄)
+sudo docker compose logs backend --tail=30
+
+# 헬스체크
+curl -s https://chargeplus.kr/health
+# OK
+```
 
 ---
 
@@ -587,6 +549,108 @@ gcloud compute instances start chargeplus-vm \
 
 ---
 
+## 12. 추가 도메인 연결
+
+동일한 VM·백엔드에 새 도메인을 추가하는 절차. (`csms.pvpentech.com` 추가 작업을 기준으로 기록.)
+
+### Step 1 — DNS A 레코드 추가
+
+도메인 등록 업체 DNS 관리 페이지에서:
+
+| 타입 | 호스트 | 값 | TTL |
+|------|--------|----|-----|
+| A | `csms` | `34.50.12.65` | 300 |
+
+전파 확인:
+```bash
+nslookup csms.pvpentech.com
+# Address: 34.50.12.65
+```
+
+### Step 2 — Let's Encrypt 인증서 발급
+
+```bash
+# VM에서 (nginx 잠깐 중단 필요)
+cd ~/chargeplus
+sudo docker compose stop nginx
+
+sudo certbot certonly --standalone \
+  -d csms.pvpentech.com \
+  --email jshw2987@gmail.com \
+  --agree-tos --no-eff-email \
+  --non-interactive
+
+sudo docker compose start nginx
+```
+
+발급 결과:
+```
+Certificate is saved at: /etc/letsencrypt/live/csms.pvpentech.com/fullchain.pem
+Key is saved at:         /etc/letsencrypt/live/csms.pvpentech.com/privkey.pem
+```
+
+### Step 3 — nginx.conf 수정
+
+`nginx/nginx.conf`에 HTTP 리다이렉트 블록과 HTTPS 서버 블록을 각각 추가한다.
+기존 `chargeplus.kr` 블록을 그대로 복사해서 도메인명과 인증서 경로만 변경하면 된다.
+
+```nginx
+# HTTP → HTTPS redirect
+server {
+    listen 80;
+    server_name csms.pvpentech.com;
+    return 301 https://$host$request_uri;
+}
+
+# HTTPS
+server {
+    listen 443 ssl;
+    server_name csms.pvpentech.com;
+
+    ssl_certificate     /etc/letsencrypt/live/csms.pvpentech.com/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/csms.pvpentech.com/privkey.pem;
+    # ... (이하 chargeplus.kr 블록과 동일)
+}
+```
+
+### Step 4 — .env 파일 수정 (핵심)
+
+> **주의:** `CSRF_TRUSTED_ORIGINS`는 `docker-compose.yml`의 기본값이 아닌 `.env` 파일 값이 우선 적용된다.
+> `.env`를 직접 수정하지 않으면 새 도메인에서 로그인 시 **CSRF 403 오류**가 발생한다.
+
+```bash
+# VM에서
+cd ~/chargeplus
+
+# CSRF_TRUSTED_ORIGINS에 새 도메인 추가
+sed -i 's|CSRF_TRUSTED_ORIGINS=.*|CSRF_TRUSTED_ORIGINS=https://chargeplus.kr,https://www.chargeplus.kr,https://csms.pvpentech.com|' .env
+
+# 확인
+grep CSRF .env
+```
+
+`ALLOWED_HOSTS`는 현재 `*`로 설정되어 있으므로 별도 수정 불필요.
+
+### Step 5 — 배포 및 확인
+
+```bash
+cd ~/chargeplus
+git pull origin master
+
+# nginx 설정 반영 (볼륨 마운트이므로 --build 불필요)
+sudo docker compose up -d nginx
+
+# backend 재시작 (CSRF 환경변수 반영)
+sudo docker compose up -d backend
+
+# 확인
+sudo docker compose exec backend env | grep CSRF
+curl -s https://csms.pvpentech.com/health
+# OK
+```
+
+---
+
 ## 현재 운영 중인 서비스 정보
 
 | 항목 | 값 |
@@ -595,8 +659,9 @@ gcloud compute instances start chargeplus-vm \
 | GCP 계정 | gresystem2023@gmail.com |
 | VM | chargeplus-vm (e2-medium, asia-northeast3-a) |
 | 외부 IP | 34.50.12.65 (정적) |
-| 도메인 | chargeplus.kr |
-| HTTPS 인증서 | Let's Encrypt (만료: 2026-06-13, 자동갱신) |
+| 도메인 | chargeplus.kr, csms.pvpentech.com |
+| HTTPS 인증서 (chargeplus.kr) | Let's Encrypt (만료: 2026-06-13, 자동갱신) |
+| HTTPS 인증서 (csms.pvpentech.com) | Let's Encrypt (만료: 2026-06-21, 자동갱신) |
 | GitHub | https://github.com/jeongsooh/chargeplus |
 | Admin | https://chargeplus.kr/admin/ (admin / admin1234!) |
 | API | https://chargeplus.kr/api/ |
