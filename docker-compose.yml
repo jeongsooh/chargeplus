@@ -40,8 +40,8 @@ services:
       - CELERY_RESULT_BACKEND=${CELERY_RESULT_BACKEND:-redis://redis:6379/2}
       - SECRET_KEY=${SECRET_KEY:-change-me-in-production}
       - DJANGO_SETTINGS_MODULE=${DJANGO_SETTINGS_MODULE:-chargeplus.settings.production}
-      - ALLOWED_HOSTS=${ALLOWED_HOSTS:-localhost,127.0.0.1,backend}
-      - CSRF_TRUSTED_ORIGINS=${CSRF_TRUSTED_ORIGINS:-http://localhost}
+      - ALLOWED_HOSTS=${ALLOWED_HOSTS:-localhost,127.0.0.1,backend,chargeplus.kr,www.chargeplus.kr,csms.pvpentech.com}
+      - CSRF_TRUSTED_ORIGINS=${CSRF_TRUSTED_ORIGINS:-https://chargeplus.kr,https://www.chargeplus.kr,https://csms.pvpentech.com}
       - MB_SECRET_KEY=${MB_SECRET_KEY:-6ca6af4578753e1afae2eb864f8aa288}
       - MB_ACCESS_CODE=${MB_ACCESS_CODE:-DNHXPHRNMZ}
       - MB_MERCHANT_ID=${MB_MERCHANT_ID:-114743}
