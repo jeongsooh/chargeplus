@@ -18,6 +18,8 @@ ChargePlus OCPP 1.6 CSMS를 Google Cloud Platform(GCE VM)에 배포하는 전체
 10. [배포 업데이트 방법](#10-배포-업데이트-방법)
 11. [VM 스펙 변경](#11-vm-스펙-변경)
 12. [추가 도메인 연결](#12-추가-도메인-연결)
+13. [SSH 접속 설정 (Git Bash)](#13-ssh-접속-설정-git-bash)
+14. [Clean Install (전체 초기화 및 재설치)](#14-clean-install-전체-초기화-및-재설치)
 
 ---
 
@@ -455,20 +457,18 @@ git push origin master
 
 ### Step 2 — VM: deploy.sh 실행
 
-VM에 SSH 접속 후:
+SSH 접속 후 스크립트 한 줄로 배포 완료:
 
 ```bash
-gcloud compute ssh chargeplus-vm \
-  --zone=asia-northeast3-a \
-  --project=chargeplus-490312
+# 접속 + 배포 한 번에
+ssh chargeplus "cd ~/chargeplus && ./deploy.sh"
+
+# 또는 접속 후 직접 실행
+ssh chargeplus
+cd ~/chargeplus && ./deploy.sh
 ```
 
-VM 내부에서:
-
-```bash
-cd ~/chargeplus
-./deploy.sh
-```
+> SSH 접속 설정이 안 된 경우 [Section 13](#13-ssh-접속-설정-git-bash) 참고.
 
 스크립트가 자동으로 수행하는 작업:
 
@@ -666,3 +666,174 @@ curl -s https://csms.pvpentech.com/health
 | Admin | https://chargeplus.kr/admin/ (admin / admin1234!) |
 | API | https://chargeplus.kr/api/ |
 | OCPP WebSocket | wss://chargeplus.kr/ocpp/1.6/{station_id} |
+
+---
+
+## 13. SSH 접속 설정 (Git Bash)
+
+`gcloud compute ssh` 대신 Git Bash에서 일반 `ssh` 명령으로 VM에 접속하는 설정.
+한 번만 설정하면 이후 `ssh chargeplus` 한 줄로 접속 가능.
+
+### Step 1 — SSH 키 생성
+
+```bash
+# Git Bash에서
+ssh-keygen -t ed25519 -C "chargeplus-deploy" -f ~/.ssh/chargeplus
+
+# 생성된 파일 확인
+ls ~/.ssh/chargeplus*
+# ~/.ssh/chargeplus      ← 개인키 (절대 공유 금지)
+# ~/.ssh/chargeplus.pub  ← 공개키 (VM에 등록)
+```
+
+> 이미 SSH 키가 있으면 이 단계는 건너뛴다.
+
+### Step 2 — 공개키를 GCP VM에 등록
+
+```bash
+gcloud compute instances add-metadata chargeplus-vm \
+  --zone=asia-northeast3-a \
+  --project=chargeplus-490312 \
+  --metadata="ssh-keys=jeong:$(cat ~/.ssh/chargeplus.pub)"
+```
+
+> `jeong`은 VM 내 사용자 이름 (`/home/jeong/` 기준).
+
+### Step 3 — `~/.ssh/config` 등록
+
+```bash
+cat >> ~/.ssh/config << 'EOF'
+
+Host chargeplus
+    HostName 34.50.12.65
+    User jeong
+    IdentityFile ~/.ssh/chargeplus
+    ServerAliveInterval 60
+EOF
+```
+
+### Step 4 — 접속 확인
+
+```bash
+ssh chargeplus
+# jeong@chargeplus-vm:~$
+```
+
+### 트러블슈팅
+
+**Permission denied (publickey)**
+
+```bash
+# 키 파일 권한 확인
+chmod 600 ~/.ssh/chargeplus
+chmod 644 ~/.ssh/chargeplus.pub
+```
+
+**접속은 되나 공개키가 무시되는 경우** — OS Login이 활성화되어 있을 때:
+
+```bash
+# OS Login 상태 확인
+gcloud compute instances describe chargeplus-vm \
+  --zone=asia-northeast3-a --project=chargeplus-490312 \
+  --format="get(metadata.items[enable-oslogin])"
+# TRUE 이면 아래 명령으로 비활성화
+
+gcloud compute instances add-metadata chargeplus-vm \
+  --zone=asia-northeast3-a --project=chargeplus-490312 \
+  --metadata enable-oslogin=FALSE
+```
+
+**sudo 패스워드 요구 시**
+
+GCP VM은 기본적으로 sudo 패스워드 없이 실행되도록 설정되어 있다. 확인:
+
+```bash
+sudo cat /etc/sudoers.d/90-cloud-init-users
+# jeong ALL=(ALL) NOPASSWD:ALL  ← 이 설정이면 패스워드 불필요
+```
+
+패스워드가 필요한 상황이라면 VM에서 직접 설정:
+
+```bash
+sudo passwd jeong
+```
+
+---
+
+## 14. Clean Install (전체 초기화 및 재설치)
+
+기존 컨테이너·이미지·데이터를 모두 삭제하고 처음부터 다시 설치하는 절차.
+
+> **주의:** `-v` 옵션은 PostgreSQL 데이터 볼륨까지 삭제한다. DB 데이터가 필요하면 먼저 백업할 것.
+
+### Step 1 — 기존 데이터 전체 삭제
+
+```bash
+ssh chargeplus
+
+cd ~/chargeplus
+
+# 컨테이너 + 볼륨(DB 데이터 포함) 전부 삭제
+sudo docker compose down -v
+
+# 사용하지 않는 이미지·캐시 전부 제거
+sudo docker system prune -af --volumes
+
+# 레포 디렉터리 삭제
+cd ~
+rm -rf ~/chargeplus
+```
+
+> 인증서는 재발급 한도(주 5회)가 있으므로 보존 권장.
+> 삭제가 필요한 경우: `sudo rm -rf /etc/letsencrypt/live/<도메인명>`
+
+### Step 2 — 재설치
+
+```bash
+# 레포 클론
+git clone https://github.com/jeongsooh/chargeplus.git
+cd ~/chargeplus
+
+# .env 파일 생성
+cat > .env << 'EOF'
+SECRET_KEY=1QpuOB7K1Ey54If6J68fa6MPwtU_6M1FoC9_1ONCtrSLFFYeye
+DJANGO_SETTINGS_MODULE=chargeplus.settings.production
+ALLOWED_HOSTS=*
+CSRF_TRUSTED_ORIGINS=https://chargeplus.kr,https://www.chargeplus.kr,https://csms.pvpentech.com
+
+POSTGRES_DB=chargeplus
+POSTGRES_USER=chargeplus
+POSTGRES_PASSWORD=ChargePlus2026Secure
+DATABASE_URL=postgresql://chargeplus:ChargePlus2026Secure@db:5432/chargeplus
+
+REDIS_URL=redis://redis:6379/0
+CELERY_BROKER_URL=redis://redis:6379/1
+CELERY_RESULT_BACKEND=redis://redis:6379/2
+
+GATEWAY_HOST=0.0.0.0
+GATEWAY_PORT=9000
+OCPP_SECURITY_PROFILE=0
+RESPONSE_TIMEOUT=10.0
+EOF
+
+# 빌드 및 시작
+sudo docker compose up -d --build
+
+# 마이그레이션
+sudo docker compose exec backend python manage.py migrate
+```
+
+### Step 3 — 설치 확인
+
+```bash
+# 전체 컨테이너 상태 (모두 Up 이어야 함)
+sudo docker compose ps
+
+# 헬스체크
+curl -s http://localhost/health
+# OK
+
+# HTTPS 확인 (인증서가 살아있는 경우)
+curl -s https://chargeplus.kr/health
+# OK
+```
